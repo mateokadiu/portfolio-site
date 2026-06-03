@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build
+dist/
+.astro/
+
+# os
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor
+.vscode/
+.idea/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# deploy
+.vercel
+.wrangler
+
+# test
+playwright-report/
+test-results/
+coverage/

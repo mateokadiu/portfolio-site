@@ -1,0 +1,53 @@
+{
+  "name": "portfolio-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal portfolio — bento-grid interactive showcase.",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run --passWithNoTests",
+    "test:visual": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/react": "^4.2.4",
+    "@astrojs/sitemap": "^3.2.1",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "astro": "^5.7.0",
+    "framer-motion": "^11.18.2",
+    "gsap": "^3.13.0",
+    "lucide-react": "^0.469.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "satori": "^0.12.1",
+    "sharp": "^0.33.5",
+    "three": "^0.170.0",
+    "typescript": "^5.7.2",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "^1.49.1",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/three": "^0.170.0",
+    "tailwindcss": "^4.0.0",
+    "vitest": "^2.1.8"
+  }
+}
