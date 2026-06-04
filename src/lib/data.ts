@@ -1,0 +1,119 @@
+export type ProjectStatus = 'shipped' | 'beta' | 'private' | 'wip';
+
+export interface Project {
+  slug: string;
+  name: string;
+  tagline: string;
+  blurb: string;
+  stack: string[];
+  status: ProjectStatus;
+  repoUrl: string | null;
+  isPrivate: boolean;
+  tileSize: '1x1' | '2x1' | '2x2';
+}
+
+export const PROJECTS: Project[] = [
+  {
+    slug: 'temporal-stripe',
+    name: 'temporal-stripe',
+    tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',
+    blurb:
+      'Open-source Temporal library covering reauthorization, multicapture, refunds and chargebacks behind type-safe signals and a saga primitive.',
+    stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/temporal-stripe',
+    isPrivate: false,
+    tileSize: '2x2',
+  },
+  {
+    slug: 'webhook-gateway',
+    name: 'webhook-gateway',
+    tagline: 'Self-hosted webhook reliability with exponential backoff + DLQ.',
+    blurb:
+      'A small Nest service that takes inbound webhooks, persists them, retries with exp backoff, and parks the dead ones in a DLQ for replay.',
+    stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/webhook-gateway',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
+    slug: 'shadowkit',
+    name: 'shadowkit',
+    tagline: 'Tailwind v4 inside the Shadow DOM, the cascade-safe way.',
+    blurb:
+      'Tiny set of helpers for building Web Components that survive the host page CSS — theme tokens scoped to :host, deduped stylesheet injection, a typed bridge for cross-instance state.',
+    stack: ['Web Components', 'Tailwind v4', 'Vite', 'TypeScript'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/shadowkit',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
+    slug: 'studybuddy',
+    name: 'studybuddy',
+    tagline: 'On-device RAG study app for React Native.',
+    blurb:
+      'A flashcard / study app with retrieval-augmented question generation, all model inference on-device via llama.rn. Skia for the heatmap.',
+    stack: ['React Native', 'Skia', 'llama.rn', 'SQLite'],
+    status: 'beta',
+    repoUrl: 'https://github.com/mateokadiu/studybuddy',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
+    slug: 'tax-ledger',
+    name: 'tax-ledger',
+    tagline: 'OSS tax line-item splitter with provable invariants.',
+    blurb:
+      'Library that splits sales-tax-inclusive orders into per-jurisdiction line items and proves the sum invariant holds across refunds, partial captures, and FX conversion.',
+    stack: ['TypeScript', 'Big.js', 'Property-based testing'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/tax-ledger',
+    isPrivate: false,
+    tileSize: '2x2',
+  },
+  {
+    slug: 'grpc-monorepo-starter',
+    name: 'grpc-monorepo-starter',
+    tagline: 'Turborepo + NestJS + gRPC + multi-language clients.',
+    blurb:
+      'Opinionated monorepo template — define a service in proto, get TS / Go / Python / Connect-Web clients regenerated on save.',
+    stack: ['Turborepo', 'NestJS', 'gRPC', 'Buf'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/grpc-monorepo-starter',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
+    slug: 'ai-trading-copilot',
+    name: 'ai-trading-copilot',
+    tagline: 'Claude-powered companion to my trading journal.',
+    blurb:
+      'NestJS + Next.js service that ingests MT5 trade data, narrates each trade against your stated plan, and flags pattern drift.',
+    stack: ['NestJS', 'Next.js', 'Claude', 'Postgres'],
+    status: 'private',
+    repoUrl: null,
+    isPrivate: true,
+    tileSize: '2x2',
+  },
+];
+
+export const PROJECT_BY_SLUG: Record<string, Project> = Object.fromEntries(
+  PROJECTS.map((p) => [p.slug, p]),
+);
+
+export const SOCIAL = {
+  email: 'mateokadiu17@gmail.com',
+  github: 'https://github.com/mateokadiu',
+  linkedin: 'https://www.linkedin.com/in/mateokadiu/',
+};
+
+export const SITE = {
+  title: 'Mateo Kadiu — portfolio',
+  description:
+    'Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.',
+  url: 'https://mateokadiu.pages.dev',
+  author: 'Mateo Kadiu',
+  location: 'Tirana, AL',
+};
