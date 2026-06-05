@@ -11,7 +11,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      noExternal: ['three', '@react-three/fiber', '@react-three/drei'],
+      noExternal: ['three', '@react-three/fiber', '@react-three/drei', 'gsap'],
     },
   },
   build: {

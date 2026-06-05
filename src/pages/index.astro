@@ -1,15 +1,8 @@
 ---
 import Layout from '~/layouts/Layout.astro';
+import Hero from '~/components/Hero';
 ---
 
 <Layout>
-  <section class="mx-auto max-w-6xl px-6 py-24">
-    <p class="font-mono text-xs uppercase tracking-wider text-muted">Tirana, AL · senior full-stack</p>
-    <h1 class="mt-3 font-display text-5xl font-semibold tracking-tight sm:text-7xl">
-      Mateo Kadiu
-    </h1>
-    <p class="mt-4 max-w-2xl text-lg text-muted">
-      Building things end-to-end. Every tile below is a live demo of a real project — not a screenshot, the actual code running in your browser.
-    </p>
-  </section>
+  <Hero client:idle />
 </Layout>
