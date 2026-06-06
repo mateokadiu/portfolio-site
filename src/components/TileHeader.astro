@@ -1,0 +1,40 @@
+---
+interface Props {
+  name: string;
+  tagline: string;
+  status?: 'shipped' | 'beta' | 'private' | 'wip';
+  isPrivate?: boolean;
+}
+const { name, tagline, status, isPrivate } = Astro.props;
+
+const statusLabel = {
+  shipped: 'shipped',
+  beta: 'beta',
+  private: 'private',
+  wip: 'wip',
+} as const;
+---
+
+<header class="flex items-start justify-between gap-3">
+  <div class="min-w-0">
+    <div class="flex items-center gap-2">
+      <h3 class="font-mono text-sm font-medium text-foreground">{name}</h3>
+      {
+        status && (
+          <span
+            class:list={[
+              'rounded-full border px-1.5 py-px font-mono text-[10px] uppercase tracking-wider',
+              status === 'shipped' && 'border-accent/30 text-accent',
+              status === 'beta' && 'border-border text-muted',
+              status === 'private' && 'border-border text-muted',
+              status === 'wip' && 'border-border text-muted',
+            ]}
+          >
+            {isPrivate ? 'private' : statusLabel[status]}
+          </span>
+        )
+      }
+    </div>
+    <p class="mt-1 text-xs leading-relaxed text-muted">{tagline}</p>
+  </div>
+</header>

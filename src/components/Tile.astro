@@ -1,0 +1,52 @@
+---
+interface Props {
+  size?: '1x1' | '2x1' | '2x2';
+  href?: string;
+  label?: string;
+  transitionName?: string;
+  className?: string;
+}
+
+const { size = '1x1', href, label, transitionName, className = '' } = Astro.props;
+
+const sizeClass = {
+  '1x1': 'lg:col-span-2 md:col-span-2',
+  '2x1': 'lg:col-span-4 md:col-span-4',
+  '2x2': 'lg:col-span-4 md:col-span-4 lg:row-span-2',
+}[size];
+
+const Tag = href ? 'a' : 'div';
+const linkProps = href ? { href, 'aria-label': label } : {};
+---
+
+<Tag
+  {...linkProps}
+  data-tile
+  data-size={size}
+  class:list={[
+    'group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-5 transition-colors hover:border-accent/40 hover:bg-card-hover focus-visible:border-accent',
+    sizeClass,
+    className,
+  ]}
+  style={transitionName ? `view-transition-name: ${transitionName};` : undefined}
+>
+  <slot />
+  {
+    href && (
+      <span
+        class="pointer-events-none absolute right-4 top-4 text-muted opacity-0 transition-opacity group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M7 17L17 7M17 7H8M17 7V16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+    )
+  }
+</Tag>
