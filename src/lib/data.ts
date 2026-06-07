@@ -1,4 +1,5 @@
 export type ProjectStatus = 'shipped' | 'beta' | 'private' | 'wip';
+export type TileSize = '1x1' | '2x1' | '2x2';
 
 export interface Project {
   slug: string;
@@ -9,8 +10,15 @@ export interface Project {
   status: ProjectStatus;
   repoUrl: string | null;
   isPrivate: boolean;
-  tileSize: '1x1' | '2x1' | '2x2';
+  tileSize: TileSize;
 }
+
+export const NOW = [
+  'on-device LLMs · llama.rn on RN',
+  'web components + shadow-dom theming',
+  'gRPC + connect-web client codegen',
+  'temporal workflows for retries',
+];
 
 export const PROJECTS: Project[] = [
   {
