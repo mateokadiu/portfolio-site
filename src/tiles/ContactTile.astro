@@ -1,0 +1,44 @@
+---
+import { SOCIAL } from '~/lib/data';
+---
+
+<div class="flex h-full flex-col gap-3">
+  <header class="flex items-start justify-between">
+    <h3 class="font-mono text-sm font-medium text-foreground">contact</h3>
+    <span class="font-mono text-[10px] uppercase text-muted">open to talk</span>
+  </header>
+
+  <p class="text-xs text-muted">
+    open to senior IC roles, contract work, or interesting OSS chats.
+  </p>
+
+  <ul class="mt-auto space-y-2 font-mono text-xs">
+    <li>
+      <a
+        href={`mailto:${SOCIAL.email}`}
+        class="group flex items-center justify-between rounded-md border border-border/60 px-2 py-1.5 text-foreground hover:border-accent/40 hover:text-accent transition-colors"
+      >
+        <span class="truncate">{SOCIAL.email}</span>
+        <span aria-hidden="true" class="text-muted group-hover:text-accent">→</span>
+      </a>
+    </li>
+    <li class="flex gap-2">
+      <a
+        href={SOCIAL.github}
+        target="_blank"
+        rel="noopener"
+        class="flex-1 rounded-md border border-border/60 px-2 py-1.5 text-center text-muted hover:border-accent/40 hover:text-foreground transition-colors"
+      >
+        github
+      </a>
+      <a
+        href={SOCIAL.linkedin}
+        target="_blank"
+        rel="noopener"
+        class="flex-1 rounded-md border border-border/60 px-2 py-1.5 text-center text-muted hover:border-accent/40 hover:text-foreground transition-colors"
+      >
+        linkedin
+      </a>
+    </li>
+  </ul>
+</div>
