@@ -7,6 +7,7 @@ import TileHeader from '~/components/TileHeader.astro';
 import AboutTile from '~/tiles/AboutTile.astro';
 import NowTile from '~/tiles/NowTile.astro';
 import ContactTile from '~/tiles/ContactTile.astro';
+import GithubTile from '~/tiles/GithubTile.astro';
 import { PROJECTS } from '~/lib/data';
 ---
 
@@ -37,6 +38,7 @@ import { PROJECTS } from '~/lib/data';
 
     <Tile size="1x1"><AboutTile /></Tile>
     <Tile size="1x1"><NowTile /></Tile>
+    <Tile size="1x1"><GithubTile /></Tile>
     <Tile size="1x1"><ContactTile /></Tile>
   </BentoGrid>
 </Layout>

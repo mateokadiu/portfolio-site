@@ -96,10 +96,10 @@ export const PROJECTS: Project[] = [
   {
     slug: 'ai-trading-copilot',
     name: 'ai-trading-copilot',
-    tagline: 'Claude-powered companion to my trading journal.',
+    tagline: 'LLM-powered companion to my trading journal.',
     blurb:
       'NestJS + Next.js service that ingests MT5 trade data, narrates each trade against your stated plan, and flags pattern drift.',
-    stack: ['NestJS', 'Next.js', 'Claude', 'Postgres'],
+    stack: ['NestJS', 'Next.js', 'LLM API', 'Postgres'],
     status: 'private',
     repoUrl: null,
     isPrivate: true,
