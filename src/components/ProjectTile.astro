@@ -1,0 +1,63 @@
+---
+import type { Project } from '~/lib/data';
+import Tile from '~/components/Tile.astro';
+import TileHeader from '~/components/TileHeader.astro';
+import TemporalStripeTile from '~/tiles/TemporalStripeTile';
+import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
+import ShadowkitTile from '~/tiles/ShadowkitTile';
+import StudybuddyTile from '~/tiles/StudybuddyTile';
+import TaxLedgerTile from '~/tiles/TaxLedgerTile';
+import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
+import AiTradingCopilotTile from '~/tiles/AiTradingCopilotTile';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+
+const href = project.isPrivate ? `/projects/${project.slug}` : `/projects/${project.slug}`;
+---
+
+<Tile
+  size={project.tileSize}
+  href={href}
+  label={`${project.name} — ${project.tagline}`}
+  transitionName={`project-${project.slug}`}
+>
+  {
+    project.slug === 'temporal-stripe' && <TemporalStripeTile client:visible />
+  }
+  {
+    project.slug === 'webhook-gateway' && <WebhookGatewayTile client:visible />
+  }
+  {project.slug === 'shadowkit' && <ShadowkitTile client:visible />}
+  {project.slug === 'studybuddy' && <StudybuddyTile client:visible />}
+  {project.slug === 'tax-ledger' && <TaxLedgerTile client:visible />}
+  {
+    project.slug === 'grpc-monorepo-starter' && (
+      <GrpcMonorepoTile client:visible />
+    )
+  }
+  {
+    project.slug === 'ai-trading-copilot' && (
+      <AiTradingCopilotTile client:visible />
+    )
+  }
+  {
+    !['temporal-stripe', 'webhook-gateway', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter', 'ai-trading-copilot'].includes(
+      project.slug,
+    ) && (
+      <>
+        <TileHeader
+          name={project.name}
+          tagline={project.tagline}
+          status={project.status}
+          isPrivate={project.isPrivate}
+        />
+        <div class="mt-4 flex-1 rounded-lg border border-dashed border-border/60 p-3 text-xs text-muted">
+          tile demo · placeholder
+        </div>
+      </>
+    )
+  }
+</Tile>
