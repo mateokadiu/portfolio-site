@@ -1,95 +1,50 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { create } from 'zustand';
-
-type State =
-  | 'authorized'
-  | 'reauthorizing'
-  | 'revising'
-  | 'multicapture'
-  | 'captured'
-  | 'canceled';
-
-const NODES: Array<{ id: State; x: number; y: number; label: string }> = [
-  { id: 'authorized', x: 60, y: 40, label: 'authorized' },
-  { id: 'reauthorizing', x: 200, y: 40, label: 'reauthorizing' },
-  { id: 'revising', x: 60, y: 110, label: 'revising' },
-  { id: 'multicapture', x: 200, y: 110, label: 'multicapture' },
-  { id: 'captured', x: 330, y: 110, label: 'captured' },
-  { id: 'canceled', x: 330, y: 40, label: 'canceled' },
-];
-
-const NODE_BY_ID = Object.fromEntries(NODES.map((n) => [n.id, n])) as Record<
-  State,
-  (typeof NODES)[number]
->;
-
-const EDGES: Array<{ from: State; to: State }> = [
-  { from: 'authorized', to: 'reauthorizing' },
-  { from: 'reauthorizing', to: 'authorized' },
-  { from: 'authorized', to: 'revising' },
-  { from: 'revising', to: 'multicapture' },
-  { from: 'authorized', to: 'multicapture' },
-  { from: 'multicapture', to: 'captured' },
-  { from: 'authorized', to: 'canceled' },
-];
-
-const LEGAL = new Set(EDGES.map((e) => `${e.from}->${e.to}`));
-const TERMINAL: Set<State> = new Set(['captured', 'canceled']);
-const SCRIPTED: State[] = [
-  'authorized',
-  'reauthorizing',
-  'authorized',
-  'multicapture',
-  'multicapture',
-  'captured',
-];
-
-interface Store {
-  current: State;
-  reauthMs: number;
-  step: number;
-  playing: boolean;
-  illegal: State | null;
-  set: (s: Partial<Store>) => void;
-}
-
-const useMachine = create<Store>((set) => ({
-  current: 'authorized',
-  reauthMs: 4000,
-  step: 0,
-  playing: false,
-  illegal: null,
-  set: (patch) => set((s) => ({ ...s, ...patch })),
-}));
-
-function isLegal(from: State, to: State) {
-  return LEGAL.has(`${from}->${to}`);
-}
+import {
+  REAUTH_TIMER_MS,
+  STRIPE_EDGES,
+  STRIPE_NODES,
+  STRIPE_NODE_BY_ID,
+  STRIPE_SCRIPT,
+  STRIPE_TERMINAL,
+  useTemporalStripeStore,
+} from '~/lib/temporalStripeStore';
 
 export default function TemporalStripeTile() {
-  const { current, reauthMs, step, playing, illegal, set } = useMachine();
+  const current = useTemporalStripeStore((s) => s.current);
+  const reauthMs = useTemporalStripeStore((s) => s.reauthMs);
+  const step = useTemporalStripeStore((s) => s.step);
+  const playing = useTemporalStripeStore((s) => s.playing);
+  const illegal = useTemporalStripeStore((s) => s.illegal);
+  const play = useTemporalStripeStore((s) => s.play);
+  const pause = useTemporalStripeStore((s) => s.pause);
+  const reset = useTemporalStripeStore((s) => s.reset);
+  const jumpTo = useTemporalStripeStore((s) => s.jumpTo);
+  const advance = useTemporalStripeStore((s) => s.advance);
+  const clearIllegal = useTemporalStripeStore((s) => s.clearIllegal);
+  const setReauthMs = useTemporalStripeStore((s) => s.setReauthMs);
+
   const reduced = useReducedMotion();
   const lastTickRef = useRef<number | null>(null);
 
-  // Scripted walker — advances through SCRIPTED on each play tick.
+  // Scripted walk while playing.
   useEffect(() => {
     if (!playing || reduced) return;
     const id = setTimeout(() => {
-      const next = SCRIPTED[step + 1];
+      const next = STRIPE_SCRIPT[step + 1];
       if (!next) {
-        set({ playing: false });
+        pause();
         return;
       }
-      set({ current: next, step: step + 1 });
+      advance(next);
     }, 1100);
     return () => clearTimeout(id);
-  }, [playing, step, reduced, set]);
+  }, [playing, step, reduced, pause, advance]);
 
-  // Reauth countdown — only ticks while we're in `reauthorizing`.
+  // Reauth countdown ticks only inside reauthorizing.
   useEffect(() => {
     if (current !== 'reauthorizing') {
-      set({ reauthMs: 4000 });
+      setReauthMs(REAUTH_TIMER_MS);
       lastTickRef.current = null;
       return;
     }
@@ -98,34 +53,19 @@ export default function TemporalStripeTile() {
       if (lastTickRef.current == null) lastTickRef.current = t;
       const dt = t - lastTickRef.current;
       lastTickRef.current = t;
-      const ms = Math.max(0, useMachine.getState().reauthMs - dt);
-      set({ reauthMs: ms });
+      const ms = Math.max(0, useTemporalStripeStore.getState().reauthMs - dt);
+      setReauthMs(ms);
       if (ms > 0) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [current, set]);
+  }, [current, setReauthMs]);
 
-  // Illegal-transition red flash auto-clears.
   useEffect(() => {
     if (!illegal) return;
-    const id = setTimeout(() => set({ illegal: null }), 320);
+    const id = setTimeout(clearIllegal, 320);
     return () => clearTimeout(id);
-  }, [illegal, set]);
-
-  const handleNodeClick = (id: State) => {
-    if (id === current) return;
-    if (!isLegal(current, id)) {
-      set({ illegal: id });
-      return;
-    }
-    set({ current: id, playing: false });
-  };
-
-  const play = () => set({ playing: true });
-  const pause = () => set({ playing: false });
-  const reset = () =>
-    set({ current: 'authorized', step: 0, playing: false, reauthMs: 4000, illegal: null });
+  }, [illegal, clearIllegal]);
 
   return (
     <div className="flex h-full flex-col">
@@ -162,9 +102,9 @@ export default function TemporalStripeTile() {
             </marker>
           </defs>
 
-          {EDGES.map((e) => {
-            const from = NODE_BY_ID[e.from];
-            const to = NODE_BY_ID[e.to];
+          {STRIPE_EDGES.map((e) => {
+            const from = STRIPE_NODE_BY_ID[e.from];
+            const to = STRIPE_NODE_BY_ID[e.to];
             const active = current === e.to && step > 0;
             return (
               <motion.line
@@ -178,26 +118,28 @@ export default function TemporalStripeTile() {
                 strokeDasharray={active ? '0' : '3 3'}
                 markerEnd="url(#ts-arrow)"
                 initial={false}
-                animate={{
-                  opacity: active ? 1 : 0.55,
-                }}
+                animate={{ opacity: active ? 1 : 0.55 }}
                 transition={{ duration: 0.4 }}
               />
             );
           })}
 
-          {NODES.map((n) => {
+          {STRIPE_NODES.map((n) => {
             const isCurrent = n.id === current;
             const isIllegal = illegal === n.id;
             return (
               <g
                 key={n.id}
-                onClick={() => handleNodeClick(n.id)}
+                onClick={() => jumpTo(n.id)}
                 className="cursor-pointer"
                 role="button"
                 tabIndex={0}
+                aria-label={`jump to ${n.label}`}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') handleNodeClick(n.id);
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    jumpTo(n.id);
+                  }
                 }}
               >
                 <motion.circle
@@ -211,9 +153,7 @@ export default function TemporalStripeTile() {
                         ? 'oklch(0.65 0.18 25 / 0.9)'
                         : 'oklch(0.25 0 0)'
                   }
-                  stroke={
-                    isCurrent ? 'oklch(0.85 0.16 25)' : 'oklch(0.45 0 0)'
-                  }
+                  stroke={isCurrent ? 'oklch(0.85 0.16 25)' : 'oklch(0.45 0 0)'}
                   strokeWidth={isCurrent ? 1.6 : 1}
                   animate={
                     isIllegal && !reduced
@@ -222,7 +162,7 @@ export default function TemporalStripeTile() {
                         ? { scale: [1, 1.08, 1] }
                         : { scale: 1 }
                   }
-                  transition={{ duration: isIllegal ? 0.32 : 0.6, repeat: 0 }}
+                  transition={{ duration: isIllegal ? 0.32 : 0.6 }}
                 />
                 <text
                   x={n.x}
@@ -257,7 +197,7 @@ export default function TemporalStripeTile() {
                   pathLength={1}
                   strokeDasharray={1}
                   initial={false}
-                  animate={{ strokeDashoffset: 1 - reauthMs / 4000 }}
+                  animate={{ strokeDashoffset: 1 - reauthMs / REAUTH_TIMER_MS }}
                   transition={{ duration: 0.12, ease: 'linear' }}
                   style={{ transform: 'rotate(-90deg)', transformOrigin: '310px 40px' }}
                 />
@@ -281,12 +221,9 @@ export default function TemporalStripeTile() {
         role="group"
         aria-label="state machine controls"
       >
-        <p
-          className="font-mono text-[10px] uppercase tracking-wider text-muted"
-          aria-live="polite"
-        >
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted" aria-live="polite">
           state · <span className="text-foreground">{current}</span>
-          {TERMINAL.has(current) && <span className="ml-2 text-accent">final</span>}
+          {STRIPE_TERMINAL.has(current) && <span className="ml-2 text-accent">final</span>}
         </p>
         <div className="flex gap-1.5 font-mono text-[10px]">
           <button
