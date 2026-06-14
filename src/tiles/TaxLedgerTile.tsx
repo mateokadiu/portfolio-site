@@ -159,20 +159,34 @@ export default function TaxLedgerTile() {
 
           <motion.div
             layout
+            animate={
+              invariantHolds && refunded.length > 0 && !reduced
+                ? { boxShadow: ['0 0 0 0 oklch(0.65 0.18 25 / 0)', '0 0 0 4px oklch(0.65 0.18 25 / 0.18)', '0 0 0 0 oklch(0.65 0.18 25 / 0)'] }
+                : { boxShadow: '0 0 0 0 oklch(0.65 0.18 25 / 0)' }
+            }
+            transition={{ duration: 0.7 }}
             className={`flex items-center justify-between rounded border px-2 py-2 font-mono text-[11px] ${
               invariantHolds && refunded.length > 0
-                ? 'border-accent/40 bg-accent/10 text-accent'
+                ? 'border-accent/50 bg-accent/10 text-accent'
                 : 'border-border/60 text-muted'
             }`}
           >
-            <span>
+            <span className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className={`inline-block h-1.5 w-1.5 rounded-full ${
+                  invariantHolds && refunded.length > 0
+                    ? 'bg-accent shadow-[0_0_8px_oklch(0.65_0.18_25)]'
+                    : 'bg-muted/40'
+                }`}
+              />
               tax total · <span className="text-foreground">{fmt(taxTotal)}</span>
             </span>
             <span aria-live="polite">
               {refunded.length === 0
                 ? 'no refunds yet'
                 : invariantHolds
-                  ? `sum invariant ✓ (delta ${fmt(deltaSum)})`
+                  ? `Σ ✓  delta ${fmt(deltaSum)}  ≡  refunded tax ${fmt(refundedSum)}`
                   : 'sum invariant violated'}
             </span>
           </motion.div>
