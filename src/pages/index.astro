@@ -8,6 +8,7 @@ import AboutTile from '~/tiles/AboutTile.astro';
 import NowTile from '~/tiles/NowTile.astro';
 import ContactTile from '~/tiles/ContactTile.astro';
 import GithubTile from '~/tiles/GithubTile.astro';
+import GithubGlobeTile from '~/tiles/GithubGlobeTile';
 import { PROJECTS } from '~/lib/data';
 ---
 
@@ -16,6 +17,8 @@ import { PROJECTS } from '~/lib/data';
 
   <BentoGrid id="work">
     {PROJECTS.map((project) => <ProjectTile project={project} />)}
+
+    <Tile size="2x2"><GithubGlobeTile client:visible /></Tile>
 
     <Tile size="1x1"><AboutTile /></Tile>
     <Tile size="1x1"><NowTile /></Tile>
