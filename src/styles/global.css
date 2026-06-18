@@ -54,4 +54,22 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+
+  [data-tile] {
+    transition: none !important;
+  }
+}
+
+/* Tiles that opt into a static fallback when motion is off. */
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-only] {
+    display: none !important;
+  }
+  [data-motion-fallback] {
+    display: block !important;
+  }
+}
+
+[data-motion-fallback] {
+  display: none;
 }
