@@ -1,0 +1,52 @@
+---
+slug: studybuddy
+name: studybuddy
+tagline: On-device RAG study app for React Native.
+status: beta
+stack: ['React Native', 'Skia', 'llama.rn', 'SQLite']
+repoUrl: 'https://github.com/mateokadiu/studybuddy'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> A flashcard / study app that runs the entire inference loop on-device — embedding model + small LLM via `llama.rn` — so my notes never leave my phone, and the spaced-repetition queue is generated from a true semantic retrieval pass over my own corpus rather than tags or hand-picked decks.
+
+## What it is
+
+A React Native app with three loops:
+
+1. **Capture loop.** I write a note. It's chunked, embedded on-device by a quantised E5-small, and stored in SQLite with the chunk vectors as `BLOB`s.
+2. **Retrieval loop.** I ask a question. The query is embedded, cosine-searched against the local vectors, top-k chunks are pulled, and a small on-device LLM generates a flashcard from the retrieved context.
+3. **Review loop.** The flashcard is enqueued in a SuperMemo-2 spaced-repetition schedule. The heatmap (the one on the portfolio tile) is the daily-review-completion view.
+
+All of it runs without a network. The phone is the server.
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/studybuddy |
+| Status | beta |
+| Platforms | iOS + Android via React Native 0.76 |
+| Model | E5-small (embeddings) + Phi-3-mini-int4 (generation) |
+
+## The problem I was solving
+
+Notes apps make me file things. They don't make me _learn_ things. Anki is the gold standard for the review loop but every card is hand-authored — there's no path from "I read 200 pages" to "I now have 30 well-tuned cards covering it".
+
+The bet: combine retrieval-augmented card generation with spaced repetition, and run it entirely locally because the corpus is personal notes I don't want in someone's cloud.
+
+## Key decisions
+
+1. **On-device only.** Once that's the spec, every other decision falls out: small quantised models, embeddings as `BLOB`s in SQLite, no auth surface, no sync.
+2. **`llama.rn` over MLC / ExecuTorch.** llama.cpp's quantisation story is more mature; the int4 model is the difference between 200ms and 2s per token on an iPhone 14.
+3. **SuperMemo-2, not SM-15+.** SM-2 is six lines; the marginal accuracy of SM-15+ doesn't compensate for the implementation cost on a solo project.
+4. **Skia for the heatmap.** Smooth 60fps gestures on the year view; SVG falls over on a 53×7 grid with hover.
+
+## Numbers
+
+- **~200ms** per generated token on iPhone 14 with int4 quantisation
+- **53×7** cells in the year heatmap
+- **0 bytes** of personal data leaves the device

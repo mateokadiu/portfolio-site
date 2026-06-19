@@ -1,0 +1,51 @@
+---
+slug: grpc-monorepo-starter
+name: grpc-monorepo-starter
+tagline: Turborepo + NestJS + gRPC + multi-language clients.
+status: shipped
+stack: ['Turborepo', 'NestJS', 'gRPC', 'Buf']
+repoUrl: 'https://github.com/mateokadiu/grpc-monorepo-starter'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> An opinionated monorepo template — define a service in proto, get TypeScript / Go / Python / Connect-Web clients regenerated on save, all under one Turborepo cache and one Buf lint config. Zero glue code; the boilerplate is the point of the project.
+
+## What it is
+
+A Turborepo with:
+
+- `services/` — NestJS gRPC services that load their `.proto` directly.
+- `proto/` — the canonical schema. `buf.yaml` + `buf.gen.yaml` config drives all codegen.
+- `clients/ts/`, `clients/go/`, `clients/py/`, `clients/web/` — auto-generated SDKs published per language ecosystem.
+- `apps/` — example consumers in each language.
+- `turbo.json` — cached build/lint/test across the whole tree.
+- `.github/workflows/codegen.yml` — runs `buf generate` on push and opens a PR if clients drifted.
+
+When I add a new RPC to `orders.proto`, four clients regenerate, all type-check, and the example consumers fail fast if anything is wrong.
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/grpc-monorepo-starter |
+| License | MIT |
+| Status | shipped |
+
+## The problem I was solving
+
+Every multi-language SDK story starts with "we have a Go service and need a TypeScript client" and ends with "and now also Python because data science wanted it". The work of keeping four codegens, four publish pipelines, and one schema in sync is the boring part of cross-language API design. This template makes the boring part free.
+
+## Key decisions
+
+1. **Buf over `protoc`.** Lint, breaking-change detection, plugin orchestration — Buf is the obvious choice in 2026.
+2. **Connect-Web on the browser side, not grpc-web.** Connect's HTTP/JSON fallback works through proxies that don't speak HTTP/2.
+3. **Codegen artifacts in git.** Generated clients are committed. Diffs are reviewable; consumers can browse the SDK source on GitHub.
+4. **One Turborepo cache for the whole tree.** A change to one client doesn't bust the Go service's test cache.
+
+## Numbers
+
+- **4** generated client languages (TS, Go, Python, Connect-Web)
+- **One** `.proto` change → 4 SDK updates with a single `pnpm codegen` invocation

@@ -1,0 +1,56 @@
+---
+slug: shadowkit
+name: shadowkit
+tagline: Tailwind v4 inside the Shadow DOM, the cascade-safe way.
+status: shipped
+stack: ['Web Components', 'Tailwind v4', 'Vite', 'TypeScript']
+repoUrl: 'https://github.com/mateokadiu/shadowkit'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> A tiny set of helpers for building Web Components that ship with their own design system but don't bleed into (or get poisoned by) the host page. Theme tokens scoped to `:host`, cascade-safe stylesheet injection via Constructable Stylesheets with content-hash dedupe, and a typed `postMessage` bridge for cross-instance state.
+
+## What it is
+
+A Turborepo containing four small packages plus a runnable example:
+
+- `@shadowkit/core` — `ShadowComponent` base class, `createStore`, `watchStore`, `defineElement`, cleanup-tracker for `disconnectedCallback`.
+- `@shadowkit/theme` — design-token DSL that compiles to `:host { --token: value }` blocks. No global CSS variables.
+- `@shadowkit/tailwind` — adopted-stylesheet injector that takes the Tailwind v4 output, content-hashes it, and dedupes across instances. The same CSS source produces one `CSSStyleSheet` object across an arbitrary number of `<sk-counter>` instances.
+- `@shadowkit/bridge` — `makeCounterBridge()` returning a typed pub/sub attached to `window`. Lets sibling components agree on shared state without exposing internals.
+
+The `examples/embed-counter` demo proves the cascade boundary: three `<sk-counter>` instances on a host page, the host has its own hostile theme, and host CSS rules targeting `.sk-counter` or `sk-counter` cannot reach the component's internals.
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/shadowkit |
+| License | MIT |
+| Status | shipped |
+| Packages | `@shadowkit/core`, `/theme`, `/tailwind`, `/bridge` |
+
+## The problem I was solving
+
+Every embed-on-someone-else's-page widget hits the same two walls:
+
+1. **Host CSS leaks in.** Random `* { box-sizing: border-box; }` rules and global `a { color: blue }` declarations mangle the widget's design.
+2. **Tailwind doesn't naturally work inside the Shadow DOM** — utilities are emitted against `:root`, which Shadow DOM doesn't see.
+
+Shadow DOM solves leak #1 if you set it up carefully. Leak #2 — Tailwind tokens — is the part most projects punt on. `shadowkit` lets me ship a real component with real Tailwind utilities and have it survive a host page styled in `!important`-stuffed legacy CSS.
+
+## Key decisions
+
+1. **Constructable Stylesheets, not `<style>` tags.** The browser dedupes adopted stylesheets natively; same `CSSStyleSheet` object → zero extra cost across 100 instances.
+2. **Content-hash dedupe on stylesheet identity.** If two callers pass the same CSS string, they get the same stylesheet handle.
+3. **Theme tokens scoped to `:host` not `:root`.** Lets multiple themes coexist on one page; no global namespace.
+4. **Bridge attached to `window`.** Simpler than CustomEvent bubbling for cross-instance state; typed via TypeScript module augmentation.
+
+## Numbers
+
+- **4 packages** + 1 runnable example
+- **One CSSStyleSheet object** shared across N instances of `<sk-counter>` on a page
+- **Zero** host-page CSS rules can reach `<sk-counter>` internals

@@ -1,0 +1,73 @@
+---
+slug: temporal-stripe
+name: temporal-stripe
+tagline: Temporal workflows for the full Stripe Connect lifecycle.
+status: shipped
+stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest']
+repoUrl: 'https://github.com/mateokadiu/temporal-stripe'
+isPrivate: false
+tileSize: '2x2'
+---
+
+## Elevator pitch
+
+> An open-source Temporal workflow library that handles the full Stripe Connect lifecycle most marketplaces hand-roll and get wrong — reauthorization-before-expiry, multicapture, refunds plus chargebacks, and per-issuer expiry overrides — all behind type-safe signals and a saga primitive for partial-failure recovery.
+
+## What it is
+
+A TypeScript monorepo at **v1.0.0** shipping two npm packages — `@temporal-stripe/core` and `@temporal-stripe/webhook`:
+
+1. **`stripeOrderWorkflow`** — owns one `PaymentIntent` from authorization through capture (or cancellation). Races a reauthorization timer (Visa = 4d default, others = 6d, plus `capture_before` extended-auth support) against four signals: `capture`, `cancel`, `reauthorize`, `revise`, and **`multicapture`** (partial captures against the same PI with an `isFinal` flag releasing the remaining hold).
+2. **`stripeRefundWorkflow`** — separate workflow for the long-tail refund + chargeback path. Lives past the order workflow's terminal state because chargebacks can land 60-120 days later.
+3. **Saga primitive** — `runSagaStep` + `SagaRegistry` for chaining irreversible Stripe calls with LIFO compensation closures on failure.
+4. **Per-issuer expiry overrides** — `brandExpiryOverrides` config arg with a package-default map; reauth timer falls through caller-override → package-default → fallback.
+5. **`@temporal-stripe/webhook`** — tiny helpers that filter out the `payment_intent.canceled` events my own reauth emits, so consumer "order canceled" handlers don't fire on internal retries.
+
+I made it BYO-storage — consumers implement `StripeOrderActivities` + `StripeRefundActivities`; no DB schema is baked in.
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/temporal-stripe |
+| License | MIT |
+| Status | v1.0.0 shipped |
+| Tests | 60 passing (45 core + 15 webhook) |
+| Packages | `@temporal-stripe/core`, `@temporal-stripe/webhook` |
+
+## The problem I was solving
+
+Stripe expires manual-capture PaymentIntents:
+
+| Brand | Default expiry |
+|---|---|
+| Visa | **5 days** |
+| Mastercard / Amex / others | **7 days** |
+| `request_extended_authorization` granted | up to 30 days via `capture_before` |
+
+If you ship physical goods, run a fraud hold, or have any business reason to delay capture beyond a few hours, auths expire on you in production. The fix is "reauthorization": cancel the old PI and create a new one against the saved payment method. That sounds like six lines of code; it's six lines plus a dozen edge cases:
+
+- The original PI must've been created with `setup_future_usage: 'off_session'` for the PM to be reusable
+- Cancelling fires `payment_intent.canceled` — the "order canceled" handler fires on my own reauth unless I tag and filter
+- The new PI's expiry timer needs recomputing from the new charge's `capture_before` and card brand
+- Revisions (drop the order total) need re-amounting via the same flow
+- Multicapture (partial captures against one PI as items ship) tangles with application fees and final-capture handoff
+- Refunds and chargebacks live past the order workflow — they need their own workflow with a long tail
+- The timer has to survive worker restarts (this is where Temporal earns its keep)
+- A reauth that half-succeeds needs explicit compensation
+
+I lived this pattern at work. Productizing it filled a clear gap — no equivalent library exists in npm-land.
+
+## Key decisions
+
+1. **Refund as a separate workflow, not a signal on the order workflow.** The order workflow's lifecycle ends at capture; a refund / chargeback can land months later.
+2. **Saga primitive for compensation on partial reauth failure.** `runSagaStep({ name, forward, compensate })` registers compensation closures as forward steps succeed. On failure, closures run in LIFO order.
+3. **`multicapture` as a signal, not a separate workflow.** Each multicapture is a state transition on the same PI.
+4. **Per-issuer expiry overrides as a config arg with a package default map.**
+5. **`tagAndCancelOldPaymentIntent` as its own activity** so a saga can compensate "we tagged + cancelled the old PI but the new PI confirm failed" cleanly.
+
+## Numbers
+
+- **60** tests (45 core + 15 webhook)
+- **5 days** Visa auth window — I fire reauth at the 4-day mark
+- **&lt;1 second** wall-clock to test a 4-day reauth timer via Temporal's time-skipping

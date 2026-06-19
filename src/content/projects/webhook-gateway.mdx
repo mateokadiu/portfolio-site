@@ -1,0 +1,58 @@
+---
+slug: webhook-gateway
+name: webhook-gateway
+tagline: Self-hosted webhook reliability with exponential backoff + DLQ.
+status: shipped
+stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript']
+repoUrl: 'https://github.com/mateokadiu/webhook-gateway'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> A self-hosted webhook receiver that persists every inbound delivery, retries on failure with exponential backoff, parks the dead ones in a DLQ, and lets me search / replay anything by signature, route, or payload shape — without paying for Hookdeck.
+
+## What it is
+
+A NestJS service backed by Postgres + BullMQ. The flow is:
+
+1. Inbound webhook POSTs to `/in/{source}` (Stripe, Shopify, GitHub, generic HMAC).
+2. The receiver verifies signature, persists the raw envelope (headers + body + auth context) into Postgres immediately, ACKs 200 within p99 < 30ms.
+3. A BullMQ job is enqueued for the downstream delivery — to my own service, or to a third-party endpoint.
+4. On failure: retry against the schedule `[30s, 2m, 10m, 1h, 6h, 24h]`. If all six attempts fail, the delivery is parked in the DLQ.
+5. Operators can search by source, route, status, time, signature, or arbitrary JSON path, and bulk-replay anything from the DLQ.
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/webhook-gateway |
+| License | MIT |
+| Status | v1.0.0 |
+| Stack | NestJS 11, Postgres 16, BullMQ 5, Redis 7 |
+
+## The problem I was solving
+
+Webhook reliability is the kind of thing every team rebuilds and every team gets wrong on the third edge case. The default Stripe / Shopify / GitHub setup is "we'll retry a few times then give up", with no visibility into what was actually sent, no way to replay, and no audit trail.
+
+I needed a layer in front of my own services that:
+
+- ACKs fast (otherwise the source thinks I'm dead and starts disabling my endpoint)
+- Persists the raw envelope before doing anything else (so I can replay after a bad deploy)
+- Retries with the right backoff curve for the downstream's actual recovery time
+- Lets me search and bulk-replay
+
+## Key decisions
+
+1. **Persist-first, deliver-second.** The receiver writes the envelope to Postgres before enqueueing the delivery job. Even if Redis explodes, every delivery is on disk and can be re-enqueued.
+2. **Exponential backoff schedule fixed at `[30s, 2m, 10m, 1h, 6h, 24h]`.** Empirically tuned — short-window retries cover transient blips, long-window retries cover deploys and database failovers.
+3. **DLQ is just a status, not a separate table.** Same `deliveries` table; status flips to `dead`. Replay is "set status back to `pending`, requeue".
+4. **Signature verification at the edge.** If Stripe-Signature fails I 400 immediately — never persist a request that I can't prove origin on.
+5. **HMAC routes for generic sources.** Anything that can sign with a shared secret can target `/in/generic/{routeId}`.
+
+## Numbers
+
+- **p99 < 30ms** ack time for inbound webhooks
+- **6 retries** on the default schedule, 31h 42m 30s total window
+- **3 source presets** out of the box: Stripe, Shopify, GitHub
