@@ -1,0 +1,191 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '~/layouts/Layout.astro';
+import Tile from '~/components/Tile.astro';
+import TemporalStripeTile from '~/tiles/TemporalStripeTile';
+import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
+import ShadowkitTile from '~/tiles/ShadowkitTile';
+import StudybuddyTile from '~/tiles/StudybuddyTile';
+import TaxLedgerTile from '~/tiles/TaxLedgerTile';
+import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
+import AiTradingCopilotTile from '~/tiles/AiTradingCopilotTile';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((entry) => ({
+    params: { slug: entry.id.replace(/\.mdx$/, '') },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+const slug = entry.id.replace(/\.mdx$/, '');
+const { Content } = await entry.render();
+const { name, tagline, status, stack, repoUrl, isPrivate } = entry.data;
+---
+
+<Layout
+  title={name}
+  description={tagline}
+  ogImage={`/og/${slug}.png`}
+  canonical={`https://mateokadiu.pages.dev/projects/${slug}`}
+>
+  <article class="mx-auto max-w-5xl px-6 py-12">
+    <a
+      href="/#work"
+      class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+    >
+      ← back to all projects
+    </a>
+
+    <header class="mb-10">
+      <div class="mb-3 flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-muted">
+        <span class="rounded border border-border bg-card px-2 py-0.5">{status}</span>
+        {isPrivate && <span class="rounded border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">🔒 private</span>}
+        {repoUrl && (
+          <a
+            href={repoUrl}
+            target="_blank"
+            rel="noopener"
+            class="rounded border border-border bg-card px-2 py-0.5 transition-colors hover:border-accent hover:text-accent"
+          >
+            github ↗
+          </a>
+        )}
+      </div>
+      <h1 class="font-mono text-4xl font-semibold tracking-tight md:text-5xl">{name}</h1>
+      <p class="mt-3 max-w-2xl text-lg text-muted">{tagline}</p>
+      <div class="mt-5 flex flex-wrap gap-1.5">
+        {stack.map((tech) => (
+          <span class="rounded-md border border-border bg-card px-2 py-1 font-mono text-xs text-muted">
+            {tech}
+          </span>
+        ))}
+      </div>
+    </header>
+
+    <div
+      class="mb-12 overflow-hidden rounded-2xl border border-border bg-card"
+      transition:name={`project-${slug}`}
+    >
+      <div class="aspect-[16/10] w-full">
+        {slug === 'temporal-stripe' && <TemporalStripeTile client:load />}
+        {slug === 'webhook-gateway' && <WebhookGatewayTile client:load />}
+        {slug === 'shadowkit' && <ShadowkitTile client:load />}
+        {slug === 'studybuddy' && <StudybuddyTile client:load />}
+        {slug === 'tax-ledger' && <TaxLedgerTile client:load />}
+        {slug === 'grpc-monorepo-starter' && <GrpcMonorepoTile client:load />}
+        {slug === 'ai-trading-copilot' && <AiTradingCopilotTile client:load />}
+      </div>
+    </div>
+
+    <div class="prose-project">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style is:global>
+  .prose-project {
+    color: rgb(212 212 216);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .prose-project h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgb(245 245 245);
+  }
+  .prose-project h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: rgb(245 245 245);
+  }
+  .prose-project p {
+    margin-bottom: 1rem;
+  }
+  .prose-project ul,
+  .prose-project ol {
+    margin: 1rem 0 1rem 1.25rem;
+    padding-left: 0.5rem;
+  }
+  .prose-project li {
+    margin-bottom: 0.4rem;
+    list-style: disc;
+  }
+  .prose-project ol li {
+    list-style: decimal;
+  }
+  .prose-project a {
+    color: oklch(0.75 0.18 35);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .prose-project code {
+    background: oklch(0.205 0 0);
+    border: 1px solid oklch(0.269 0 0);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+  .prose-project pre {
+    background: oklch(0.18 0 0);
+    border: 1px solid oklch(0.269 0 0);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    font-size: 0.85rem;
+  }
+  .prose-project pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  .prose-project blockquote {
+    margin: 1.25rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid oklch(0.65 0.18 25);
+    background: oklch(0.18 0 0);
+    border-radius: 0 6px 6px 0;
+    color: rgb(228 228 231);
+    font-style: italic;
+  }
+  .prose-project table {
+    width: 100%;
+    margin: 1.25rem 0;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .prose-project th,
+  .prose-project td {
+    border: 1px solid oklch(0.269 0 0);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+  .prose-project th {
+    background: oklch(0.205 0 0);
+    font-weight: 600;
+    color: rgb(245 245 245);
+  }
+  .prose-project hr {
+    border: 0;
+    border-top: 1px solid oklch(0.269 0 0);
+    margin: 2rem 0;
+  }
+  .prose-project strong {
+    color: rgb(245 245 245);
+    font-weight: 600;
+  }
+</style>
