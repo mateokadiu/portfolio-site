@@ -28,7 +28,8 @@ const linkProps = href ? { href, 'aria-label': label } : {};
     sizeClass,
     className,
   ]}
-  style={transitionName ? `view-transition-name: ${transitionName};` : undefined}
+  transition:name={transitionName}
+  transition:animate="initial"
 >
   <slot />
   {
