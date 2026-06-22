@@ -47,9 +47,6 @@ importers:
       satori:
         specifier: ^0.12.1
         version: 0.12.2
-      sharp:
-        specifier: ^0.33.5
-        version: 0.33.5
       three:
         specifier: ^0.170.0
         version: 0.170.0
@@ -81,6 +78,9 @@ importers:
       '@types/three':
         specifier: ^0.170.0
         version: 0.170.0
+      sharp:
+        specifier: ^0.33.5
+        version: 0.33.5
       tailwindcss:
         specifier: ^4.0.0
         version: 4.3.1
