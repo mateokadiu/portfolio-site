@@ -36,8 +36,17 @@ body {
 
 *:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
   border-radius: 4px;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline-offset: 4px;
+}
+
+[data-tile]:focus-visible {
+  outline-offset: 6px;
 }
 
 ::selection {

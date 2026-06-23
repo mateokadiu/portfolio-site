@@ -2,13 +2,14 @@
 import { SOCIAL } from '~/lib/data';
 ---
 
-<header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
-  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+<header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur" transition:persist>
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4" aria-label="primary">
     <a
       href="/"
-      class="font-mono text-sm font-semibold tracking-tight text-foreground hover:text-accent transition-colors"
+      class="rounded font-mono text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-accent"
+      aria-label="back to home"
     >
-      mk<span class="text-accent">.</span>
+      mk<span class="text-accent" aria-hidden="true">.</span>
     </a>
     <ul class="flex items-center gap-6 text-sm text-muted">
       <li>
