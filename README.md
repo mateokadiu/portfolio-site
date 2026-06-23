@@ -4,6 +4,13 @@ Personal portfolio at [mateokadiu.pages.dev](https://mateokadiu.pages.dev) — a
 
 Astro 5 + Tailwind v4 + React islands + Framer Motion + GSAP + react-three-fiber. Zero JS on first paint, lazy-hydrated tiles, Lighthouse 95+ across the board.
 
+![bento grid homepage](./docs/screenshots/home.png)
+
+A click on a tile takes you to its full deep-dive page — same demo at full size, with the architecture write-up, decisions, and Q&A.
+
+![temporal-stripe deep dive](./docs/screenshots/temporal-stripe.png)
+![tax-ledger refund split](./docs/screenshots/tax-ledger.png)
+
 ## What's in the grid
 
 | Tile | What it is |
