@@ -1,60 +1,29 @@
+// Server-only Keystatic reader. Calls `process.cwd()` at module load, which
+// is unsafe in client bundles — keep this file out of any React island's
+// import graph. Client-safe types + helpers live in ./cv-types.ts.
+
 import { createReader } from '@keystatic/core/reader';
 import keystaticConfig from '../../keystatic.config';
+import type {
+  Certification,
+  EducationEntry,
+  Proficiency,
+  Role,
+  Skill,
+  SkillCategory,
+} from './cv-types';
+
+export type {
+  Certification,
+  EducationEntry,
+  Proficiency,
+  Role,
+  Skill,
+  SkillCategory,
+} from './cv-types';
+export { categoryHue, categoryLabel, proficiencyDots } from './cv-types';
 
 const reader = createReader(process.cwd(), keystaticConfig);
-
-export type SkillCategory =
-  | 'languages'
-  | 'backend'
-  | 'frontend'
-  | 'mobile'
-  | 'infra'
-  | 'data'
-  | 'tools';
-
-export type Proficiency = 'expert' | 'strong' | 'working' | 'learning';
-
-export interface Skill {
-  slug: string;
-  name: string;
-  category: SkillCategory;
-  proficiency: Proficiency;
-  yearsUsing: number;
-  unlockedBy: string[];
-  order: number;
-}
-
-export interface Role {
-  slug: string;
-  company: string;
-  title: string;
-  startDate: string;
-  endDate: string | null;
-  location: string;
-  remote: boolean;
-  summary: string;
-  bullets: string[];
-  stack: string[];
-  accent: 'orange' | 'cyan' | 'lime';
-}
-
-export interface EducationEntry {
-  slug: string;
-  school: string;
-  degree: string;
-  startYear: number;
-  endYear: number;
-  location: string;
-  notes: string;
-}
-
-export interface Certification {
-  slug: string;
-  name: string;
-  issuer: string;
-  date: string;
-  credentialUrl: string;
-}
 
 export async function loadPersonal() {
   const data = await reader.singletons.personal.read();
@@ -128,45 +97,4 @@ export async function loadCertifications(): Promise<Certification[]> {
       credentialUrl: entry.entry.credentialUrl ?? '',
     }))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
-}
-
-const CATEGORY_LABELS: Record<SkillCategory, string> = {
-  languages: 'languages',
-  backend: 'backend',
-  frontend: 'frontend',
-  mobile: 'mobile',
-  infra: 'infra · devops',
-  data: 'data',
-  tools: 'tools',
-};
-
-const CATEGORY_HUE: Record<SkillCategory, number> = {
-  languages: 25, // warm orange (accent)
-  backend: 200, // cyan
-  frontend: 130, // lime
-  mobile: 50, // amber
-  data: 280, // violet
-  infra: 350, // rose
-  tools: 0, // neutral gray (zero chroma in oklch)
-};
-
-export function categoryLabel(c: SkillCategory): string {
-  return CATEGORY_LABELS[c];
-}
-
-export function categoryHue(c: SkillCategory): number {
-  return CATEGORY_HUE[c];
-}
-
-export function proficiencyDots(p: Proficiency): number {
-  switch (p) {
-    case 'expert':
-      return 4;
-    case 'strong':
-      return 3;
-    case 'working':
-      return 2;
-    case 'learning':
-      return 1;
-  }
 }

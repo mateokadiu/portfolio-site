@@ -18,7 +18,7 @@ import {
   type SkillCategory,
   categoryHue,
   proficiencyDots,
-} from '~/lib/cv';
+} from '~/lib/cv-types';
 
 interface Props {
   skills: Skill[];
