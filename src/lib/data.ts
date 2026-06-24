@@ -114,7 +114,7 @@ export const PROJECT_BY_SLUG: Record<string, Project> = Object.fromEntries(
 export const SOCIAL = {
   email: 'mateokadiu17@gmail.com',
   github: 'https://github.com/mateokadiu',
-  linkedin: 'https://www.linkedin.com/in/mateokadiu/',
+  linkedin: 'https://www.linkedin.com/in/mateo-kadiu/',
 };
 
 export const SITE = {
