@@ -1,0 +1,17 @@
+company: Kineton Albania
+title: Software Engineer
+startDate: '2022-10-01'
+endDate: '2024-05-31'
+location: Tirana, Albania
+remote: false
+summary: Team lead across multiple internal + external projects — full SDLC from multi-environment configuration through release candidates and store publishing.
+bullets:
+  - Led multiple internal and external projects as team lead, organizing work across cross-functional contributors
+  - Contributed across all stages of development — from multi-environment configuration and feature work to release candidates and publishing to the Google Play Store and App Store
+stack:
+  - TypeScript
+  - React Native
+  - React
+  - Node.js
+  - Firebase
+accent: cyan

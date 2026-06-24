@@ -33,11 +33,17 @@ const categories: SkillCategory[] = [
   'tools',
 ];
 
+const SITE = 'https://mateokadiu.pages.dev';
+const currentRole = roles[0];
+
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${SITE}/about#person`,
   name: personal.name,
-  jobTitle: 'Senior Full-Stack Engineer',
+  givenName: personal.name.split(' ')[0],
+  familyName: personal.name.split(' ').slice(1).join(' '),
+  jobTitle: 'Software Engineer',
   description: personal.tagline,
   email: `mailto:${personal.email}`,
   address: {
@@ -45,23 +51,68 @@ const personJsonLd = {
     addressLocality: personal.location.split(',')[0]?.trim() ?? 'Tirana',
     addressCountry: 'AL',
   },
-  url: 'https://mateokadiu.pages.dev/cv',
+  url: `${SITE}/about`,
+  image: `${SITE}/og/about.png`,
   sameAs: [links.github, links.linkedin].filter(Boolean),
   knowsAbout: skills.map((s) => s.name),
+  worksFor: currentRole
+    ? {
+        '@type': 'Organization',
+        name: currentRole.company,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: currentRole.location.split(',')[0]?.trim(),
+        },
+      }
+    : undefined,
+  alumniOf: education.map((e) => ({
+    '@type': 'CollegeOrUniversity',
+    name: e.school,
+    address: { '@type': 'PostalAddress', addressLocality: e.location.split(',')[0]?.trim() },
+  })),
+  hasOccupation: {
+    '@type': 'Occupation',
+    name: 'Software Engineer',
+    occupationLocation: { '@type': 'City', name: personal.location.split(',')[0]?.trim() },
+    skills: skills.map((s) => s.name).join(', '),
+  },
+};
+
+const profilePageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': `${SITE}/about#profile`,
+  url: `${SITE}/about`,
+  name: `${personal.name} — About`,
+  description: personal.tagline,
+  mainEntity: { '@id': `${SITE}/about#person` },
+  primaryImageOfPage: `${SITE}/og/about.png`,
+  inLanguage: 'en-US',
+  isPartOf: { '@type': 'WebSite', url: SITE, name: 'Mateo Kadiu' },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
+    { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE}/about` },
+  ],
 };
 ---
 
 <Layout
-  title="CV"
+  title="About"
   description={personal.tagline}
-  canonical="https://mateokadiu.pages.dev/cv"
+  ogImage="/og/about.png"
+  canonical="https://mateokadiu.pages.dev/about"
   pageType="profile"
-  jsonLd={[personJsonLd]}
+  jsonLd={[personJsonLd, profilePageJsonLd, breadcrumbJsonLd]}
 >
   <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
     <header class="mb-14">
       <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-        cv · {personal.location} · {personal.timezone}
+        about · {personal.location} · {personal.timezone}
         {personal.openToWork && <span class="ml-2 text-accent">· open to work</span>}
       </p>
       <h1 class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">

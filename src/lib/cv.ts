@@ -71,14 +71,14 @@ export async function loadLinks() {
 export async function loadSkills(): Promise<Skill[]> {
   const all = await reader.collections.skills.all();
   return all
-    .map((entry) => ({
+    .map<Skill>((entry) => ({
       slug: entry.slug,
       name: entry.slug,
       category: entry.entry.category as SkillCategory,
       proficiency: entry.entry.proficiency as Proficiency,
-      yearsUsing: entry.entry.yearsUsing,
-      unlockedBy: entry.entry.unlockedBy,
-      order: entry.entry.order,
+      yearsUsing: entry.entry.yearsUsing ?? 1,
+      unlockedBy: [...entry.entry.unlockedBy],
+      order: entry.entry.order ?? 100,
     }))
     .sort((a, b) => a.order - b.order);
 }
@@ -86,17 +86,17 @@ export async function loadSkills(): Promise<Skill[]> {
 export async function loadRoles(): Promise<Role[]> {
   const all = await reader.collections.roles.all();
   return all
-    .map((entry) => ({
+    .map<Role>((entry) => ({
       slug: entry.slug,
       company: entry.entry.company,
       title: entry.entry.title,
-      startDate: entry.entry.startDate,
-      endDate: entry.entry.endDate,
+      startDate: entry.entry.startDate ?? '1970-01-01',
+      endDate: entry.entry.endDate ?? null,
       location: entry.entry.location,
       remote: entry.entry.remote,
       summary: entry.entry.summary,
-      bullets: entry.entry.bullets,
-      stack: entry.entry.stack,
+      bullets: [...entry.entry.bullets],
+      stack: [...entry.entry.stack],
       accent: entry.entry.accent as Role['accent'],
     }))
     .sort((a, b) => (a.startDate < b.startDate ? 1 : -1));
@@ -105,12 +105,12 @@ export async function loadRoles(): Promise<Role[]> {
 export async function loadEducation(): Promise<EducationEntry[]> {
   const all = await reader.collections.education.all();
   return all
-    .map((entry) => ({
+    .map<EducationEntry>((entry) => ({
       slug: entry.slug,
       school: entry.entry.school,
       degree: entry.entry.degree,
-      startYear: entry.entry.startYear,
-      endYear: entry.entry.endYear,
+      startYear: entry.entry.startYear ?? 0,
+      endYear: entry.entry.endYear ?? 0,
       location: entry.entry.location,
       notes: entry.entry.notes,
     }))
@@ -120,11 +120,11 @@ export async function loadEducation(): Promise<EducationEntry[]> {
 export async function loadCertifications(): Promise<Certification[]> {
   const all = await reader.collections.certifications.all();
   return all
-    .map((entry) => ({
+    .map<Certification>((entry) => ({
       slug: entry.slug,
       name: entry.entry.name,
       issuer: entry.entry.issuer,
-      date: entry.entry.date,
+      date: entry.entry.date ?? '1970-01-01',
       credentialUrl: entry.entry.credentialUrl ?? '',
     }))
     .sort((a, b) => (a.date < b.date ? 1 : -1));

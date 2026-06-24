@@ -242,7 +242,8 @@ export const GET: APIRoute = async () => {
   const buf = await renderToBuffer(
     PdfDoc({ personal, links, skills, roles, education, certifications }),
   );
-  return new Response(buf, {
+  // Cast Node Buffer → Uint8Array for the Response BodyInit contract.
+  return new Response(new Uint8Array(buf), {
     headers: {
       'content-type': 'application/pdf',
       'content-disposition': 'inline; filename="mateo-kadiu-cv.pdf"',

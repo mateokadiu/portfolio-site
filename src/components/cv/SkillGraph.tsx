@@ -1,4 +1,7 @@
 import {
+  type Simulation,
+  type SimulationLinkDatum,
+  type SimulationNodeDatum,
   forceCenter,
   forceCollide,
   forceLink,
@@ -21,19 +24,12 @@ interface Props {
   skills: Skill[];
 }
 
-interface SimNode {
+interface SimNode extends SimulationNodeDatum {
   id: string;
   skill: Skill;
-  x?: number;
-  y?: number;
-  fx?: number | null;
-  fy?: number | null;
 }
 
-interface SimLink {
-  source: string | SimNode;
-  target: string | SimNode;
-}
+type SimLink = SimulationLinkDatum<SimNode>;
 
 const WIDTH = 900;
 const HEIGHT = 540;
@@ -54,7 +50,7 @@ export default function SkillGraph({ skills }: Props) {
   const reduced = useReducedMotion();
   const [nodes, setNodes] = useState<SimNode[]>([]);
   const [hover, setHover] = useState<string | null>(null);
-  const simRef = useRef<ReturnType<typeof forceSimulation> | null>(null);
+  const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
 
   const { initialNodes, links } = useMemo(() => {
     const nodeMap = new Map<string, SimNode>();
@@ -119,16 +115,12 @@ export default function SkillGraph({ skills }: Props) {
         }).strength(0.06),
       );
 
-    if (reduced) {
-      sim.alpha(0).stop();
-      // run a single tick to layout positions deterministically
-      for (let i = 0; i < 300; i++) sim.tick();
-      setNodes([...sim.nodes()]);
-    } else {
-      sim.on('tick', () => {
-        setNodes([...sim.nodes()]);
-      });
-    }
+    // Run the simulation to a stable layout synchronously so first paint has
+    // positioned nodes. Production builds were rendering an empty SVG when we
+    // relied on the async .on('tick') subscription only.
+    sim.stop();
+    for (let i = 0; i < 300; i++) sim.tick();
+    setNodes(sim.nodes().map((n) => ({ ...n })));
 
     simRef.current = sim;
     return () => {
@@ -136,12 +128,15 @@ export default function SkillGraph({ skills }: Props) {
     };
   }, [initialNodes, links, reduced]);
 
+  const getId = (endpoint: string | number | SimNode) =>
+    typeof endpoint === 'object' ? endpoint.id : String(endpoint);
+
   const connectedTo = useMemo(() => {
     if (!hover) return new Set<string>();
     const set = new Set<string>();
     for (const l of links) {
-      const s = typeof l.source === 'string' ? l.source : l.source.id;
-      const t = typeof l.target === 'string' ? l.target : l.target.id;
+      const s = getId(l.source);
+      const t = getId(l.target);
       if (s === hover) set.add(t);
       if (t === hover) set.add(s);
     }
@@ -160,8 +155,8 @@ export default function SkillGraph({ skills }: Props) {
       >
         <g>
           {links.map((l) => {
-            const s = typeof l.source === 'string' ? l.source : l.source.id;
-            const t = typeof l.target === 'string' ? l.target : l.target.id;
+            const s = getId(l.source);
+            const t = getId(l.target);
             const a = nodes.find((n) => n.id === s);
             const b = nodes.find((n) => n.id === t);
             if (!a || !b || a.x == null || b.x == null) return null;

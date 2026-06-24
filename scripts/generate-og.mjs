@@ -13,6 +13,11 @@ const projects = [
     tagline: 'Senior full-stack — bento-grid interactive portfolio.',
   },
   {
+    slug: 'about',
+    name: 'Mateo Kadiu',
+    tagline: 'Software Engineer · Stripe Connect · NestJS · Kubernetes on Pulumi · Tirana, AL',
+  },
+  {
     slug: 'temporal-stripe',
     name: 'temporal-stripe',
     tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',

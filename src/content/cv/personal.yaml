@@ -1,13 +1,15 @@
 name: Mateo Kadiu
-headline: Senior full-stack engineer · TypeScript-first, JVM-curious
-location: Tirana, AL
+headline: Software Engineer · Stripe Connect, NestJS/Next.js, Kubernetes-on-Pulumi
+location: Tirana, Albania
 timezone: Europe/Tirane
-tagline: I ship real things end-to-end — from Stripe Connect saga workflows in production to Web Components with their cascade boundaries intact. Open to senior IC roles + interesting OSS chats.
+tagline: Full-stack at the depth most teams skip — multi-PaymentIntent Stripe Connect, gRPC contracts between Nest services, Kubernetes infra scaffolded from Pulumi, high-throughput webhook fan-out with deduplication. Currently at ReserveBar (remote, USA). Open to senior IC roles + contract work.
 bio: |
-  I build for the long arc. Most of my work is the unglamorous stuff that turns out to matter — retry budgets, idempotency keys, the ledger that has to balance to the cent, the webhook that fires reliably at 03:00 EST on a public holiday.
+  Software engineer working full-stack across the things that actually break in production: Stripe Connect lifecycles, gRPC contracts, k8s topologies, webhook delivery under load.
 
-  Currently senior full-stack at ReserveBar — Stripe Connect at scale, NestJS + Next.js + Postgres + Kubernetes. Outside of that I ship OSS (see the bento grid on the homepage) and trade my own book on MT5.
+  At ReserveBar since June 2024 — Stripe Connect across per-retailer accounts, Pulumi-provisioned Kubernetes, Nest microservices over gRPC. Before that, two years at Kineton Albania as a team lead shipping internal + external projects to the Play Store and App Store.
+
+  Master's in Software Engineering from Canadian Institute of Technology (Jul 2024).
 openToWork: true
-availability: Open to senior IC roles, contract work, or interesting OSS chats
-email: mateokadiu17@gmail.com
+availability: Open to senior IC roles + contract work
+email: mateokadiu18@gmail.com
 avatarUrl: ''

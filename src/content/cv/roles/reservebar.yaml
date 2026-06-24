@@ -1,24 +1,26 @@
 company: ReserveBar
-title: Senior Full-Stack Engineer
-startDate: '2023-09-01'
+title: Software Engineer
+startDate: '2024-06-01'
 endDate: null
-location: Tirana, AL
+location: Ridgefield, CT
 remote: true
-summary: Ship the Stripe Connect + tax + ledger backbone for a marketplace processing 8-figure annual GMV across alcohol regulatory regimes.
+summary: Full-stack across NestJS backends and Next.js frontends — Stripe Connect end-to-end, Pulumi-provisioned Kubernetes, gRPC service-to-service.
 bullets:
-  - Owned the reauth + multicapture saga for split-tender orders; cut Connect dispute rate ~40% by replacing ad-hoc retries with Temporal workflows
-  - Built the merchant-onboarding tax-id verification flow with VAT/EIN/GST adapters; sub-second p95 with Redis-cached VIES + state-specific endpoints
-  - Designed the cross-border fee ledger with bitemporal columns so a refund 90 days later reproduces the exact tax it was supposed to unwind
-  - Mentored 2 mid-level engineers through the NestJS + Postgres + BullMQ + K8s stack
+  - Built and maintained full-stack features across NestJS backends and Next.js frontends, designing services for horizontal scale and long-term maintainability
+  - Applied clean architecture principles and built reusable UI systems with shadcn/ui and Tailwind CSS, deliberately partitioning Next.js work between server and client components to reduce bundle size and improve time-to-interactive
+  - Built a Kubernetes infrastructure from the ground up using Pulumi for IaC, designing the multi-pod topology and autoscaling strategy across staging and production environments
+  - Implemented gRPC-based service-to-service communication with Protocol Buffers for type-safe contracts, reducing payload size and latency compared to REST across internal microservices
+  - Designed a high-throughput webhook system supporting multiple upstream sources and fan-out delivery, with deduplication logic to guarantee idempotent event processing under bulk load
+  - Owned the Stripe integration end-to-end — a multi-PaymentIntent Stripe Connect architecture across per-retailer accounts, full lifecycle ops (capture / refund / revision / multicapture / incremental auth), and a fault-tolerant reconciliation layer for partial-failure recovery
 stack:
+  - TypeScript
   - NestJS
   - Next.js
   - Stripe Connect
-  - Postgres
-  - Drizzle
-  - BullMQ
-  - Redis
   - Kubernetes
   - Pulumi
-  - TypeScript
+  - gRPC
+  - Tailwind CSS
+  - shadcn/ui
+  - Turborepo
 accent: orange
