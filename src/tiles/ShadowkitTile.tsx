@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 // Vendored from ~/Desktop/development/personal/shadowkit/examples/embed-counter/dist
 // — the script registers the real <sk-counter> custom element on `window`.
 const SK_COUNTER_BUNDLE = '/embeds/sk-counter/assets/index-DaVEyx3H.js';
-const HOST_STYLE_RULE = '.sk-counter, sk-counter { background: hotpink !important; color: lime !important; }';
+const HOST_STYLE_RULE =
+  '.sk-counter, sk-counter { background: hotpink !important; color: lime !important; }';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -33,7 +34,7 @@ function useBundle() {
     }
 
     setLoaded('loading');
-    const existing = document.querySelector(`script[data-sk-counter]`);
+    const existing = document.querySelector('script[data-sk-counter]');
     if (existing) {
       // Wait one tick; if the bundle was already loaded, the element will be registered.
       const check = () => {
@@ -95,7 +96,9 @@ export default function ShadowkitTile() {
       <header className="flex items-start justify-between">
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">shadowkit</h3>
-          <p className="mt-1 text-xs text-muted">Tailwind v4 inside Shadow DOM — cascade boundary holds</p>
+          <p className="mt-1 text-xs text-muted">
+            Tailwind v4 inside Shadow DOM — cascade boundary holds
+          </p>
         </div>
         <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
           shipped
@@ -131,11 +134,7 @@ export default function ShadowkitTile() {
         </motion.button>
       </div>
 
-      <pre
-        ref={hostLogRef}
-        className="hidden"
-        aria-hidden="true"
-      />
+      <pre ref={hostLogRef} className="hidden" aria-hidden="true" />
     </div>
   );
 }

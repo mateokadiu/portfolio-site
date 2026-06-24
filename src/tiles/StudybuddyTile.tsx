@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 import { mulberry32 } from '~/lib/seededRandom';
 
 const WEEKS = 53;
@@ -65,10 +65,7 @@ export default function StudybuddyTile() {
         </span>
       </header>
 
-      <div
-        className="relative mt-4 flex-1"
-        onMouseLeave={() => setHover(null)}
-      >
+      <div className="relative mt-4 flex-1" onMouseLeave={() => setHover(null)}>
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT + 14}`}
           className="h-full w-full"
@@ -96,7 +93,10 @@ export default function StudybuddyTile() {
               onMouseEnter={() => setHover({ w: c.w, d: c.d, count: c.count })}
             >
               <title>
-                {dateForCell(c.w, c.d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                {dateForCell(c.w, c.d).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                })}
                 {` · ${c.count} reviews`}
               </title>
             </motion.rect>

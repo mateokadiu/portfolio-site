@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 
 interface Attempt {
   id: number;
@@ -78,7 +78,9 @@ export default function WebhookGatewayTile() {
                         : 'bg-red-500/15 text-red-300'
                   }`}
                   initial={
-                    reduced ? { opacity: 1 } : { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }
+                    reduced
+                      ? { opacity: 1 }
+                      : { opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }
                   }
                   animate={{ opacity: 1, width: 'auto', paddingLeft: 6, paddingRight: 6 }}
                   transition={{

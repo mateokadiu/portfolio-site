@@ -1,6 +1,6 @@
-import { Suspense, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber';
+import { Canvas, type ThreeEvent, useFrame } from '@react-three/fiber';
 import { useReducedMotion } from 'framer-motion';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { COMMIT_LOCATIONS, latLonToVec3 } from '~/lib/commitLocations';
 

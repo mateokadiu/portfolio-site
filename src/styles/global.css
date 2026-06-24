@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import './fonts.css';
+@import "tailwindcss";
+@import "./fonts.css";
 
 @theme {
   --color-background: oklch(0.145 0 0);
@@ -11,9 +11,9 @@
   --color-accent: oklch(0.65 0.18 25);
   --color-accent-soft: oklch(0.65 0.18 25 / 0.18);
 
-  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'JetBrains Mono', monospace;
-  --font-display: 'Geist Mono', ui-monospace, monospace;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "JetBrains Mono", monospace;
+  --font-display: "Geist Mono", ui-monospace, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quad: cubic-bezier(0.45, 0, 0.55, 1);
@@ -26,7 +26,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-sans);
-  font-feature-settings: 'ss01', 'cv11', 'tnum';
+  font-feature-settings: "ss01", "cv11", "tnum";
   text-rendering: optimizeLegibility;
 }
 

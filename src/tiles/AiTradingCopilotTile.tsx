@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { NARRATIVES, SAMPLE_TRADE } from '~/lib/copilotNarratives';
 
 const TYPING_MS = 18;
@@ -68,10 +68,7 @@ export default function AiTradingCopilotTile() {
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted">
             ▸ generated narrative
           </p>
-          <p
-            className="font-sans text-[12px] leading-snug text-foreground/90"
-            aria-live="polite"
-          >
+          <p className="font-sans text-[12px] leading-snug text-foreground/90" aria-live="polite">
             {text.slice(0, shown)}
             {shown < text.length && (
               <motion.span
@@ -86,7 +83,9 @@ export default function AiTradingCopilotTile() {
       </div>
 
       <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-muted">
-        <span>narrative {(variant % NARRATIVES.length) + 1} / {NARRATIVES.length}</span>
+        <span>
+          narrative {(variant % NARRATIVES.length) + 1} / {NARRATIVES.length}
+        </span>
         <button
           type="button"
           onClick={() => setVariant((v) => v + 1)}

@@ -4,10 +4,10 @@
 // CI / Cloudflare-Pages builds without gh available still ship).
 
 import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import { writeFileSync, existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const exec = promisify(execFile);
 const here = dirname(fileURLToPath(import.meta.url));

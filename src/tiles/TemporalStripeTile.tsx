@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import {
   REAUTH_TIMER_MS,
   STRIPE_EDGES,
@@ -185,7 +185,14 @@ export default function TemporalStripeTile() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
               >
-                <circle cx={310} cy={40} r={9} fill="none" stroke="oklch(0.3 0 0)" strokeWidth={2} />
+                <circle
+                  cx={310}
+                  cy={40}
+                  r={9}
+                  fill="none"
+                  stroke="oklch(0.3 0 0)"
+                  strokeWidth={2}
+                />
                 <motion.circle
                   cx={310}
                   cy={40}

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
 import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 
 interface Item {
   id: string;
@@ -50,7 +50,7 @@ const totalSplit = (items: Item[]): Split =>
     { state: 0, county: 0, city: 0 },
   );
 
-const fmt = (n: number) => (n < 0 ? '-' : '') + `$${Math.abs(n).toFixed(2)}`;
+const fmt = (n: number) => `${n < 0 ? '-' : ''}$${Math.abs(n).toFixed(2)}`;
 
 export default function TaxLedgerTile() {
   const [refunded, setRefunded] = useState<string[]>([]);
@@ -82,7 +82,9 @@ export default function TaxLedgerTile() {
       <header className="flex items-start justify-between">
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">tax-ledger</h3>
-          <p className="mt-1 text-xs text-muted">refund splits per jurisdiction · invariant proven visually</p>
+          <p className="mt-1 text-xs text-muted">
+            refund splits per jurisdiction · invariant proven visually
+          </p>
         </div>
         <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
           shipped
@@ -161,7 +163,13 @@ export default function TaxLedgerTile() {
             layout
             animate={
               invariantHolds && refunded.length > 0 && !reduced
-                ? { boxShadow: ['0 0 0 0 oklch(0.65 0.18 25 / 0)', '0 0 0 4px oklch(0.65 0.18 25 / 0.18)', '0 0 0 0 oklch(0.65 0.18 25 / 0)'] }
+                ? {
+                    boxShadow: [
+                      '0 0 0 0 oklch(0.65 0.18 25 / 0)',
+                      '0 0 0 4px oklch(0.65 0.18 25 / 0.18)',
+                      '0 0 0 0 oklch(0.65 0.18 25 / 0)',
+                    ],
+                  }
                 : { boxShadow: '0 0 0 0 oklch(0.65 0.18 25 / 0)' }
             }
             transition={{ duration: 0.7 }}

@@ -7,14 +7,46 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(__dirname, '..', 'public', 'og');
 
 const projects = [
-  { slug: 'default', name: 'Mateo Kadiu', tagline: 'Senior full-stack — bento-grid interactive portfolio.' },
-  { slug: 'temporal-stripe', name: 'temporal-stripe', tagline: 'Temporal workflows for the full Stripe Connect lifecycle.' },
-  { slug: 'webhook-gateway', name: 'webhook-gateway', tagline: 'Self-hosted webhook reliability with exp-backoff + DLQ.' },
-  { slug: 'shadowkit', name: 'shadowkit', tagline: 'Web Components toolkit — Tailwind v4 in Shadow DOM.' },
-  { slug: 'studybuddy', name: 'studybuddy', tagline: 'On-device RAG study app — RN + Skia + ExecuTorch.' },
-  { slug: 'tax-ledger', name: 'tax-ledger', tagline: 'OSS tax line-item splitter with multi-adapter ledger.' },
-  { slug: 'grpc-monorepo-starter', name: 'grpc-monorepo-starter', tagline: 'Turborepo + NestJS + gRPC + Connect-Web starter.' },
-  { slug: 'ai-trading-copilot', name: 'ai-trading-copilot', tagline: 'LLM-powered companion to my trading journal.' },
+  {
+    slug: 'default',
+    name: 'Mateo Kadiu',
+    tagline: 'Senior full-stack — bento-grid interactive portfolio.',
+  },
+  {
+    slug: 'temporal-stripe',
+    name: 'temporal-stripe',
+    tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',
+  },
+  {
+    slug: 'webhook-gateway',
+    name: 'webhook-gateway',
+    tagline: 'Self-hosted webhook reliability with exp-backoff + DLQ.',
+  },
+  {
+    slug: 'shadowkit',
+    name: 'shadowkit',
+    tagline: 'Web Components toolkit — Tailwind v4 in Shadow DOM.',
+  },
+  {
+    slug: 'studybuddy',
+    name: 'studybuddy',
+    tagline: 'On-device RAG study app — RN + Skia + ExecuTorch.',
+  },
+  {
+    slug: 'tax-ledger',
+    name: 'tax-ledger',
+    tagline: 'OSS tax line-item splitter with multi-adapter ledger.',
+  },
+  {
+    slug: 'grpc-monorepo-starter',
+    name: 'grpc-monorepo-starter',
+    tagline: 'Turborepo + NestJS + gRPC + Connect-Web starter.',
+  },
+  {
+    slug: 'ai-trading-copilot',
+    name: 'ai-trading-copilot',
+    tagline: 'LLM-powered companion to my trading journal.',
+  },
 ];
 
 function esc(s) {

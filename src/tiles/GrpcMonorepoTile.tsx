@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 const PROTO_LINES = [
   'service Orders {',
@@ -78,11 +78,7 @@ export default function GrpcMonorepoTile() {
           <code>
             {PROTO_LINES.map((line, i) => (
               <div key={`${run}-${i}`} className="whitespace-pre">
-                {i < lineIdx
-                  ? line
-                  : i === lineIdx
-                    ? line.slice(0, charIdx)
-                    : ''}
+                {i < lineIdx ? line : i === lineIdx ? line.slice(0, charIdx) : ''}
                 {i === lineIdx && !done && (
                   <motion.span
                     aria-hidden="true"

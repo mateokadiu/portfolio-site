@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useEffect, useRef } from 'react';
 
 // Lightweight char-splitter — we don't ship the paid SplitText plugin, but the
 // effect is the same: per-character wrappers with a stagger.
