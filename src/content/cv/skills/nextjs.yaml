@@ -1,6 +1,7 @@
-category: backend
+category: frontend
 proficiency: expert
-yearsUsing: 5
+yearsUsing: 4
 order: 2
 unlockedBy:
-  - typescript
+  - react
+  - nodejs
