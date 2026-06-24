@@ -1,0 +1,24 @@
+company: ReserveBar
+title: Senior Full-Stack Engineer
+startDate: '2023-09-01'
+endDate: null
+location: Tirana, AL
+remote: true
+summary: Ship the Stripe Connect + tax + ledger backbone for a marketplace processing 8-figure annual GMV across alcohol regulatory regimes.
+bullets:
+  - Owned the reauth + multicapture saga for split-tender orders; cut Connect dispute rate ~40% by replacing ad-hoc retries with Temporal workflows
+  - Built the merchant-onboarding tax-id verification flow with VAT/EIN/GST adapters; sub-second p95 with Redis-cached VIES + state-specific endpoints
+  - Designed the cross-border fee ledger with bitemporal columns so a refund 90 days later reproduces the exact tax it was supposed to unwind
+  - Mentored 2 mid-level engineers through the NestJS + Postgres + BullMQ + K8s stack
+stack:
+  - NestJS
+  - Next.js
+  - Stripe Connect
+  - Postgres
+  - Drizzle
+  - BullMQ
+  - Redis
+  - Kubernetes
+  - Pulumi
+  - TypeScript
+accent: orange

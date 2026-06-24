@@ -1,0 +1,13 @@
+name: Mateo Kadiu
+headline: Senior full-stack engineer · TypeScript-first, JVM-curious
+location: Tirana, AL
+timezone: Europe/Tirane
+tagline: I ship real things end-to-end — from Stripe Connect saga workflows in production to Web Components with their cascade boundaries intact. Open to senior IC roles + interesting OSS chats.
+bio: |
+  I build for the long arc. Most of my work is the unglamorous stuff that turns out to matter — retry budgets, idempotency keys, the ledger that has to balance to the cent, the webhook that fires reliably at 03:00 EST on a public holiday.
+
+  Currently senior full-stack at ReserveBar — Stripe Connect at scale, NestJS + Next.js + Postgres + Kubernetes. Outside of that I ship OSS (see the bento grid on the homepage) and trade my own book on MT5.
+openToWork: true
+availability: Open to senior IC roles, contract work, or interesting OSS chats
+email: mateokadiu17@gmail.com
+avatarUrl: ''

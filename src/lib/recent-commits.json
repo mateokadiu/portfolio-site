@@ -1,6 +1,13 @@
 [
   {
     "repo": "mateokadiu/webhook-gateway",
+    "sha": "52b8244",
+    "message": "fix fan-out + retry + stats: drizzle inArray + bullmq job-id + iso since",
+    "date": "2026-07-05T17:30:00Z",
+    "url": "https://github.com/mateokadiu/webhook-gateway/commit/52b8244379622b9298d8d4db30032d0d69856005"
+  },
+  {
+    "repo": "mateokadiu/webhook-gateway",
     "sha": "4bc0b4a",
     "message": "changelog: v0.1 → v1.0 release notes",
     "date": "2026-07-04T20:33:18Z",
@@ -26,12 +33,5 @@
     "message": "docs: README v1.0 update — routing, search, bulk ops, stripe-format",
     "date": "2026-07-04T18:08:42Z",
     "url": "https://github.com/mateokadiu/webhook-gateway/commit/9be46f1f1228b551dfeff02519cfe3db0f357372"
-  },
-  {
-    "repo": "mateokadiu/webhook-gateway",
-    "sha": "8051ad2",
-    "message": "bump versions to 1.0.0 across all packages",
-    "date": "2026-07-04T12:42:18Z",
-    "url": "https://github.com/mateokadiu/webhook-gateway/commit/8051ad2b5a7ffcadf5a7aba3231140b934b044f3"
   }
 ]

@@ -1,0 +1,222 @@
+---
+import RolesTimeline from '~/components/cv/RolesTimeline.astro';
+import SkillGraph from '~/components/cv/SkillGraph';
+import Layout from '~/layouts/Layout.astro';
+import {
+  type SkillCategory,
+  categoryHue,
+  categoryLabel,
+  loadCertifications,
+  loadEducation,
+  loadLinks,
+  loadPersonal,
+  loadRoles,
+  loadSkills,
+} from '~/lib/cv';
+
+const [personal, links, skills, roles, education, certifications] = await Promise.all([
+  loadPersonal(),
+  loadLinks(),
+  loadSkills(),
+  loadRoles(),
+  loadEducation(),
+  loadCertifications(),
+]);
+
+const categories: SkillCategory[] = [
+  'languages',
+  'backend',
+  'frontend',
+  'mobile',
+  'data',
+  'infra',
+  'tools',
+];
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: personal.name,
+  jobTitle: 'Senior Full-Stack Engineer',
+  description: personal.tagline,
+  email: `mailto:${personal.email}`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: personal.location.split(',')[0]?.trim() ?? 'Tirana',
+    addressCountry: 'AL',
+  },
+  url: 'https://mateokadiu.pages.dev/cv',
+  sameAs: [links.github, links.linkedin].filter(Boolean),
+  knowsAbout: skills.map((s) => s.name),
+};
+---
+
+<Layout
+  title="CV"
+  description={personal.tagline}
+  canonical="https://mateokadiu.pages.dev/cv"
+  pageType="profile"
+  jsonLd={[personJsonLd]}
+>
+  <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+    <header class="mb-14">
+      <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
+        cv · {personal.location} · {personal.timezone}
+        {personal.openToWork && <span class="ml-2 text-accent">· open to work</span>}
+      </p>
+      <h1 class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+        {personal.name}
+      </h1>
+      <p class="mt-3 max-w-2xl text-balance text-base text-muted sm:text-lg">
+        {personal.headline}
+      </p>
+      <p class="mt-4 max-w-2xl text-balance text-sm text-foreground/80">
+        {personal.tagline}
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-2 font-mono text-xs">
+        {
+          links.github && (
+            <a
+              href={links.github}
+              target="_blank"
+              rel="noopener"
+              class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+            >
+              github ↗
+            </a>
+          )
+        }
+        {
+          links.linkedin && (
+            <a
+              href={links.linkedin}
+              target="_blank"
+              rel="noopener"
+              class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+            >
+              linkedin ↗
+            </a>
+          )
+        }
+        <a
+          href={`mailto:${personal.email}`}
+          class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+        >
+          {personal.email} ↗
+        </a>
+        <a
+          href="/cv.pdf"
+          class="rounded-md border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent transition-colors hover:bg-accent/15"
+        >
+          ↓ cv.pdf
+        </a>
+      </div>
+    </header>
+
+    {/* SKILLS — force-directed graph */}
+    <section class="mb-20">
+      <header class="mb-5 flex items-baseline justify-between">
+        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+          skills<span class="text-accent">.</span>
+        </h2>
+        <p class="font-mono text-[11px] uppercase tracking-wider text-muted">
+          {skills.length} tools · hover to inspect
+        </p>
+      </header>
+
+      <div class="rounded-2xl border border-border bg-card p-4 sm:p-6">
+        <SkillGraph skills={skills} client:visible />
+      </div>
+
+      {/* Per-category chip strip — accessible fallback + complement to the graph */}
+      <div class="mt-6 space-y-3">
+        {
+          categories.map((cat) => {
+            const inCat = skills.filter((s) => s.category === cat);
+            if (inCat.length === 0) return null;
+            const hue = categoryHue(cat);
+            return (
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+                  style={`color: oklch(0.78 0.12 ${hue}); border-color: oklch(0.55 0.14 ${hue} / 0.5);`}
+                >
+                  {categoryLabel(cat)}
+                </span>
+                {inCat.map((s) => (
+                  <span class="rounded-md border border-border bg-background/40 px-2 py-1 font-mono text-[11px] text-foreground/80">
+                    {s.name}
+                  </span>
+                ))}
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    {/* EXPERIENCE — sticky-scroll timeline */}
+    <section class="mb-20">
+      <header class="mb-8">
+        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+          experience<span class="text-accent">.</span>
+        </h2>
+      </header>
+      <RolesTimeline roles={roles} />
+    </section>
+
+    {/* EDUCATION */}
+    {
+      education.length > 0 && (
+        <section class="mb-16">
+          <header class="mb-6">
+            <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+              education<span class="text-accent">.</span>
+            </h2>
+          </header>
+          <ul class="space-y-4">
+            {education.map((e) => (
+              <li class="rounded-xl border border-border bg-card p-4">
+                <p class="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  {e.startYear} — {e.endYear} · {e.location}
+                </p>
+                <h3 class="mt-1 font-mono text-base font-semibold text-foreground">
+                  {e.degree} · <span class="text-muted">{e.school}</span>
+                </h3>
+                {e.notes && <p class="mt-2 text-sm text-muted">{e.notes}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {/* CERTIFICATIONS */}
+    {
+      certifications.length > 0 && (
+        <section class="mb-16">
+          <header class="mb-6">
+            <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+              certs<span class="text-accent">.</span>
+            </h2>
+          </header>
+          <ul class="flex flex-wrap gap-2 font-mono text-xs">
+            {certifications.map((c) => (
+              <li>
+                <a
+                  href={c.credentialUrl || '#'}
+                  class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+                  target={c.credentialUrl ? '_blank' : undefined}
+                  rel="noopener"
+                >
+                  {c.name} · {c.issuer}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</Layout>

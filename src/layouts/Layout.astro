@@ -183,5 +183,23 @@ const allLd = [personLd, websiteLd, ...(itemListLd ? [itemListLd] : []), ...json
     <Nav />
     <main id="main"><slot /></main>
     <Footer />
+
+    <script>
+      // ClientRouter doesn't re-fire the browser's default fragment scroll on
+      // cross-page navigations. After each page-load, if a hash is present,
+      // smooth-scroll to it.
+      function scrollToHash() {
+        if (!window.location.hash) return;
+        const id = window.location.hash.slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+          requestAnimationFrame(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
+      }
+      scrollToHash();
+      document.addEventListener('astro:page-load', scrollToHash);
+    </script>
   </body>
 </html>

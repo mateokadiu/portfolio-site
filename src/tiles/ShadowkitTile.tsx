@@ -152,7 +152,7 @@ export default function ShadowkitTile() {
             3 shadow roots · synced through a typed postMessage bridge
           </p>
           {loaded === 'ready' ? (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {[1, 2, 3].map((i) => (
                 // @ts-expect-error custom element
                 <sk-counter key={i} id={`sk-${i}`} />
