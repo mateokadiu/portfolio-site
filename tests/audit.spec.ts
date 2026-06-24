@@ -8,7 +8,6 @@ const PAGES = [
   '/projects/studybuddy',
   '/projects/tax-ledger',
   '/projects/grpc-monorepo-starter',
-  '/projects/ai-trading-copilot',
 ];
 
 const STATIC_ASSETS = [
@@ -19,7 +18,6 @@ const STATIC_ASSETS = [
   '/og/studybuddy.png',
   '/og/tax-ledger.png',
   '/og/grpc-monorepo-starter.png',
-  '/og/ai-trading-copilot.png',
   '/manifest.webmanifest',
   '/apple-touch-icon.png',
   '/favicon-32.png',
@@ -90,13 +88,6 @@ test('project page has article meta + SoftwareSourceCode JSON-LD', async ({ page
   const types = scripts.map((s) => JSON.parse(s)['@type']);
   expect(types).toContain('SoftwareSourceCode');
   expect(types).toContain('BreadcrumbList');
-});
-
-test('ai-trading-copilot page falls back to CreativeWork (no repo)', async ({ page }) => {
-  await page.goto('/projects/ai-trading-copilot');
-  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
-  const types = scripts.map((s) => JSON.parse(s)['@type']);
-  expect(types).toContain('CreativeWork');
 });
 
 test('sitemap lists all 8 pages', async ({ request }) => {

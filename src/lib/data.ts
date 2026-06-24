@@ -93,18 +93,6 @@ export const PROJECTS: Project[] = [
     isPrivate: false,
     tileSize: '2x1',
   },
-  {
-    slug: 'ai-trading-copilot',
-    name: 'ai-trading-copilot',
-    tagline: 'LLM-powered companion to my trading journal.',
-    blurb:
-      'NestJS + Next.js service that ingests MT5 trade data, narrates each trade against your stated plan, and flags pattern drift.',
-    stack: ['NestJS', 'Next.js', 'LLM API', 'Postgres'],
-    status: 'private',
-    repoUrl: null,
-    isPrivate: true,
-    tileSize: '2x2',
-  },
 ];
 
 export const PROJECT_BY_SLUG: Record<string, Project> = Object.fromEntries(

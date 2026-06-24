@@ -42,11 +42,6 @@ const projects = [
     name: 'grpc-monorepo-starter',
     tagline: 'Turborepo + NestJS + gRPC + Connect-Web starter.',
   },
-  {
-    slug: 'ai-trading-copilot',
-    name: 'ai-trading-copilot',
-    tagline: 'LLM-powered companion to my trading journal.',
-  },
 ];
 
 function esc(s) {

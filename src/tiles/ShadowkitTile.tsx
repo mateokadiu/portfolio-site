@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 const SK_COUNTER_BUNDLE = '/embeds/sk-counter/assets/index-DaVEyx3H.js';
 const HOST_STYLE_RULE =
   '.sk-counter, sk-counter, sk-counter * { background: hotpink !important; color: lime !important; }';
-const HOST_INVERT_RULE = ':root { filter: invert(1) hue-rotate(180deg); }';
+const HOST_DESCENDANT_RULE =
+  'body * { background: hotpink !important; color: lime !important; outline: 2px solid red !important; }';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -60,7 +61,7 @@ function useBundle() {
   return { loaded, hostLogRef };
 }
 
-type ProbeKey = 'css' | 'invert';
+type ProbeKey = 'css' | 'descendant';
 
 interface ProbeRowProps {
   active: boolean;
@@ -99,7 +100,7 @@ export default function ShadowkitTile() {
   const reduced = useReducedMotion();
   const styleRefs = useRef<Record<ProbeKey, HTMLStyleElement | null>>({
     css: null,
-    invert: null,
+    descendant: null,
   });
 
   const toggle = (key: ProbeKey, rule: string) => {
@@ -125,7 +126,7 @@ export default function ShadowkitTile() {
 
   useEffect(() => {
     return () => {
-      for (const k of ['css', 'invert'] as ProbeKey[]) {
+      for (const k of ['css', 'descendant'] as ProbeKey[]) {
         styleRefs.current[k]?.remove();
       }
     };
@@ -148,7 +149,7 @@ export default function ShadowkitTile() {
       <div className="mt-4 flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
-            3 isolated instances — each owns its own shadow root + state
+            3 shadow roots · synced through a typed postMessage bridge
           </p>
           {loaded === 'ready' ? (
             <div className="grid grid-cols-3 gap-2">
@@ -179,11 +180,11 @@ export default function ShadowkitTile() {
             onClick={() => toggle('css', HOST_STYLE_RULE)}
           />
           <ProbeRow
-            active={active.has('invert')}
-            label="invert whole page"
-            onText="page inverted — counter still looks identical inside its root"
-            offText="try a brutal :root filter that should affect everything"
-            onClick={() => toggle('invert', HOST_INVERT_RULE)}
+            active={active.has('descendant')}
+            label="paint every host element"
+            onText="rule applied — every host element is pink + lime, sk-counter unchanged"
+            offText="try a body * !important that nukes every element on the page"
+            onClick={() => toggle('descendant', HOST_DESCENDANT_RULE)}
           />
         </motion.div>
       </div>

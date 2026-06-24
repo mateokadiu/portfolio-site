@@ -2,7 +2,6 @@
 import Tile from '~/components/Tile.astro';
 import TileHeader from '~/components/TileHeader.astro';
 import type { Project } from '~/lib/data';
-import AiTradingCopilotTile from '~/tiles/AiTradingCopilotTile';
 import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
 import ShadowkitTile from '~/tiles/ShadowkitTile';
 import StudybuddyTile from '~/tiles/StudybuddyTile';
@@ -39,12 +38,7 @@ const href = project.isPrivate ? `/projects/${project.slug}` : `/projects/${proj
     )
   }
   {
-    project.slug === 'ai-trading-copilot' && (
-      <AiTradingCopilotTile client:visible />
-    )
-  }
-  {
-    !['temporal-stripe', 'webhook-gateway', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter', 'ai-trading-copilot'].includes(
+    !['temporal-stripe', 'webhook-gateway', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter'].includes(
       project.slug,
     ) && (
       <>

@@ -25,7 +25,7 @@ function attemptsAt(step: number, downstreamDown: boolean): Attempt[] {
   for (let i = 0; i < step - 1 && i < BACKOFF_SECONDS.length; i += 1) {
     const isLast = i === BACKOFF_SECONDS.length - 1 && step - 1 > i;
     out.push({
-      label: labelFor(BACKOFF_SECONDS[i]),
+      label: labelFor(BACKOFF_SECONDS[i] ?? 0),
       status: isLast ? 'failed' : 'retrying',
     });
   }
