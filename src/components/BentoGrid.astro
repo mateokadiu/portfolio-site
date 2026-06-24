@@ -15,10 +15,7 @@ const { id, className = '' } = Astro.props;
       tiles run real code
     </p>
   </header>
-  <div
-    class="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5 lg:grid-cols-6"
-    role="list"
-  >
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5 lg:grid-cols-6">
     <slot />
   </div>
 </section>

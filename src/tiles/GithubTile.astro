@@ -39,15 +39,15 @@ const relative = (iso: string | null) => {
             href={item.url}
             target="_blank"
             rel="noopener"
-            class="group flex items-start gap-2 text-muted hover:text-foreground transition-colors"
+            class="group flex items-start gap-2 text-foreground/80 transition-colors hover:text-foreground"
           >
-            <span class="mt-0.5 inline-block rounded bg-accent/15 px-1 py-px font-mono text-[9px] text-accent">
+            <span class="mt-0.5 inline-block rounded bg-background px-1 py-px font-mono text-[10px] text-accent">
               {item.sha}
             </span>
             <span class="min-w-0 flex-1 truncate">{item.message}</span>
-            <span class="shrink-0 text-[10px] text-muted/70">{relative(item.date)}</span>
+            <span class="shrink-0 text-[11px] text-muted">{relative(item.date)}</span>
           </a>
-          <p class="ml-12 text-[10px] text-muted/70">{item.repo.split('/')[1]}</p>
+          <p class="ml-12 text-[11px] text-muted">{item.repo.split('/')[1]}</p>
         </li>
       ))
     }

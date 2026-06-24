@@ -16,7 +16,11 @@ const sizeClass = {
 }[size];
 
 const Tag = href ? 'a' : 'div';
-const linkProps = href ? { href, 'aria-label': label } : {};
+const linkProps = href ? { href } : {};
+// `label` kept on the API for future use but not emitted as aria-label —
+// the tile's visible h3 + tagline already give the accessible name,
+// and adding aria-label here trips lighthouse label-content-name-mismatch.
+void label;
 ---
 
 <Tag

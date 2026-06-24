@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 // — the script registers the real <sk-counter> custom element on `window`.
 const SK_COUNTER_BUNDLE = '/embeds/sk-counter/assets/index-DaVEyx3H.js';
 const HOST_STYLE_RULE =
-  '.sk-counter, sk-counter { background: hotpink !important; color: lime !important; }';
+  '.sk-counter, sk-counter, sk-counter * { background: hotpink !important; color: lime !important; }';
+const HOST_INVERT_RULE = ':root { filter: invert(1) hue-rotate(180deg); }';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -21,8 +22,6 @@ function useBundle() {
     if (loaded !== 'idle') return;
     if (typeof window === 'undefined') return;
 
-    // The vendor bundle expects a #log node — provide it (hidden) so the
-    // bundle's appendChild doesn't blow up.
     if (!document.getElementById('log')) {
       const stub = hostLogRef.current;
       if (stub) stub.id = 'log';
@@ -36,7 +35,6 @@ function useBundle() {
     setLoaded('loading');
     const existing = document.querySelector('script[data-sk-counter]');
     if (existing) {
-      // Wait one tick; if the bundle was already loaded, the element will be registered.
       const check = () => {
         if (window.customElements?.get('sk-counter')) setLoaded('ready');
         else setLoaded('fallback');
@@ -50,7 +48,6 @@ function useBundle() {
     s.src = SK_COUNTER_BUNDLE;
     s.dataset.skCounter = 'true';
     s.onload = () => {
-      // The bundle calls customElements.define synchronously after import.
       requestAnimationFrame(() => {
         if (window.customElements?.get('sk-counter')) setLoaded('ready');
         else setLoaded('fallback');
@@ -63,31 +60,74 @@ function useBundle() {
   return { loaded, hostLogRef };
 }
 
+type ProbeKey = 'css' | 'invert';
+
+interface ProbeRowProps {
+  active: boolean;
+  label: string;
+  onText: string;
+  offText: string;
+  onClick: () => void;
+}
+
+function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-2 rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[10px] transition-colors hover:border-accent/40"
+    >
+      <span
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[10px] ${
+          active ? 'bg-accent text-background' : 'bg-border/60 text-muted'
+        }`}
+        aria-hidden="true"
+      >
+        {active ? '✓' : ''}
+      </span>
+      <span className="flex-1 truncate">
+        <span className="text-foreground">{label}:</span>{' '}
+        <span className="text-muted">{active ? onText : offText}</span>
+      </span>
+    </button>
+  );
+}
+
 export default function ShadowkitTile() {
   const { loaded, hostLogRef } = useBundle();
-  const [tried, setTried] = useState(false);
+  const [active, setActive] = useState<Set<ProbeKey>>(new Set());
   const reduced = useReducedMotion();
-  const injectedStyleRef = useRef<HTMLStyleElement | null>(null);
+  const styleRefs = useRef<Record<ProbeKey, HTMLStyleElement | null>>({
+    css: null,
+    invert: null,
+  });
 
-  const injectHostCss = () => {
+  const toggle = (key: ProbeKey, rule: string) => {
     if (typeof document === 'undefined') return;
-    if (injectedStyleRef.current) {
-      injectedStyleRef.current.remove();
-      injectedStyleRef.current = null;
-      setTried(false);
+    const isOn = active.has(key);
+    if (isOn) {
+      styleRefs.current[key]?.remove();
+      styleRefs.current[key] = null;
+      setActive((s) => {
+        const next = new Set(s);
+        next.delete(key);
+        return next;
+      });
       return;
     }
     const el = document.createElement('style');
-    el.dataset.skProbe = 'true';
-    el.textContent = HOST_STYLE_RULE;
+    el.dataset.skProbe = key;
+    el.textContent = rule;
     document.head.appendChild(el);
-    injectedStyleRef.current = el;
-    setTried(true);
+    styleRefs.current[key] = el;
+    setActive((s) => new Set(s).add(key));
   };
 
   useEffect(() => {
     return () => {
-      injectedStyleRef.current?.remove();
+      for (const k of ['css', 'invert'] as ProbeKey[]) {
+        styleRefs.current[k]?.remove();
+      }
     };
   }, []);
 
@@ -105,11 +145,18 @@ export default function ShadowkitTile() {
         </span>
       </header>
 
-      <div className="mt-4 flex-1 flex flex-col gap-3">
-        <div className="flex items-center justify-center rounded-lg border border-border/60 bg-background/40 p-3">
+      <div className="mt-4 flex flex-1 flex-col gap-3">
+        <div className="rounded-lg border border-border/60 bg-background/40 p-3">
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+            3 isolated instances — each owns its own shadow root + state
+          </p>
           {loaded === 'ready' ? (
-            // @ts-expect-error custom element
-            <sk-counter id="portfolio-sk-counter" />
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3].map((i) => (
+                // @ts-expect-error custom element
+                <sk-counter key={i} id={`sk-${i}`} />
+              ))}
+            </div>
           ) : loaded === 'fallback' ? (
             <p className="font-mono text-[11px] text-muted">
               custom element not registered — bundle failed to load
@@ -119,19 +166,26 @@ export default function ShadowkitTile() {
           )}
         </div>
 
-        <motion.button
-          type="button"
-          onClick={injectHostCss}
-          className="rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[10px] hover:border-accent/40"
-          whileTap={reduced ? undefined : { scale: 0.98 }}
+        <motion.div
+          className="space-y-1.5"
+          initial={false}
+          animate={reduced ? undefined : { opacity: 1 }}
         >
-          <span className="text-foreground">{tried ? '✓ host CSS injected' : '×'}</span>{' '}
-          <span className="text-muted">
-            {tried
-              ? '— colors did not bleed through. cascade boundary holding.'
-              : 'try to style sk-counter from the host page'}
-          </span>
-        </motion.button>
+          <ProbeRow
+            active={active.has('css')}
+            label="inject host CSS"
+            onText="rule applied — counter unchanged (boundary holding)"
+            offText="try to repaint sk-counter from outside"
+            onClick={() => toggle('css', HOST_STYLE_RULE)}
+          />
+          <ProbeRow
+            active={active.has('invert')}
+            label="invert whole page"
+            onText="page inverted — counter still looks identical inside its root"
+            offText="try a brutal :root filter that should affect everything"
+            onClick={() => toggle('invert', HOST_INVERT_RULE)}
+          />
+        </motion.div>
       </div>
 
       <pre ref={hostLogRef} className="hidden" aria-hidden="true" />

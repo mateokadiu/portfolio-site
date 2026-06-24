@@ -237,7 +237,7 @@ export default function TemporalStripeTile() {
             type="button"
             onClick={play}
             disabled={playing}
-            className="rounded border border-border/60 px-1.5 py-0.5 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
+            className="min-h-[28px] rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
           >
             ▶ play
           </button>
@@ -245,7 +245,7 @@ export default function TemporalStripeTile() {
             type="button"
             onClick={pause}
             disabled={!playing}
-            className="rounded border border-border/60 px-1.5 py-0.5 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
+            className="min-h-[28px] rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
           >
             ⏸ pause
           </button>
