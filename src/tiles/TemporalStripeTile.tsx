@@ -186,33 +186,33 @@ export default function TemporalStripeTile() {
                 transition={{ duration: 0.25 }}
               >
                 <circle
-                  cx={310}
-                  cy={40}
-                  r={9}
-                  fill="none"
+                  cx={200}
+                  cy={12}
+                  r={7}
+                  fill="oklch(0.145 0 0)"
                   stroke="oklch(0.3 0 0)"
-                  strokeWidth={2}
+                  strokeWidth={1.5}
                 />
                 <motion.circle
-                  cx={310}
-                  cy={40}
-                  r={9}
+                  cx={200}
+                  cy={12}
+                  r={7}
                   fill="none"
                   stroke="oklch(0.7 0.18 25)"
-                  strokeWidth={2}
+                  strokeWidth={1.5}
                   strokeLinecap="round"
                   pathLength={1}
                   strokeDasharray={1}
                   initial={false}
                   animate={{ strokeDashoffset: 1 - reauthMs / REAUTH_TIMER_MS }}
                   transition={{ duration: 0.12, ease: 'linear' }}
-                  style={{ transform: 'rotate(-90deg)', transformOrigin: '310px 40px' }}
+                  style={{ transform: 'rotate(-90deg)', transformOrigin: '200px 12px' }}
                 />
                 <text
-                  x={310}
-                  y={66}
-                  textAnchor="middle"
-                  className="font-mono text-[8px]"
+                  x={213}
+                  y={15}
+                  textAnchor="start"
+                  className="font-mono text-[7px]"
                   fill="oklch(0.708 0 0)"
                 >
                   reauth in {(reauthMs / 1000).toFixed(1)}s

@@ -27,6 +27,43 @@ const slug = entry.id.replace(/\.mdx$/, '');
 const { Content } = await entry.render();
 const { name, tagline, status, stack, repoUrl, isPrivate } = entry.data;
 
+const SITE_URL = 'https://mateokadiu.pages.dev';
+const projectUrl = `${SITE_URL}/projects/${slug}`;
+
+const projectLd: Record<string, unknown> = repoUrl
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareSourceCode',
+      name,
+      description: tagline,
+      url: projectUrl,
+      codeRepository: repoUrl,
+      programmingLanguage: stack,
+      author: { '@type': 'Person', name: 'Mateo Kadiu', url: SITE_URL },
+      license: 'https://opensource.org/licenses/MIT',
+      isAccessibleForFree: true,
+      keywords: stack.join(', '),
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      name,
+      description: tagline,
+      url: projectUrl,
+      author: { '@type': 'Person', name: 'Mateo Kadiu', url: SITE_URL },
+      keywords: stack.join(', '),
+    };
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Projects', item: `${SITE_URL}/#work` },
+    { '@type': 'ListItem', position: 3, name, item: projectUrl },
+  ],
+};
+
 const DEMO_HINTS: Record<string, { headline: string; steps: string[] }> = {
   'temporal-stripe': {
     headline: 'Watch a Stripe Connect PaymentIntent live its full lifecycle.',
@@ -93,7 +130,10 @@ const hint = DEMO_HINTS[slug];
   title={name}
   description={tagline}
   ogImage={`/og/${slug}.png`}
-  canonical={`https://mateokadiu.pages.dev/projects/${slug}`}
+  canonical={projectUrl}
+  pageType="article"
+  articleTags={stack}
+  jsonLd={[projectLd, breadcrumbLd]}
 >
   <article class="mx-auto max-w-5xl px-6 py-12">
     <a

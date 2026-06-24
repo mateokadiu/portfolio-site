@@ -73,8 +73,8 @@ export default function Hero() {
         ref={taglineRef}
         className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-muted sm:text-lg"
       >
-        I build things end-to-end — TypeScript on the server, React/RN/Astro on the client,
-        Temporal/Stripe/Postgres in between. Every tile below is a live demo of a real project.
+        Every tile below is a project I shipped — and the demo inside is the real thing, running. No
+        screenshots, no mockups. Click anywhere.
       </p>
 
       <div

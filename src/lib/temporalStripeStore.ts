@@ -91,10 +91,10 @@ export const useTemporalStripeStore = create<StoreState & StoreActions>((set, ge
       set({ illegal: id });
       return false;
     }
-    set({ current: id, playing: false });
+    set({ current: id, playing: false, illegal: null });
     return true;
   },
-  advance: (next) => set((s) => ({ current: next, step: s.step + 1 })),
+  advance: (next) => set((s) => ({ current: next, step: s.step + 1, illegal: null })),
   flashIllegal: (id) => set({ illegal: id }),
   clearIllegal: () => set({ illegal: null }),
   setReauthMs: (ms) => set({ reauthMs: ms }),

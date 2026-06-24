@@ -3,13 +3,18 @@ import '~/styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Footer from '~/components/Footer.astro';
 import Nav from '~/components/Nav.astro';
-import { SITE } from '~/lib/data';
+import { PROJECTS, SITE, SOCIAL } from '~/lib/data';
 
 interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
   canonical?: string;
+  pageType?: 'website' | 'article' | 'profile';
+  articleTags?: string[];
+  articlePublishedTime?: string;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
 }
 
 const {
@@ -17,9 +22,76 @@ const {
   description = SITE.description,
   ogImage = '/og/default.png',
   canonical = SITE.url,
+  pageType = 'website',
+  articleTags = [],
+  articlePublishedTime,
+  jsonLd = [],
+  noindex = false,
 } = Astro.props;
 
 const fullTitle = title === SITE.title ? title : `${title} — Mateo Kadiu`;
+const absoluteOg = new URL(ogImage, SITE.url).toString();
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.author,
+  url: SITE.url,
+  image: new URL('/og/default.png', SITE.url).toString(),
+  jobTitle: 'Senior Full-Stack Engineer',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Tirana',
+    addressCountry: 'AL',
+  },
+  email: `mailto:${SOCIAL.email}`,
+  sameAs: [SOCIAL.github, SOCIAL.linkedin],
+  knowsAbout: [
+    'TypeScript',
+    'NestJS',
+    'Next.js',
+    'Astro',
+    'React',
+    'React Native',
+    'Temporal',
+    'Stripe Connect',
+    'Postgres',
+    'gRPC',
+    'Web Components',
+    'Kubernetes',
+    'Pulumi',
+  ],
+};
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.title,
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: 'en-US',
+  author: { '@type': 'Person', name: SITE.author, url: SITE.url },
+};
+
+const itemListLd =
+  canonical === SITE.url
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Projects by Mateo Kadiu',
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: PROJECTS.length,
+        itemListElement: PROJECTS.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${SITE.url}/projects/${p.slug}`,
+          name: p.name,
+          description: p.tagline,
+        })),
+      }
+    : null;
+
+const allLd = [personLd, websiteLd, ...(itemListLd ? [itemListLd] : []), ...jsonLd];
 ---
 
 <!doctype html>
@@ -29,10 +101,27 @@ const fullTitle = title === SITE.title ? title : `${title} — Mateo Kadiu`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="author" content={SITE.author} />
+    <meta
+      name="robots"
+      content={noindex
+        ? 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#252525" />
+    <meta name="color-scheme" content="dark" />
     <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="me" href={SOCIAL.github} />
+    <link rel="me" href={SOCIAL.linkedin} />
+    <link rel="author" href={SITE.url} />
 
     <link
       rel="preload"
@@ -49,17 +138,41 @@ const fullTitle = title === SITE.title ? title : `${title} — Mateo Kadiu`;
       crossorigin="anonymous"
     />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={pageType} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Mateo Kadiu" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, SITE.url).toString()} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteOg} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content={`${title} — preview card`} />
+
+    {pageType === 'article' && articlePublishedTime && (
+      <meta property="article:published_time" content={articlePublishedTime} />
+    )}
+    {pageType === 'article' && (
+      <meta property="article:author" content={SITE.author} />
+    )}
+    {articleTags.map((t) => (
+      <meta property="article:tag" content={t} />
+    ))}
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, SITE.url).toString()} />
+    <meta name="twitter:image" content={absoluteOg} />
+    <meta name="twitter:image:alt" content={`${title} — preview card`} />
+    <meta name="twitter:creator" content="@mateokadiu" />
+    <meta name="twitter:site" content="@mateokadiu" />
 
     <ClientRouter />
+
+    {allLd.map((ld) => (
+      <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    ))}
   </head>
   <body class="min-h-screen bg-background font-sans text-foreground">
     <a
