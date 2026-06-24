@@ -55,3 +55,32 @@ void label;
     )
   }
 </Tag>
+
+<script>
+  // Tile anchors wrap interactive demos (buttons, web components, inputs). A
+  // click on those should drive the demo, not navigate to /projects/[slug].
+  // Single capture-phase listener catches every tile; survives ClientRouter
+  // navigations via a window-level guard.
+  declare global {
+    interface Window {
+      __tileInteractGuard?: boolean;
+    }
+  }
+  if (!window.__tileInteractGuard) {
+    window.__tileInteractGuard = true;
+    const INTERACTIVE_SELECTOR =
+      'button, [role="button"], input, textarea, select, label, [contenteditable="true"], sk-counter, [data-tile-interactive]';
+    document.addEventListener(
+      'click',
+      (event) => {
+        const target = event.target as HTMLElement | null;
+        if (!target) return;
+        if (!target.closest('a[data-tile]')) return;
+        if (target.closest(INTERACTIVE_SELECTOR)) {
+          event.preventDefault();
+        }
+      },
+      true,
+    );
+  }
+</script>
