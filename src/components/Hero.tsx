@@ -39,10 +39,10 @@ export default function Hero() {
     gsap.set(taglineRef.current, { opacity: 0, y: 14 });
     gsap.set(cueRef.current, { opacity: 0, y: 8 });
 
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.to(chars, { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.03 })
-      .to(taglineRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
-      .to(cueRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    tl.to(chars, { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.025 })
+      .to(taglineRef.current, { opacity: 1, y: 0, duration: 0.7 }, '-=0.45')
+      .to(cueRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.25');
 
     const cueTween = gsap.to(cueRef.current, {
       y: 6,
