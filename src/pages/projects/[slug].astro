@@ -125,16 +125,16 @@ const hint = DEMO_HINTS[slug];
   articleTags={stack}
   jsonLd={[projectLd, breadcrumbLd]}
 >
-  <article class="mx-auto max-w-5xl px-6 py-12">
+  <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
     <a
       href="/#work"
-      class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+      class="mb-6 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground sm:mb-8"
     >
       ← back to all projects
     </a>
 
-    <header class="mb-10">
-      <div class="mb-3 flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-muted">
+    <header class="mb-8 sm:mb-10">
+      <div class="mb-3 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-muted sm:text-xs">
         <span class="rounded border border-border bg-card px-2 py-0.5">{status}</span>
         {isPrivate && <span class="rounded border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">🔒 private</span>}
         {repoUrl && (
@@ -148,11 +148,11 @@ const hint = DEMO_HINTS[slug];
           </a>
         )}
       </div>
-      <h1 class="font-mono text-4xl font-semibold tracking-tight md:text-5xl">{name}</h1>
-      <p class="mt-3 max-w-2xl text-lg text-muted">{tagline}</p>
-      <div class="mt-5 flex flex-wrap gap-1.5">
+      <h1 class="break-words font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">{name}</h1>
+      <p class="mt-3 max-w-2xl text-base text-muted sm:text-lg">{tagline}</p>
+      <div class="mt-4 flex flex-wrap gap-1.5 sm:mt-5">
         {stack.map((tech) => (
-          <span class="rounded-md border border-border bg-card px-2 py-1 font-mono text-xs text-muted">
+          <span class="rounded-md border border-border bg-card px-2 py-1 font-mono text-[11px] text-muted sm:text-xs">
             {tech}
           </span>
         ))}
@@ -160,14 +160,14 @@ const hint = DEMO_HINTS[slug];
     </header>
 
     {hint && (
-      <aside class="mb-4 rounded-xl border border-accent/25 bg-accent/5 p-4">
+      <aside class="mb-4 rounded-xl border border-accent/25 bg-accent/5 p-3 sm:p-4">
         <p class="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-accent">
           <span aria-hidden="true">▸</span> try the demo
         </p>
-        <p class="mb-2 text-sm text-foreground">{hint.headline}</p>
-        <ol class="space-y-1 text-sm text-muted">
+        <p class="mb-2 text-[14px] text-foreground sm:text-sm">{hint.headline}</p>
+        <ol class="space-y-1.5 text-[13px] text-muted sm:text-sm">
           {hint.steps.map((s, i) => (
-            <li class="flex gap-2">
+            <li class="flex gap-2 leading-relaxed">
               <span class="select-none font-mono text-accent">{i + 1}.</span>
               <span>{s}</span>
             </li>
@@ -177,10 +177,10 @@ const hint = DEMO_HINTS[slug];
     )}
 
     <div
-      class="mb-12 overflow-hidden rounded-2xl border border-border bg-card"
+      class="mb-12 rounded-2xl border border-border bg-card"
       transition:name={`project-${slug}`}
     >
-      <div class="aspect-[16/10] w-full p-4 sm:p-6">
+      <div class="min-h-[420px] w-full p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6">
         {slug === 'temporal-stripe' && <TemporalStripeTile client:load />}
         {slug === 'webhook-gateway' && <WebhookGatewayTile client:load />}
         {slug === 'shadowkit' && <ShadowkitTile client:load />}
@@ -199,14 +199,20 @@ const hint = DEMO_HINTS[slug];
 <style is:global>
   .prose-project {
     color: rgb(212 212 216);
-    line-height: 1.7;
-    font-size: 16px;
+    line-height: 1.65;
+    font-size: 15px;
+  }
+  @media (min-width: 640px) {
+    .prose-project {
+      font-size: 16px;
+      line-height: 1.7;
+    }
   }
   .prose-project h2 {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: rgb(245 245 245);
   }
@@ -268,6 +274,10 @@ const hint = DEMO_HINTS[slug];
     border-radius: 0 6px 6px 0;
     color: rgb(228 228 231);
     font-style: italic;
+    line-height: 1.55;
+  }
+  .prose-project blockquote p {
+    margin: 0;
   }
   .prose-project table {
     width: 100%;
