@@ -4,14 +4,21 @@ startDate: '2022-10-01'
 endDate: '2024-05-31'
 location: Tirana, Albania
 remote: false
-summary: Team lead across multiple internal + external projects — full SDLC from multi-environment configuration through release candidates and store publishing.
+summary: Team lead across multiple internal + external projects — full SDLC from multi-environment configuration through release candidates and store publishing. React Native bare + Expo on mobile, micro-frontends with module federation on web.
 bullets:
-  - Led multiple internal and external projects as team lead, organizing work across cross-functional contributors
-  - Contributed across all stages of development — from multi-environment configuration and feature work to release candidates and publishing to the Google Play Store and App Store
+  - Led multiple internal and external projects as team lead, organizing work across cross-functional contributors and owning the release train end-to-end
+  - Shipped React Native apps across both bare workflows (custom native modules, manual signing, fastlane pipelines) and Expo (EAS Build, OTA updates) — picking the right one per project's native-integration depth
+  - Built a micro-frontend architecture on the web using Webpack Module Federation — independently deployable remotes loaded by a host shell, shared singleton libs (React, design system), runtime version negotiation
+  - Operated workloads on AWS — S3 + CloudFront for asset delivery, Lambda for serverless glue, Cognito for auth flows, IAM-scoped CI deploys
+  - Contributed across the full SDLC — multi-environment configuration (dev/staging/prod), feature work, release candidates, code signing, and publishing to Google Play Store + App Store
+  - Owned firebase usage across projects — Auth, Firestore, Cloud Messaging, Remote Config, Crashlytics — and the integration patterns between firebase and the rest of the stack
 stack:
   - TypeScript
-  - React Native
+  - React Native (bare + Expo)
   - React
+  - Module Federation
   - Node.js
+  - AWS
   - Firebase
+  - Fastlane
 accent: cyan

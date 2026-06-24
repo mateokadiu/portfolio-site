@@ -1,0 +1,88 @@
+---
+slug: stripe-eu-vat-moss
+name: stripe-eu-vat-moss
+tagline: EU VAT One-Stop-Shop automation engine.
+status: shipped
+stack: ['Java 21', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi']
+repoUrl: 'https://github.com/mateokadiu/stripe-eu-vat-moss'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> Spring Boot service that turns Stripe tax + Connect data into a compliant quarterly EU OSS VAT return. Bitemporal event store, 27-country VAT matrix, SAF-OSS XML output, Pulumi-Java on Oracle Cloud Free.
+
+## What it is
+
+Java 21 + Spring Boot 3.4 + Spring Modulith. Eight modules:
+
+- **`moss-shared`** — primitive value types (Money, Country, Period, IsoCurrency, UUIDv7), jqwik property tests
+- **`moss-ledger`** — bitemporal Postgres event store via JOOQ (no JPA), append-only with effective + recorded time
+- **`moss-enrich`** — 27-country VAT rate matrix as Liquibase data, ECB FX feed parser, VIES SOAP client with 24h cache, place-of-supply resolver
+- **`moss-ingest`** — Stripe itemized tax CSV parser, resumable cursor, idempotent ingest, webhook handler with HMAC-SHA256 verification, Connect deemed-seller routing (Art. 14a)
+- **`moss-file`** — SAF-OSS JAXB marshaller with optional XSD validation, sha256 sealing, grouping rules per OSS Guidelines §3.6
+- **`moss-observe`** — Micrometer dual registry (Prometheus + OTLP), Grafana dashboard JSON
+- **`moss-api`** — REST controllers + OpenAPI spec
+- **`moss-cli`** — Picocli: `ingest-csv`, `close-period`, `generate-return`, `audit-replay`
+
+## Why this exists
+
+Every marketplace using Stripe Connect across the EU has to file an OSS VAT return quarterly. Stripe ingests the tax data; what they don't do is generate the per-member-state report in the SAF-OSS XML format each tax authority requires. Most teams hand-roll this in Python notebooks and pray. This is the boring, correct version.
+
+## Architecture
+
+```
+stripe webhooks   ECB feed   VIES SOAP
+       │             │           │
+       ▼             ▼           ▼
+   ┌──────────────────────────────────┐
+   │   moss-ingest    moss-enrich     │
+   └────────────────┬─────────────────┘
+                    ▼
+        ┌──────────────────────┐
+        │ moss-ledger (bitemp) │  ← postgres event store
+        └──────────┬───────────┘
+                   ▼
+        ┌──────────────────────┐
+        │   moss-file (XML)    │  → saf-oss return + sha256
+        └──────────────────────┘
+                   │
+       ┌───────────┴───────────┐
+       ▼                       ▼
+   moss-api               moss-cli
+```
+
+The event store is bitemporal — every fact has `effective_at` (when the sale happened) AND `recorded_at` (when we learned about it). Lets us replay a return as we knew it on date X, which is what auditors actually ask for.
+
+## Key decisions
+
+- **JOOQ, not JPA** — bitemporal queries need explicit SQL. Hibernate fights you here. JOOQ generates type-safe DSL from the schema.
+- **Spring Modulith over microservices** — single-deployable, module-boundary enforcement via ArchUnit. No service mesh for a single-team OSS project.
+- **Liquibase, not Flyway** — XML changesets + the ability to express the 27-country rate matrix as data, not migrations.
+- **Picocli CLI as first-class** — every API operation is also a CLI subcommand. Auditors don't want a UI; they want a deterministic command they can re-run.
+- **Pulumi-Java on Oracle Cloud Always-Free** — €0 hosting. ARM Ampere A1 + autonomous Postgres + 10 GB object storage.
+- **Pitest + jqwik** — mutation testing (72% kill rate on compliance surfaces) + property testing for rounding/threshold edges. The hard part of tax software is the math edge cases.
+
+## Numbers worth knowing
+
+| | |
+|---|---|
+| Lines of Java | 5,433 |
+| Tests | 116 (unit + IT + property), 100% pass |
+| Pitest mutation score | 72% (test strength 83%) |
+| Modules | 9 (eight `moss-*` + `infra`) |
+| Liquibase changesets | 27-country rate matrix + 2026 FI/LT VAT changes |
+| Container | Jib + distroless java21, 260 MB linux/amd64 |
+| Deploy cost | €0 on Oracle Cloud Always-Free |
+| Release | v0.1.0 tagged + CycloneDX SBOM |
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/stripe-eu-vat-moss |
+| License | MIT |
+| Build | `./gradlew check assemble` — green |
+| Container | `./gradlew jibDockerBuild` — distroless 260 MB |
+| Deploy | `pulumi up` in `infra/` — Oracle Cloud Always-Free |

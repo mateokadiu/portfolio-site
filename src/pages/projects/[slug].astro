@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '~/layouts/Layout.astro';
 import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
+import MossTile from '~/tiles/MossTile';
 import ShadowkitTile from '~/tiles/ShadowkitTile';
 import StudybuddyTile from '~/tiles/StudybuddyTile';
 import TaxLedgerTile from '~/tiles/TaxLedgerTile';
@@ -187,6 +188,7 @@ const hint = DEMO_HINTS[slug];
         {slug === 'studybuddy' && <StudybuddyTile client:load />}
         {slug === 'tax-ledger' && <TaxLedgerTile client:load />}
         {slug === 'grpc-monorepo-starter' && <GrpcMonorepoTile client:load />}
+        {slug === 'stripe-eu-vat-moss' && <MossTile client:load />}
       </div>
     </div>
 
