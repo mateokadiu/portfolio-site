@@ -1,31 +1,19 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
-
-interface Member {
-  code: string;
-  name: string;
-  rate: number;
-  flag: string;
-}
-
-const MEMBERS: Member[] = [
-  { code: 'DE', name: 'Germany', rate: 0.19, flag: '🇩🇪' },
-  { code: 'FR', name: 'France', rate: 0.2, flag: '🇫🇷' },
-  { code: 'IT', name: 'Italy', rate: 0.22, flag: '🇮🇹' },
-  { code: 'ES', name: 'Spain', rate: 0.21, flag: '🇪🇸' },
-  { code: 'NL', name: 'Netherlands', rate: 0.21, flag: '🇳🇱' },
-  { code: 'FI', name: 'Finland', rate: 0.255, flag: '🇫🇮' },
-];
+import { EU27_VAT, bpToPercent } from '~/lib/vat-rates';
 
 const NET_EUR = 100;
-
 const fmt = (n: number) => `€${n.toFixed(2)}`;
+
+// Featured chips — six representative economies; full matrix remains 27.
+const FEATURED = ['DE', 'FR', 'IT', 'ES', 'FI', 'HU'];
 
 export default function MossTile() {
   const reduced = useReducedMotion();
   const [picked, setPicked] = useState('DE');
-  const member = MEMBERS.find((m) => m.code === picked) ?? MEMBERS[0];
-  const vat = NET_EUR * member.rate;
+  const member = EU27_VAT.find((m) => m.code === picked) ?? EU27_VAT[0];
+  const ratePct = bpToPercent(member.rateBp);
+  const vat = NET_EUR * (ratePct / 100);
   const gross = NET_EUR + vat;
 
   return (
@@ -44,11 +32,14 @@ export default function MossTile() {
 
       <div className="mt-4 flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
-            customer in
-          </p>
+          <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
+            <span>customer in</span>
+            <span>{EU27_VAT.length} member states · live rates</span>
+          </div>
           <div className="flex flex-wrap gap-1.5">
-            {MEMBERS.map((m) => {
+            {FEATURED.map((code) => {
+              const m = EU27_VAT.find((r) => r.code === code);
+              if (!m) return null;
               const active = m.code === picked;
               return (
                 <button
@@ -84,7 +75,7 @@ export default function MossTile() {
             className="mt-1.5 flex items-center justify-between text-muted"
           >
             <span>
-              vat <span className="text-foreground">{(member.rate * 100).toFixed(1)}%</span>{' '}
+              vat <span className="text-foreground">{ratePct.toFixed(1)}%</span>{' '}
               <span className="text-[10px]">→ {member.code} treasury</span>
             </span>
             <span className="text-foreground">+ {fmt(vat)}</span>
