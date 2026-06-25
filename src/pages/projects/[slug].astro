@@ -7,6 +7,7 @@ import ShadowkitTile from '~/tiles/ShadowkitTile';
 import StudybuddyTile from '~/tiles/StudybuddyTile';
 import TaxLedgerTile from '~/tiles/TaxLedgerTile';
 import TemporalStripeTile from '~/tiles/TemporalStripeTile';
+import TideTile from '~/tiles/TideTile';
 import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
 
 export async function getStaticPaths() {
@@ -189,6 +190,7 @@ const hint = DEMO_HINTS[slug];
         {slug === 'tax-ledger' && <TaxLedgerTile client:load />}
         {slug === 'grpc-monorepo-starter' && <GrpcMonorepoTile client:load />}
         {slug === 'stripe-eu-vat-moss' && <MossTile client:load />}
+        {slug === 'tide' && <TideTile client:load />}
       </div>
     </div>
 

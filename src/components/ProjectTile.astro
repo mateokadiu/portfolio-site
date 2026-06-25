@@ -8,6 +8,7 @@ import ShadowkitTile from '~/tiles/ShadowkitTile';
 import StudybuddyTile from '~/tiles/StudybuddyTile';
 import TaxLedgerTile from '~/tiles/TaxLedgerTile';
 import TemporalStripeTile from '~/tiles/TemporalStripeTile';
+import TideTile from '~/tiles/TideTile';
 import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
 
 interface Props {
@@ -34,13 +35,14 @@ const href = project.isPrivate ? `/projects/${project.slug}` : `/projects/${proj
   {project.slug === 'studybuddy' && <StudybuddyTile client:visible />}
   {project.slug === 'tax-ledger' && <TaxLedgerTile client:visible />}
   {project.slug === 'stripe-eu-vat-moss' && <MossTile client:visible />}
+  {project.slug === 'tide' && <TideTile client:visible />}
   {
     project.slug === 'grpc-monorepo-starter' && (
       <GrpcMonorepoTile client:visible />
     )
   }
   {
-    !['temporal-stripe', 'webhook-gateway', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter', 'stripe-eu-vat-moss'].includes(
+    !['temporal-stripe', 'webhook-gateway', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter', 'stripe-eu-vat-moss', 'tide'].includes(
       project.slug,
     ) && (
       <>

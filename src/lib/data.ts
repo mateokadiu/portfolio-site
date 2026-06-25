@@ -94,6 +94,18 @@ export const PROJECTS: Project[] = [
     tileSize: '2x1',
   },
   {
+    slug: 'tide',
+    name: 'tide',
+    tagline: 'Self-hostable read-later — Pocket / Omnivore replacement.',
+    blurb:
+      'Next.js 16 + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
+    stack: ['Next.js 16', 'React 19', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/tide',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
     slug: 'studybuddy',
     name: 'studybuddy',
     tagline: 'On-device RAG study app for React Native.',

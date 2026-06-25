@@ -4,15 +4,69 @@ import Hero from '~/components/Hero';
 import ProjectTile from '~/components/ProjectTile.astro';
 import Tile from '~/components/Tile.astro';
 import Layout from '~/layouts/Layout.astro';
-import { PROJECTS } from '~/lib/data';
+import { PROJECTS, SITE, SOCIAL } from '~/lib/data';
+import { loadPersonal } from '~/lib/cv';
 import AboutTile from '~/tiles/AboutTile.astro';
 import ContactTile from '~/tiles/ContactTile.astro';
 import GithubGlobeTile from '~/tiles/GithubGlobeTile';
 import GithubTile from '~/tiles/GithubTile.astro';
 import NowTile from '~/tiles/NowTile.astro';
+
+const personal = await loadPersonal();
+const siteUrl = SITE.url;
+const personId = `${siteUrl}/#person`;
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': personId,
+  name: personal.name,
+  givenName: personal.name.split(' ')[0],
+  familyName: personal.name.split(' ').slice(1).join(' '),
+  jobTitle: 'Software Engineer',
+  description: personal.tagline,
+  email: `mailto:${personal.email}`,
+  url: siteUrl,
+  image: `${siteUrl}/og/about.png`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: personal.location.split(',')[0]?.trim() ?? 'Tirana',
+    addressCountry: 'AL',
+  },
+  sameAs: [SOCIAL.github, SOCIAL.linkedin].filter(Boolean),
+  knowsAbout: [
+    'Stripe Connect',
+    'NestJS',
+    'Next.js',
+    'Kubernetes',
+    'Pulumi',
+    'gRPC',
+    'Spring Boot',
+    'TypeScript',
+    'Java',
+    'Postgres',
+  ],
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  url: siteUrl,
+  name: SITE.title,
+  description: SITE.description,
+  author: { '@id': personId },
+  publisher: { '@id': personId },
+  inLanguage: 'en-US',
+};
 ---
 
-<Layout>
+<Layout
+  title={SITE.title}
+  description={SITE.description}
+  canonical={siteUrl}
+  jsonLd={[personJsonLd, websiteJsonLd]}
+>
   <Hero client:idle />
 
   <BentoGrid id="work">

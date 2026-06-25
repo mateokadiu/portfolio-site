@@ -7,6 +7,7 @@ const PROJECTS = [
   'tax-ledger',
   'grpc-monorepo-starter',
   'stripe-eu-vat-moss',
+  'tide',
   'studybuddy',
 ];
 
@@ -15,7 +16,7 @@ test('homepage renders with hero + bento grid', async ({ page }) => {
   await expect(page).toHaveTitle(/Mateo Kadiu/);
   await expect(page.getByRole('main')).toBeVisible();
   const tiles = page.locator('[data-tile]');
-  await expect(tiles).toHaveCount(12);
+  await expect(tiles).toHaveCount(13);
 });
 
 for (const slug of PROJECTS) {

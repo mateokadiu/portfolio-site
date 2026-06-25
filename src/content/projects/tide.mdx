@@ -1,0 +1,94 @@
+---
+slug: tide
+name: tide
+tagline: Self-hostable read-later — Pocket / Omnivore replacement.
+status: shipped
+stack: ['Next.js 16', 'React 19', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK']
+repoUrl: 'https://github.com/mateokadiu/tide'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> Modern read-later that actually gets used. Save from anywhere (web, browser extension, share sheet, email, API), read in a clean RSC reader, get streaming AI summaries on demand. Self-hostable on Oracle Cloud Free.
+
+## What it is
+
+A Next.js 16 read-later app filling the gap left by **Pocket shutting down in March 2025** and **Omnivore EOL-ing in November 2024**. The only OSS option left was Wallabag, which feels like 2014.
+
+Four capture surfaces:
+
+- **Web** — paste a URL, save (server action, optimistic ack)
+- **Browser extension** — Chrome + Firefox MV3, toolbar button + keyboard shortcut
+- **iOS / Android share sheet** — PWA Web Share Target API
+- **Email** — every user gets `save+{uuid}@tide.example`; Resend inbound webhook persists
+- **API** — bearer-token `POST /api/v1/articles` for shortcuts.app and power users
+
+## Why this exists
+
+Personal itch. The current OSS options either died (Pocket, Omnivore) or feel abandoned (Wallabag). Nothing in 2026 matches the daily-driver UX of Pocket-at-its-peak with a modern stack underneath. Built it to replace what I lost.
+
+## Architecture
+
+```
+   web   extension   share sheet   email   api
+    │       │             │          │       │
+    └───────┴──────┬──────┴──────────┴───────┘
+                   ▼
+        ┌──────────────────────┐
+        │  edge save endpoint  │  ← idempotent (user_id, url_hash)
+        └──────────┬───────────┘
+                   ▼
+          ┌────────────────┐
+          │   BullMQ jobs  │
+          │  extract / embed
+          │  tag / archive │
+          └────────┬───────┘
+                   ▼
+        ┌──────────────────────┐
+        │  postgres + pgvector │  ← fts + ann hybrid search
+        └──────────┬───────────┘
+                   ▼
+     ┌─────────────┴─────────────┐
+     ▼                           ▼
+  RSC reader               streaming summary
+  (typography +            (Anthropic +
+   highlights +             Suspense
+   listen mode)             boundary)
+```
+
+The save endpoint runs on edge runtime for low-latency global ingest. Heavy work (extraction via Mozilla Readability, embedding, tag inference) is enqueued to BullMQ workers. Reader is RSC with no client JS beyond the typography toggles + highlight gestures.
+
+## Key decisions
+
+- **Better-Auth, not Clerk/NextAuth** — OSS-pure, no vendor lock; magic link + GitHub + Google.
+- **Drizzle, not Prisma** — typed migrations, no ORM lock-in, faster cold-start on edge.
+- **Postgres FTS + pgvector**, not Algolia/Meilisearch — at <100k articles per user, tsvector + trigram + ANN cosine is faster than a separate service hop.
+- **Server Actions only** — no `/api` REST routes for app traffic; mutations return typed `Result<T, AppError>`.
+- **Anthropic Haiku 4.5 for summaries** — fast, cheap, streams cleanly via Suspense.
+- **Dual driver (postgres / sqlite)** — solo self-host uses SQLite + local FS; teams use Postgres + R2/MinIO.
+- **Oracle Cloud Always-Free for hosted demo** — €0 hosting on Ampere A1 ARM + autonomous Postgres + 10GB object storage.
+
+## Numbers worth knowing
+
+| | |
+|---|---|
+| Commits | 91 (2026-01-15 → 2026-06-08) |
+| Lighthouse mobile | 100 / 100 / 96 / 100 (perf / a11y / best-practices / SEO) |
+| Lighthouse desktop | 100 / 100 / 96 / 100 |
+| Extraction fixtures | 10/10 pass (NYT, Substack, dev.to, Medium, Wikipedia, GitHub, BBC, ArXiv, paywall, SPA) |
+| ADRs documented | 9 |
+| Capture surfaces | 5 (web / ext / mail / share-sheet / api) |
+| Self-host one-liner | `docker compose up` or `pulumi up` |
+
+## Status
+
+| | |
+|---|---|
+| Repo | github.com/mateokadiu/tide |
+| License | MIT |
+| Build | green |
+| Lighthouse | published in `docs/performance.md` |
+| Self-host | docker-compose + Pulumi-TS on Oracle Cloud Free |
+| Deploy | not yet — self-host only for now |
