@@ -8,6 +8,13 @@
   },
   {
     "repo": "mateokadiu/webhook-gateway",
+    "sha": "03795c9",
+    "message": "docs: interactive readme — collapsibles + mermaid + deep anchors over file punts",
+    "date": "2026-07-05T15:45:00Z",
+    "url": "https://github.com/mateokadiu/webhook-gateway/commit/03795c9b5972eeff6c7e806dea00d215804b92fc"
+  },
+  {
+    "repo": "mateokadiu/webhook-gateway",
     "sha": "4bc0b4a",
     "message": "changelog: v0.1 → v1.0 release notes",
     "date": "2026-07-04T20:33:18Z",
@@ -26,12 +33,5 @@
     "message": "docs: README v1.0 — adapters, persistence, multi-currency",
     "date": "2026-07-04T18:08:42Z",
     "url": "https://github.com/mateokadiu/tax-ledger/commit/8d7600d69dc5d637b4342c5232ae2e870666e562"
-  },
-  {
-    "repo": "mateokadiu/webhook-gateway",
-    "sha": "9be46f1",
-    "message": "docs: README v1.0 update — routing, search, bulk ops, stripe-format",
-    "date": "2026-07-04T18:08:42Z",
-    "url": "https://github.com/mateokadiu/webhook-gateway/commit/9be46f1f1228b551dfeff02519cfe3db0f357372"
   }
 ]

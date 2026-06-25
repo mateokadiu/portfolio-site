@@ -113,6 +113,14 @@ const allLd = [personLd, websiteLd, ...(itemListLd ? [itemListLd] : []), ...json
     <meta name="theme-color" content="#252525" />
     <meta name="color-scheme" content="dark" />
     <meta name="generator" content={Astro.generator} />
+    {
+      import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+        <meta
+          name="google-site-verification"
+          content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION}
+        />
+      )
+    }
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
