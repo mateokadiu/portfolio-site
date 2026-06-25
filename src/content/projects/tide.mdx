@@ -64,8 +64,8 @@ The save endpoint runs on edge runtime for low-latency global ingest. Heavy work
 
 - **Better-Auth, not Clerk/NextAuth** — OSS-pure, no vendor lock; magic link + GitHub + Google.
 - **Drizzle, not Prisma** — typed migrations, no ORM lock-in, faster cold-start on edge.
-- **Postgres FTS + pgvector**, not Algolia/Meilisearch — at <100k articles per user, tsvector + trigram + ANN cosine is faster than a separate service hop.
-- **Server Actions only** — no `/api` REST routes for app traffic; mutations return typed `Result<T, AppError>`.
+- **Postgres FTS + pgvector**, not Algolia/Meilisearch — at under 100k articles per user, tsvector + trigram + ANN cosine is faster than a separate service hop.
+- **Server Actions only** — no `/api` REST routes for app traffic; mutations return typed `Result&lt;T, AppError&gt;`.
 - **Anthropic Haiku 4.5 for summaries** — fast, cheap, streams cleanly via Suspense.
 - **Dual driver (postgres / sqlite)** — solo self-host uses SQLite + local FS; teams use Postgres + R2/MinIO.
 - **Oracle Cloud Always-Free for hosted demo** — €0 hosting on Ampere A1 ARM + autonomous Postgres + 10GB object storage.
