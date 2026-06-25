@@ -96,9 +96,7 @@ export default function TideTile() {
                           : 'bg-muted/40'
                     }`}
                   />
-                  <span className={done || active ? 'text-foreground' : 'text-muted'}>
-                    {label}
-                  </span>
+                  <span className={done || active ? 'text-foreground' : 'text-muted'}>{label}</span>
                   {active && !reduced && (
                     <motion.span
                       key={`${label}-active`}
