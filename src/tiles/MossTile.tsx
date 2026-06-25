@@ -8,10 +8,12 @@ const fmt = (n: number) => `€${n.toFixed(2)}`;
 // Featured chips — six representative economies; full matrix remains 27.
 const FEATURED = ['DE', 'FR', 'IT', 'ES', 'FI', 'HU'];
 
+const FALLBACK = EU27_VAT[0]!;
+
 export default function MossTile() {
   const reduced = useReducedMotion();
   const [picked, setPicked] = useState('DE');
-  const member = EU27_VAT.find((m) => m.code === picked) ?? EU27_VAT[0];
+  const member = EU27_VAT.find((m) => m.code === picked) ?? FALLBACK;
   const ratePct = bpToPercent(member.rateBp);
   const vat = NET_EUR * (ratePct / 100);
   const gross = NET_EUR + vat;

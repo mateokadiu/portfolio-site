@@ -4,9 +4,10 @@ const PROJECTS = [
   'temporal-stripe',
   'webhook-gateway',
   'shadowkit',
-  'studybuddy',
   'tax-ledger',
   'grpc-monorepo-starter',
+  'stripe-eu-vat-moss',
+  'studybuddy',
 ];
 
 test('homepage renders with hero + bento grid', async ({ page }) => {
@@ -14,7 +15,7 @@ test('homepage renders with hero + bento grid', async ({ page }) => {
   await expect(page).toHaveTitle(/Mateo Kadiu/);
   await expect(page.getByRole('main')).toBeVisible();
   const tiles = page.locator('[data-tile]');
-  await expect(tiles).toHaveCount(11);
+  await expect(tiles).toHaveCount(12);
 });
 
 for (const slug of PROJECTS) {
