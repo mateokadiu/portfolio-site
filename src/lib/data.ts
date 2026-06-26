@@ -132,7 +132,9 @@ export const SOCIAL = {
 export const SITE = {
   title: 'Mateo Kadiu — Senior Full-Stack Engineer',
   description:
-    'Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.',
+    'Senior full-stack engineer — TypeScript, NestJS, Next.js, Kubernetes, Stripe Connect, gRPC, Temporal. Tirana, EU timezone, remote-friendly. Open to senior IC roles + contract work. Live-demo portfolio: every tile is the real work running.',
+  keywords:
+    'senior full-stack engineer, full-stack engineer, software engineer, typescript, nestjs, next.js, react, kubernetes, pulumi, stripe connect, grpc, temporal, postgres, spring boot, java, remote engineer, eu timezone, contract engineer, tirana',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',
