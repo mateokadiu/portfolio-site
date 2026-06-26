@@ -60,10 +60,10 @@ export const PROJECTS: Project[] = [
   {
     slug: 'tax-ledger',
     name: 'tax-ledger',
-    tagline: 'OSS tax line-item splitter with provable invariants.',
+    tagline: 'Append-only tax ledger downstream of Avalara / TaxJar / Stripe Tax / Fonoa.',
     blurb:
-      'Library that splits sales-tax-inclusive orders into per-jurisdiction line items and proves the sum invariant holds across refunds, partial captures, and FX conversion.',
-    stack: ['TypeScript', 'Big.js', 'Property-based testing'],
+      'Takes the engine response + your line items and emits a deterministic ledger that sums to the engine total to the cent and stays reconciled across refunds, partial captures, revisions, and engine-quoted reversals. Decimal.js + Hamilton allocator + Zod + fast-check property tests. Drizzle adapter for PG/SQLite.',
+    stack: ['TypeScript', 'Decimal.js', 'Zod', 'fast-check', 'Drizzle'],
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/tax-ledger',
     isPrivate: false,

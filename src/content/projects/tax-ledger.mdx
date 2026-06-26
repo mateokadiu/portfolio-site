@@ -1,9 +1,9 @@
 ---
 slug: tax-ledger
 name: tax-ledger
-tagline: OSS tax line-item splitter with provable invariants.
+tagline: Append-only tax ledger downstream of Avalara / TaxJar / Stripe Tax / Fonoa.
 status: shipped
-stack: ['TypeScript', 'Big.js', 'Property-based testing']
+stack: ['TypeScript', 'Decimal.js', 'Zod', 'fast-check', 'Drizzle']
 repoUrl: 'https://github.com/mateokadiu/tax-ledger'
 isPrivate: false
 tileSize: '2x2'
@@ -11,41 +11,74 @@ tileSize: '2x2'
 
 ## Elevator pitch
 
-> A small library for splitting a sales-tax-inclusive order into per-jurisdiction line items and proving the sum invariant holds — across refunds, partial captures, FX conversion, and rounding. Property-tested. No fluff. The function you wish your e-commerce backend already had.
+> Every team that ships sales tax in production grows the same 1,000-line `Math.floor(ratio * tax)` blob across their refund flow. After three partial refunds the books drift a few cents. After a thousand orders, a few dollars. Accountants get involved. `tax-ledger` is that 1,000 lines factored into a ~600-line pure function with property-based tests proving the books always reconcile.
 
 ## What it is
 
-A TypeScript package shipping two primitives plus adapters:
+A TypeScript monorepo (`@tax-ledger/core` + adapters) that sits **downstream** of a real tax engine — Avalara, TaxJar, Stripe Tax, Fonoa — and turns the engine's response plus your line items into an **append-only ledger**: per-line, per-jurisdiction, per-tax-type rows that sum back to the engine's total to the cent and stay reconciled across the order lifecycle.
 
-- **`split(order, jurisdictions)`** — Takes a list of line items with cents-precision amounts and a jurisdiction stack (state, county, city), returns a flat array of `{ itemId, jurisdiction, taxCents }` rows. Sum of rows always equals sum of input tax (proven via property test with 10k generated orders).
-- **`reconcile(originalSplits, refunds)`** — Given the original split + a list of refunds (full or partial), returns the new totals + the deltas per jurisdiction. The deltas always sum to the negative of refunded tax (also proven).
+Five verbs on the core:
 
-Adapters for Stripe, Shopify, and a generic CSV importer. Multi-currency via stored FX rate snapshots.
+- **`split(input, opts?)`** — Engine response in, ledger out. One row per `(line, jurisdiction, taxType)`. Validated by Zod at the boundary.
+- **`refund(ledger, spec, opts?)`** — Refund by `amountCents` or by `quantity`. Emits delta rows that sum exactly to the negative of the refunded tax.
+- **`partialCapture(ledger, spec, opts?)`** — Capture less than was authorized; ledger entries adjust proportionally.
+- **`revise(ledger, newOrder, opts?)`** — Engine re-quote (address change, line edit). Emits the diff against the prior ledger.
+- **`reconcile(ledger, delta, { expectTotalCents?, toleranceCents? })`** — Fold an engine-provided refund/reversal (Stripe Tax `create_reversal`, Avalara refund/adjust) into the ledger and assert it sums to what the engine reported, within tolerance. Catches drift on the boundary.
+
+Plus **reporting helpers** — `toComponentTotals()` ({ salesTax, shippingTax, bottleDeposits, vat, additional, total }) and `rollupBy([...])` to group by any dimension.
+
+## Why it exists
+
+Tax math goes wrong in three places: rounding, refund splits, and revisions. Most platforms hide it behind an opaque engine call. The moment a customer refunds one item out of three, the tax delta has to be apportioned back to each jurisdiction in proportion to its original contribution, with cents-precision arithmetic so the sum still balances. Get one decimal wrong and reconciliation fails.
+
+`tax-ledger` exposes the math, proves the invariants, and keeps the bug surface small.
 
 ## Status
 
 | | |
 |---|---|
 | Repo | github.com/mateokadiu/tax-ledger |
-| License | MIT |
-| Status | v1.0.0 shipped |
-| Tests | property-based, 10k cases per invariant |
-
-## The problem I was solving
-
-Tax math goes wrong in three places — rounding, refund splits, and FX conversion. Most accounting systems hide the math behind an opaque service call. The moment a customer refunds one item out of three, the tax delta has to be apportioned back to each jurisdiction in proportion to its original contribution, with all-cents arithmetic so the sum still balances. Get one decimal wrong and reconciliation fails.
-
-I wanted a library where the math is exposed, the invariants are proven, and the bug surface is small.
+| License | MIT — public from day one |
+| Latest | **v1.1.0** (2026-07-15) |
+| Tests | **147** across 6 packages, including 21 property-based suites at 500–1000 fast-check runs each |
+| Packages | `@tax-ledger/{core, avalara, taxjar, stripe-tax, fonoa, drizzle}` |
 
 ## Key decisions
 
-1. **Cents-precision integer math with `Big.js` only at jurisdiction boundaries.** All internal storage and arithmetic is in cents. FX conversion and rate multiplication uses `Big.js` to avoid float drift, then back to integer cents at the edge.
-2. **Largest-remainder method for rounding splits.** The classic apportionment problem — give each jurisdiction its floor share, then distribute the remaining cents to jurisdictions with the largest fractional remainder. Provably sums to the input.
-3. **Property-based tests for invariants.** "For any 1≤items≤10, any 1≤jurisdictions≤4, any non-negative rates: sum of split rows == input tax." 10k cases per release.
-4. **Adapters as separate entry points.** `tax-ledger/stripe`, `tax-ledger/shopify`. Core has zero external deps.
+1. **Append-only ledger, deltas as new rows.** Refunds and revisions never mutate prior rows — they emit new rows with signed `amountCents`. Replay is a fold. An auditable ledger that never mutates is a precondition for shipping to accounting.
+2. **`Decimal.js` for intermediate math, integer cents for I/O.** Arbitrary precision avoids both FP drift and BigInt footguns on rates with more than 2 decimal places. Every emitted `amountCents` is an integer.
+3. **Largest-remainder (Hamilton's method) allocator.** Sum-preserving by construction. Deterministic tiebreak by row position (not row id) — replay-stable across runs.
+4. **Zod at the input boundary.** Engine responses are untyped JSON. Validate once, trust downstream.
+5. **One ISO-4217 currency per ledger.** Mixed-currency reconcile is refused with `CurrencyMismatchError`. FX belongs upstream — convert before revising into a different currency.
+6. **Pure core, opt-in adapters.** Core has zero external deps beyond `decimal.js`, `zod`, and `uuid`. Avalara / TaxJar / Stripe-tax / Fonoa adapters are separate npm packages; install only what you use.
+7. **Determinism is opt-in.** Every mutating verb accepts `{ now?, generateId? }` for snapshot tests and event-sourced replays. Omit for the default real clock + UUIDv7.
+
+## Invariants the property tests prove
+
+Every property holds over 500–1000 fast-check-generated orders:
+
+- **`sum(split(input).taxes) === input.totalTaxCents`** (with a 1-cent rounding-residual row if the engine itself drifted)
+- **`sum(refund(ledger, spec)) === -spec.amountCents`** to the cent
+- **No fractional cents.** Every emitted `amountCents` is an integer
+- **Allocator total preservation.** `sum(allocate(totalCents, weights)) === totalCents` for any positive or negative total
+- **Idempotent reconcile.** `revise(ledger, sameOrder)` is always a no-op; replay of the same event produces the same delta
+- **No-collapse jurisdiction.** Every `(jurisdiction, taxType)` on the source line is preserved as its own row, refunded proportionally
+
+## What 1.1 added on top of 1.0
+
+- **Quantity-based refunds** that actually work (1.0 stubbed `computeRemainingQuantity` to `1`)
+- **`reconcile()`** — fold an engine-quoted reversal back into the ledger with a sum assertion
+- **`'vat'` tax type** plus optional `taxCode`, `taxBehavior` (`inclusive` / `exclusive`), and `engineTaxType` (the engine's native label) flowing through every verb and the Drizzle adapter
+- **Stripe reversal bridge** — `toStripeReversal()` builds `create_reversal` params (full / flat / per-line) and `reversalTotals()` reads the reversed tax back off the response
+- **Richer `Jurisdiction`** — optional `country` / `region` / `name` carried from the engine, persisted as nullable Drizzle columns, so the ledger reconciles 1-1 instead of collapsing to `type + code`
+- **Currency minor-unit helpers** in core (`minorUnitExponent`, `toMinorUnits`, `fromMinorUnits`, `formatMinorUnits`) — JPY=0, KWD=3, …; multi-currency isn't implicitly 2-decimal anymore
+- **`@tax-ledger/fonoa`** — new adapter for Fonoa's Tax calculation response (EU VAT / GST), honoring tax-inclusive pricing and treating reverse-charge / exempt lines as zero-tax
+- **Reporting verbs on `Ledger`** — `toComponentTotals()` and `rollupBy([...])`
 
 ## Numbers
 
-- **10,000** property-test cases per invariant per release
-- **0** allocations of `Big.js` instances on the hot path inside `split()`
-- **3** built-in adapters (Stripe, Shopify, CSV)
+- **147** tests across the workspace (up from 110 in 1.0)
+- **6** packages (`core` + 4 engine adapters + Drizzle persistence)
+- **21** property-based suites, 500–1000 runs each
+- **0** float operations on amounts (`Decimal.js` intermediate, integer cents I/O)
+- **MIT**, public from day one
