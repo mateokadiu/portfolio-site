@@ -130,7 +130,7 @@ export const SOCIAL = {
 };
 
 export const SITE = {
-  title: 'Mateo Kadiu — portfolio',
+  title: 'Mateo Kadiu — Senior Full-Stack Engineer',
   description:
     'Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.',
   url: 'https://mateokadiu.com',
