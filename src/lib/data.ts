@@ -133,7 +133,7 @@ export const SITE = {
   title: 'Mateo Kadiu — portfolio',
   description:
     'Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.',
-  url: 'https://mateokadiu.pages.dev',
+  url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',
 };

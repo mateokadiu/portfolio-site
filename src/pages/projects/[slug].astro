@@ -27,7 +27,7 @@ const slug = entry.id.replace(/\.mdx$/, '');
 const { Content } = await entry.render();
 const { name, tagline, status, stack, repoUrl, isPrivate } = entry.data;
 
-const SITE_URL = 'https://mateokadiu.pages.dev';
+const SITE_URL = 'https://mateokadiu.com';
 const projectUrl = `${SITE_URL}/projects/${slug}`;
 
 const projectLd: Record<string, unknown> = repoUrl

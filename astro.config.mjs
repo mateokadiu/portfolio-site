@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://mateokadiu.pages.dev',
+  site: 'https://mateokadiu.com',
   output: 'static',
   integrations: [react(), mdx(), sitemap()],
   vite: {
