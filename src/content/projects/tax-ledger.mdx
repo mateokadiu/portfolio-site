@@ -25,7 +25,7 @@ Five verbs on the core:
 - **`revise(ledger, newOrder, opts?)`** — Engine re-quote (address change, line edit). Emits the diff against the prior ledger.
 - **`reconcile(ledger, delta, { expectTotalCents?, toleranceCents? })`** — Fold an engine-provided refund/reversal (Stripe Tax `create_reversal`, Avalara refund/adjust) into the ledger and assert it sums to what the engine reported, within tolerance. Catches drift on the boundary.
 
-Plus **reporting helpers** — `toComponentTotals()` ({ salesTax, shippingTax, bottleDeposits, vat, additional, total }) and `rollupBy([...])` to group by any dimension.
+Plus **reporting helpers** — `toComponentTotals()` returns `{ salesTax, shippingTax, bottleDeposits, vat, additional, total }`, and `rollupBy([...])` groups by any dimension.
 
 ## Why it exists
 
