@@ -83,8 +83,7 @@ export default function StudybuddyTile() {
               rx={1.5}
               fill={LEVEL_COLORS[c.level]}
               initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-20px' }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{
                 delay: reduced ? 0 : Math.min(i, 200) * 0.004,
                 duration: 0.3,
