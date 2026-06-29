@@ -1,7 +1,7 @@
 {
   "name": "Mateo Kadiu — portfolio",
   "short_name": "mateokadiu",
-  "description": "Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.",
+  "description": "Senior full-stack engineer. Bento-grid interactive showcase: every project tile opens to a live demo of how the project works.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

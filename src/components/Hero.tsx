@@ -73,8 +73,7 @@ export default function Hero() {
         ref={taglineRef}
         className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-muted sm:text-lg"
       >
-        Every tile below is a project I shipped — and the demo inside is the real thing, running. No
-        screenshots, no mockups. Click anywhere.
+        Every tile below is a project I shipped. Click in for an interactive demo of how it works.
       </p>
 
       <div
