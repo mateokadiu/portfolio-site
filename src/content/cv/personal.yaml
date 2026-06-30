@@ -4,9 +4,9 @@ location: Tirana, Albania
 timezone: Europe/Tirane
 tagline: Full-stack at the depth most teams skip — Next.js 16 + React 19 (RSC, Server Actions), Angular signals, Tailwind design systems, React Native (Fabric) on the front; multi-PaymentIntent Stripe Connect, gRPC between Nest services, Pulumi-Kubernetes, high-throughput webhook fan-out on the back. Open to senior IC roles + contract work.
 bio: |
-  Software engineer working full-stack across the things that actually break in production: Stripe Connect lifecycles, gRPC contracts, k8s topologies, webhook delivery under load.
+  Software engineer working full-stack across the surfaces that ship to real users — Next.js + React frontends, Angular admin consoles, React Native mobile, and the NestJS / Java services + infrastructure behind them.
 
-  Recent focus: Stripe Connect across per-retailer accounts, Pulumi-provisioned Kubernetes, Nest microservices over gRPC. Before that, two years at Kineton Albania as a team lead shipping internal + external projects to the Play Store and App Store.
+  Recent focus: Next.js 16 + React 19 (Server Components, Server Actions) and Angular signals on the front; multi-PaymentIntent Stripe Connect, gRPC between Nest services, Pulumi-provisioned Kubernetes, and high-throughput webhook delivery on the back. Before ReserveBar, two years at Kineton Albania as a team lead shipping React Native apps to the Play Store and App Store plus a Webpack Module Federation micro-frontend architecture.
 
   Master's in Software Engineering from Canadian Institute of Technology (Jul 2024).
 openToWork: true
