@@ -21,7 +21,7 @@ const {
   title = SITE.title,
   description = SITE.description,
   ogImage = '/og/default.png',
-  canonical = SITE.url,
+  canonical = `${SITE.url}/`,
   pageType = 'website',
   articleTags = [],
   articlePublishedTime,
@@ -77,7 +77,7 @@ const websiteLd = {
 };
 
 const itemListLd =
-  canonical === SITE.url
+  canonical === `${SITE.url}/`
     ? {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
@@ -87,7 +87,7 @@ const itemListLd =
         itemListElement: PROJECTS.map((p, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          url: `${SITE.url}/projects/${p.slug}`,
+          url: `${SITE.url}/projects/${p.slug}/`,
           name: p.name,
           description: p.tagline,
         })),
