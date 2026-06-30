@@ -131,7 +131,10 @@ export default function WebhookGatewayAdminTile() {
                   transition={{ duration: 0.18 }}
                   className="flex items-center gap-2 rounded border border-border/40 px-1.5 py-1"
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[r.status]}`} aria-hidden />
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[r.status]}`}
+                    aria-hidden
+                  />
                   <span className="text-muted">{r.id.slice(0, 6)}</span>
                   <span className="truncate">{r.source}</span>
                   <span className="ml-auto text-[9px] text-muted">{r.age}</span>

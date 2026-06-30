@@ -1,5 +1,19 @@
 [
   {
+    "repo": "mateokadiu/tax-ledger",
+    "sha": "b587ef4",
+    "message": "ci: bump actions to node-24 versions (checkout v7, setup-node v6, pnpm v6)",
+    "date": "2026-07-16T18:15:00Z",
+    "url": "https://github.com/mateokadiu/tax-ledger/commit/b587ef4afe5ffc384710d9edd0426660c81b0dad"
+  },
+  {
+    "repo": "mateokadiu/tax-ledger",
+    "sha": "2231059",
+    "message": "changelog: 1.1.0 release notes",
+    "date": "2026-07-15T20:10:00Z",
+    "url": "https://github.com/mateokadiu/tax-ledger/commit/2231059c17414dabdd797032dd99f441b38b5c63"
+  },
+  {
     "repo": "mateokadiu/webhook-gateway",
     "sha": "52b8244",
     "message": "fix fan-out + retry + stats: drizzle inArray + bullmq job-id + iso since",
@@ -19,19 +33,5 @@
     "message": "changelog: v0.1 → v1.0 release notes",
     "date": "2026-07-04T20:33:18Z",
     "url": "https://github.com/mateokadiu/webhook-gateway/commit/4bc0b4a421ec9ebd30e5d41a07e9072d30c883b5"
-  },
-  {
-    "repo": "mateokadiu/tax-ledger",
-    "sha": "7526082",
-    "message": "changelog: v0.1 → v1.0 release notes",
-    "date": "2026-07-04T20:14:08Z",
-    "url": "https://github.com/mateokadiu/tax-ledger/commit/7526082861ca98f58c4b92283c7a5f260e81b87a"
-  },
-  {
-    "repo": "mateokadiu/tax-ledger",
-    "sha": "8d7600d",
-    "message": "docs: README v1.0 — adapters, persistence, multi-currency",
-    "date": "2026-07-04T18:08:42Z",
-    "url": "https://github.com/mateokadiu/tax-ledger/commit/8d7600d69dc5d637b4342c5232ae2e870666e562"
   }
 ]
