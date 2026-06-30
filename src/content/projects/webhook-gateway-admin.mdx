@@ -1,0 +1,55 @@
+---
+slug: webhook-gateway-admin
+name: webhook-gateway-admin
+tagline: Angular 19 admin UI for webhook-gateway — zoneless, signals, standalone.
+status: shipped
+stack: ['Angular 19', 'TypeScript', 'Tailwind v4', 'TanStack Query', 'Zod']
+repoUrl: 'https://github.com/mateokadiu/webhook-gateway-admin'
+isPrivate: false
+tileSize: '2x1'
+---
+
+## Elevator pitch
+
+> Second admin for [`webhook-gateway`](https://github.com/mateokadiu/webhook-gateway). The canonical admin is Next.js + React 19; this one is Angular 19 with zoneless change detection, signal-based filters, and TanStack Query for Angular against the same backend. Built to demonstrate modern Angular against a real domain model, not a toy.
+
+## What it is
+
+A modern Angular admin spanning the full webhook-gateway surface area:
+
+- **Dashboard** — totals (events received / deliveries ok / retrying / dead), latency (avg + p95), per-source + per-target rollup. 30 s refetch.
+- **Events** — signal-based filters (full-text, status, source), multi-select rows, bulk replay + bulk tombstone.
+- **Event detail** — full metadata, request headers, body preview, per-delivery status + last response excerpt + manual replay.
+- **Deliveries** — filter by status + target, per-row retry for failed / retrying / dead.
+- **Sources** — list + reactive form with Zod-validated `SourceCreate` body, plugin selector, signature tolerance, target multi-select, delete.
+- **Targets** — list + reactive form (URL validation, custom backoff schedule as comma-separated seconds, max attempts, timeout, enabled toggle, delete).
+- **Settings** — runtime-configurable API base URL + bearer token, persisted to `localStorage`.
+
+## Why this exists
+
+The portfolio claimed two years of Angular but had zero public Angular code under github.com/mateokadiu — interviewers spot-check, the claim got discounted. This fills the gap with a real, complete admin paired to an existing backend rather than a contrived toy.
+
+The "same backend, two frontends" framing is also a real interview talking point: I built the NestJS service + the React (Next.js) admin first; I added the Angular admin to defend the Angular skill claim with code that ships against the same domain model.
+
+## Modern Angular cheat sheet (what this exercises)
+
+| Feature | Where |
+|---|---|
+| `provideExperimentalZonelessChangeDetection()` | `app.config.ts` — no Zone.js; signals are the dirty marker |
+| Standalone components | every `@Component`; no `NgModule` anywhere |
+| Template control flow (`@if` / `@for` / `@switch`) | every feature template |
+| `input.required<T>()` + `withComponentInputBinding()` | `event-detail`, `source-form`, `target-form` |
+| `signal()` + `computed()` for local state | filter state in events + deliveries lists |
+| TanStack Query for Angular (`injectQuery` / `injectMutation`) | every feature page |
+| Zod validation at the I/O boundary | `core/models/schemas.ts` mirrors `@webhook-gateway/shared` 1-1 |
+| Reactive forms with `Zod.safeParse` on submit | source + target forms |
+| Functional router with lazy `loadComponent` | `app.routes.ts` |
+| Tailwind v4 `@theme` tokens | `src/styles.css` — single source of truth for the OKLCH palette |
+
+## Numbers
+
+- **5 commits** spanning 2 weekends (2026-07-11 → 2026-07-26) after the backend's v1.0 shipped
+- **6 feature areas** (dashboard, events, deliveries, sources, targets, settings) + shell + core
+- **Bundle:** ~140 KB initial gzipped at v1.0 (with lazy-loaded feature chunks)
+- **Zero `NgModule`s** — fully standalone
+- **Zone.js removed** from polyfills
