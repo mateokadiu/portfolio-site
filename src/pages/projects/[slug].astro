@@ -9,6 +9,7 @@ import TaxLedgerTile from '~/tiles/TaxLedgerTile';
 import TemporalStripeTile from '~/tiles/TemporalStripeTile';
 import TideTile from '~/tiles/TideTile';
 import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
+import WebhookGatewayAdminTile from '~/tiles/WebhookGatewayAdminTile';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -79,6 +80,14 @@ const DEMO_HINTS: Record<string, { headline: string; steps: string[] }> = {
       'Toggle “downstream is down” to mark the receiver as unhealthy.',
       'The next attempt enters the retry-backoff schedule: 30s · 2m · 10m · 1h · 6h · 24h (sped up for the demo).',
       'After enough failed retries the event lands in the DLQ — toggle back to healthy to drain.',
+    ],
+  },
+  'webhook-gateway-admin': {
+    headline: 'A miniature of the Angular admin UI.',
+    steps: [
+      'The received/delivered counters tick on a 2.4s interval — animated by signals in the real app.',
+      'Click the filter pills (all/ok/failed) to drive a `signal()`; the visible rows are a `computed()`.',
+      'The full admin (sidebar + dashboard + events table + sources/targets CRUD) is in the repo — same backend as webhook-gateway.',
     ],
   },
   shadowkit: {
@@ -185,6 +194,7 @@ const hint = DEMO_HINTS[slug];
       <div class="min-h-[420px] w-full p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6">
         {slug === 'temporal-stripe' && <TemporalStripeTile client:load />}
         {slug === 'webhook-gateway' && <WebhookGatewayTile client:load />}
+        {slug === 'webhook-gateway-admin' && <WebhookGatewayAdminTile client:load />}
         {slug === 'shadowkit' && <ShadowkitTile client:load />}
         {slug === 'studybuddy' && <StudybuddyTile client:load />}
         {slug === 'tax-ledger' && <TaxLedgerTile client:load />}
