@@ -34,6 +34,18 @@ export const PROJECTS: Project[] = [
     tileSize: '2x1',
   },
   {
+    slug: 'webhook-gateway-admin',
+    name: 'webhook-gateway-admin',
+    tagline: 'Angular 19 admin UI for webhook-gateway — zoneless, signals, standalone.',
+    blurb:
+      'Second admin for webhook-gateway (the canonical one is Next.js). Zoneless change detection, signal-based filters, TanStack Query for Angular, Zod-validated responses, Tailwind v4 + @theme tokens, reactive forms for sources + targets CRUD. Same backend, angular twin — shipped to demonstrate modern Angular against a real domain model.',
+    stack: ['Angular 19', 'TypeScript', 'Tailwind v4', 'TanStack Query', 'Zod'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/webhook-gateway-admin',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
     slug: 'shadowkit',
     name: 'shadowkit',
     tagline: 'Tailwind v4 inside the Shadow DOM, the cascade-safe way.',
