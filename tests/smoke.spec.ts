@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 const PROJECTS = [
   'temporal-stripe',
   'webhook-gateway',
+  'webhook-gateway-admin',
   'shadowkit',
   'tax-ledger',
   'grpc-monorepo-starter',
@@ -16,7 +17,7 @@ test('homepage renders with hero + bento grid', async ({ page }) => {
   await expect(page).toHaveTitle(/Mateo Kadiu/);
   await expect(page.getByRole('main')).toBeVisible();
   const tiles = page.locator('[data-tile]');
-  await expect(tiles).toHaveCount(13);
+  await expect(tiles).toHaveCount(14);
 });
 
 for (const slug of PROJECTS) {
