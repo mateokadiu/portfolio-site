@@ -22,26 +22,14 @@ export const NOW = [
 
 export const PROJECTS: Project[] = [
   {
-    slug: 'temporal-stripe',
-    name: 'temporal-stripe',
-    tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',
+    slug: 'tide',
+    name: 'tide',
+    tagline: 'Self-hostable read-later — Pocket / Omnivore replacement.',
     blurb:
-      'Open-source Temporal library covering reauthorization, multicapture, refunds and chargebacks behind type-safe signals and a saga primitive.',
-    stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest'],
+      'Next.js 16 + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
+    stack: ['Next.js 16', 'React 19', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
     status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/temporal-stripe',
-    isPrivate: false,
-    tileSize: '2x2',
-  },
-  {
-    slug: 'webhook-gateway',
-    name: 'webhook-gateway',
-    tagline: 'Self-hosted webhook reliability with exponential backoff + DLQ.',
-    blurb:
-      'A small Nest service that takes inbound webhooks, persists them, retries with exp backoff, and parks the dead ones in a DLQ for replay.',
-    stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/webhook-gateway',
+    repoUrl: 'https://github.com/mateokadiu/tide',
     isPrivate: false,
     tileSize: '2x1',
   },
@@ -58,6 +46,30 @@ export const PROJECTS: Project[] = [
     tileSize: '2x1',
   },
   {
+    slug: 'studybuddy',
+    name: 'studybuddy',
+    tagline: 'On-device RAG study app for React Native.',
+    blurb:
+      'A flashcard / study app with retrieval-augmented question generation, all model inference on-device via llama.rn. Skia for the heatmap.',
+    stack: ['React Native', 'Skia', 'llama.rn', 'SQLite'],
+    status: 'beta',
+    repoUrl: 'https://github.com/mateokadiu/studybuddy',
+    isPrivate: false,
+    tileSize: '2x1',
+  },
+  {
+    slug: 'temporal-stripe',
+    name: 'temporal-stripe',
+    tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',
+    blurb:
+      'Open-source Temporal library covering reauthorization, multicapture, refunds and chargebacks behind type-safe signals and a saga primitive.',
+    stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/temporal-stripe',
+    isPrivate: false,
+    tileSize: '2x2',
+  },
+  {
     slug: 'tax-ledger',
     name: 'tax-ledger',
     tagline: 'Append-only tax ledger downstream of Avalara / TaxJar / Stripe Tax / Fonoa.',
@@ -68,6 +80,18 @@ export const PROJECTS: Project[] = [
     repoUrl: 'https://github.com/mateokadiu/tax-ledger',
     isPrivate: false,
     tileSize: '2x2',
+  },
+  {
+    slug: 'webhook-gateway',
+    name: 'webhook-gateway',
+    tagline: 'Self-hosted webhook reliability with exponential backoff + DLQ.',
+    blurb:
+      'A small Nest service that takes inbound webhooks, persists them, retries with exp backoff, and parks the dead ones in a DLQ for replay.',
+    stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript'],
+    status: 'shipped',
+    repoUrl: 'https://github.com/mateokadiu/webhook-gateway',
+    isPrivate: false,
+    tileSize: '2x1',
   },
   {
     slug: 'grpc-monorepo-starter',
@@ -93,30 +117,6 @@ export const PROJECTS: Project[] = [
     isPrivate: false,
     tileSize: '2x1',
   },
-  {
-    slug: 'tide',
-    name: 'tide',
-    tagline: 'Self-hostable read-later — Pocket / Omnivore replacement.',
-    blurb:
-      'Next.js 16 + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
-    stack: ['Next.js 16', 'React 19', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/tide',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'studybuddy',
-    name: 'studybuddy',
-    tagline: 'On-device RAG study app for React Native.',
-    blurb:
-      'A flashcard / study app with retrieval-augmented question generation, all model inference on-device via llama.rn. Skia for the heatmap.',
-    stack: ['React Native', 'Skia', 'llama.rn', 'SQLite'],
-    status: 'beta',
-    repoUrl: 'https://github.com/mateokadiu/studybuddy',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
 ];
 
 export const PROJECT_BY_SLUG: Record<string, Project> = Object.fromEntries(
@@ -132,9 +132,9 @@ export const SOCIAL = {
 export const SITE = {
   title: 'Mateo Kadiu — Senior Full-Stack Engineer',
   description:
-    'Senior full-stack engineer — TypeScript, NestJS, Next.js, Kubernetes, Stripe Connect, gRPC, Temporal. Tirana, EU timezone, remote-friendly. Open to senior IC roles + contract work. Interactive portfolio: every tile opens to a live demo of how the project works.',
+    'Senior full-stack engineer — React · Next.js · Angular · Tailwind · React Native on the front, NestJS · Java/Spring Boot · Kubernetes · Stripe Connect · gRPC on the back. Tirana, EU timezone, remote-friendly. Open to senior IC roles + contract work.',
   keywords:
-    'senior full-stack engineer, full-stack engineer, software engineer, typescript, nestjs, next.js, react, kubernetes, pulumi, stripe connect, grpc, temporal, postgres, spring boot, java, remote engineer, eu timezone, contract engineer, tirana',
+    'senior full-stack engineer, full-stack engineer, frontend engineer, typescript, javascript, react, next.js, angular, tailwind css, web components, react native, nestjs, node.js, java, spring boot, postgres, kubernetes, pulumi, stripe connect, grpc, temporal, remote engineer, eu timezone, contract engineer, tirana',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',

@@ -1,8 +1,8 @@
 name: Mateo Kadiu
-headline: Software Engineer · Stripe Connect, NestJS/Next.js, Kubernetes-on-Pulumi
+headline: Software Engineer · React / Next.js / Angular on web, React Native on mobile, NestJS + Stripe Connect on the back
 location: Tirana, Albania
 timezone: Europe/Tirane
-tagline: Full-stack at the depth most teams skip — multi-PaymentIntent Stripe Connect, gRPC contracts between Nest services, Next.js / React / Angular on the front, Kubernetes infra scaffolded from Pulumi, high-throughput webhook fan-out with deduplication. Open to senior IC roles + contract work.
+tagline: Full-stack at the depth most teams skip — Next.js 16 + React 19 (RSC, Server Actions), Angular signals, Tailwind design systems, React Native (Fabric) on the front; multi-PaymentIntent Stripe Connect, gRPC between Nest services, Pulumi-Kubernetes, high-throughput webhook fan-out on the back. Open to senior IC roles + contract work.
 bio: |
   Software engineer working full-stack across the things that actually break in production: Stripe Connect lifecycles, gRPC contracts, k8s topologies, webhook delivery under load.
 
