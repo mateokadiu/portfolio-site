@@ -3,7 +3,7 @@ import '~/styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Footer from '~/components/Footer.astro';
 import Nav from '~/components/Nav.astro';
-import { PROJECTS, SITE, SOCIAL } from '~/lib/data';
+import { PROJECTS, SITE, SOCIAL, siteUrl } from '~/lib/data';
 
 interface Props {
   title?: string;
@@ -21,7 +21,7 @@ const {
   title = SITE.title,
   description = SITE.description,
   ogImage = '/og/default.png',
-  canonical = `${SITE.url}/`,
+  canonical = siteUrl('/'),
   pageType = 'website',
   articleTags = [],
   articlePublishedTime,
@@ -77,7 +77,7 @@ const websiteLd = {
 };
 
 const itemListLd =
-  canonical === `${SITE.url}/`
+  canonical === siteUrl('/')
     ? {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
@@ -87,14 +87,22 @@ const itemListLd =
         itemListElement: PROJECTS.map((p, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          url: `${SITE.url}/projects/${p.slug}/`,
+          url: siteUrl(`/projects/${p.slug}`),
           name: p.name,
           description: p.tagline,
         })),
       }
     : null;
 
-const allLd = [personLd, websiteLd, ...(itemListLd ? [itemListLd] : []), ...jsonLd];
+const hasCustomPerson = jsonLd.some((ld) => ld['@type'] === 'Person');
+const hasCustomWebsite = jsonLd.some((ld) => ld['@type'] === 'WebSite');
+
+const allLd = [
+  ...(hasCustomPerson ? [] : [personLd]),
+  ...(hasCustomWebsite ? [] : [websiteLd]),
+  ...(itemListLd ? [itemListLd] : []),
+  ...jsonLd,
+];
 ---
 
 <!doctype html>

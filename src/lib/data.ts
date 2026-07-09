@@ -151,3 +151,19 @@ export const SITE = {
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',
 };
+
+/** Site-relative path with trailing slash (hash paths like /#work are unchanged). */
+export function sitePath(path = '/'): string {
+  if (!path || path === '/') return '/';
+  if (path.includes('#')) return path.startsWith('/') ? path : `/${path}`;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return normalized.endsWith('/') ? normalized : `${normalized}/`;
+}
+
+/** Absolute canonical URL for a site path. */
+export function siteUrl(path = '/'): string {
+  if (!path || path === '/') return `${SITE.url}/`;
+  const relative = sitePath(path);
+  if (relative.includes('#')) return `${SITE.url}${relative}`;
+  return `${SITE.url}${relative}`;
+}

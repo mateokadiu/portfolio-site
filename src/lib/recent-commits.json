@@ -1,37 +1,37 @@
 [
   {
+    "repo": "mateokadiu/portfolio-site",
+    "sha": "bbaaf17",
+    "message": "chore: update cv to latest changes",
+    "date": "2026-07-09T14:23:09Z",
+    "url": "https://github.com/mateokadiu/portfolio-site/commit/bbaaf173aea10d7fbc7af0f1dd896251a03dca0a"
+  },
+  {
+    "repo": "mateokadiu/portfolio-site",
+    "sha": "0135795",
+    "message": "og: dynamic build-time og image generation via satori + resvg — replaces stale static pngs, wires to live data",
+    "date": "2026-07-01T19:54:26Z",
+    "url": "https://github.com/mateokadiu/portfolio-site/commit/013579594b32aef5402f22c872dab8d9f45f9aba"
+  },
+  {
+    "repo": "mateokadiu/portfolio-site",
+    "sha": "971728f",
+    "message": "project: add companion-admin section to webhook-gateway page linking the angular twin",
+    "date": "2026-06-30T20:40:48Z",
+    "url": "https://github.com/mateokadiu/portfolio-site/commit/971728ff297ca65a7b0f808404f036f32f735317"
+  },
+  {
+    "repo": "mateokadiu/webhook-gateway",
+    "sha": "e26aa62",
+    "message": "docs: cross-link the angular admin twin (webhook-gateway-admin) — callout under intro + footnote in architecture table",
+    "date": "2026-06-30T20:40:45Z",
+    "url": "https://github.com/mateokadiu/webhook-gateway/commit/e26aa62326c3f6b8307814130dbbd2331e941df5"
+  },
+  {
     "repo": "mateokadiu/tax-ledger",
     "sha": "9698baf",
     "message": "fix(changelog): backdate v1.0 + v1.1 release entries to actual ship dates",
     "date": "2026-06-30T18:31:27Z",
     "url": "https://github.com/mateokadiu/tax-ledger/commit/9698bafb7877fe2588b120c85dd55993659c6a5a"
-  },
-  {
-    "repo": "mateokadiu/webhook-gateway",
-    "sha": "cb3d6bb",
-    "message": "fix(changelog): backdate v1.0 release to actual ship date (2026-05-30)",
-    "date": "2026-06-30T18:30:45Z",
-    "url": "https://github.com/mateokadiu/webhook-gateway/commit/cb3d6bbe835e7adf6b897743c6873dc9e078398b"
-  },
-  {
-    "repo": "mateokadiu/portfolio-site",
-    "sha": "0f575a1",
-    "message": "fix(lint): biome auto-fix import order + jsx wrap on admin tile",
-    "date": "2026-06-30T18:18:43Z",
-    "url": "https://github.com/mateokadiu/portfolio-site/commit/0f575a1de1cee3788b18efaf72f11b4cf1d54bdb"
-  },
-  {
-    "repo": "mateokadiu/portfolio-site",
-    "sha": "8617556",
-    "message": "tile: interactive webhook-gateway-admin demo — mini sidebar + signal-driven counters + filter pills",
-    "date": "2026-06-30T18:16:11Z",
-    "url": "https://github.com/mateokadiu/portfolio-site/commit/86175564be0714bdd24a865c8c1a8e16956a59a2"
-  },
-  {
-    "repo": "mateokadiu/portfolio-site",
-    "sha": "b5b2bfb",
-    "message": "test: add webhook-gateway-admin to smoke list + bump tile count to 14",
-    "date": "2026-06-30T17:47:38Z",
-    "url": "https://github.com/mateokadiu/portfolio-site/commit/b5b2bfbe2c0049b014575f4477cd31a9dda93e0d"
   }
 ]

@@ -1,0 +1,4 @@
+# Canonical host — avoid redirect errors from www / alternate origins
+https://www.mateokadiu.com/*  https://mateokadiu.com/:splat  301
+http://mateokadiu.com/*        https://mateokadiu.com/:splat  301
+http://www.mateokadiu.com/*    https://mateokadiu.com/:splat  301

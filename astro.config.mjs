@@ -6,8 +6,15 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://mateokadiu.com',
+  trailingSlash: 'always',
   output: 'static',
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [
+    react(),
+    mdx(),
+    sitemap({
+      filter: (page) => !page.includes('/embeds/'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
     ssr: {

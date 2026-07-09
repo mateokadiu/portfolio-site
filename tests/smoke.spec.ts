@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { projectPath } from './site-urls';
 
 const PROJECTS = [
   'temporal-stripe',
@@ -22,7 +23,7 @@ test('homepage renders with hero + bento grid', async ({ page }) => {
 
 for (const slug of PROJECTS) {
   test(`project page renders: ${slug}`, async ({ page }) => {
-    const res = await page.goto(`/projects/${slug}`);
+    const res = await page.goto(projectPath(slug));
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toContainText(slug);
     await expect(page.getByText(/back to all projects/i)).toBeVisible();

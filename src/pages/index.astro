@@ -5,7 +5,7 @@ import ProjectTile from '~/components/ProjectTile.astro';
 import Tile from '~/components/Tile.astro';
 import Layout from '~/layouts/Layout.astro';
 import { loadPersonal } from '~/lib/cv';
-import { PROJECTS, SITE, SOCIAL } from '~/lib/data';
+import { PROJECTS, SITE, SOCIAL, siteUrl } from '~/lib/data';
 import AboutTile from '~/tiles/AboutTile.astro';
 import ContactTile from '~/tiles/ContactTile.astro';
 import GithubGlobeTile from '~/tiles/GithubGlobeTile';
@@ -13,8 +13,7 @@ import GithubTile from '~/tiles/GithubTile.astro';
 import NowTile from '~/tiles/NowTile.astro';
 
 const personal = await loadPersonal();
-const siteUrl = SITE.url;
-const personId = `${siteUrl}/#person`;
+const personId = `${siteUrl('/')}#person`;
 
 const personJsonLd = {
   '@context': 'https://schema.org',
@@ -26,8 +25,8 @@ const personJsonLd = {
   jobTitle: 'Software Engineer',
   description: personal.tagline,
   email: `mailto:${personal.email}`,
-  url: siteUrl,
-  image: `${siteUrl}/og/about.png`,
+  url: siteUrl('/'),
+  image: siteUrl('/og/about.png'),
   address: {
     '@type': 'PostalAddress',
     addressLocality: personal.location.split(',')[0]?.trim() ?? 'Tirana',
@@ -57,8 +56,8 @@ const personJsonLd = {
 const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': `${siteUrl}/#website`,
-  url: siteUrl,
+  '@id': `${siteUrl('/')}#website`,
+  url: siteUrl('/'),
   name: SITE.title,
   description: SITE.description,
   author: { '@id': personId },
@@ -70,7 +69,7 @@ const websiteJsonLd = {
 <Layout
   title={SITE.title}
   description={SITE.description}
-  canonical={`${siteUrl}/`}
+  canonical={siteUrl('/')}
   jsonLd={[personJsonLd, websiteJsonLd]}
 >
   <Hero client:idle />
@@ -80,7 +79,7 @@ const websiteJsonLd = {
 
     <Tile size="2x2"><GithubGlobeTile client:visible /></Tile>
 
-    <Tile size="1x1"><AboutTile /></Tile>
+    <Tile size="1x1" href="/about/"><AboutTile /></Tile>
     <Tile size="1x1"><NowTile /></Tile>
     <Tile size="1x1"><GithubTile /></Tile>
     <Tile size="1x1"><ContactTile /></Tile>
