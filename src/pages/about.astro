@@ -15,11 +15,11 @@ import {
 } from '~/lib/cv';
 import { siteUrl } from '~/lib/data';
 
-const [personal, links, skills, roles, education, certifications] = await Promise.all([
+const [personal, links, roles, skills, education, certifications] = await Promise.all([
   loadPersonal(),
   loadLinks(),
-  loadSkills(),
   loadRoles(),
+  loadSkills(),
   loadEducation(),
   loadCertifications(),
 ]);
@@ -69,12 +69,18 @@ const personJsonLd = {
   alumniOf: education.map((e) => ({
     '@type': 'CollegeOrUniversity',
     name: e.school,
-    address: { '@type': 'PostalAddress', addressLocality: e.location.split(',')[0]?.trim() },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: e.location.split(',')[0]?.trim(),
+    },
   })),
   hasOccupation: {
     '@type': 'Occupation',
     name: 'Software Engineer',
-    occupationLocation: { '@type': 'City', name: personal.location.split(',')[0]?.trim() },
+    occupationLocation: {
+      '@type': 'City',
+      name: personal.location.split(',')[0]?.trim(),
+    },
     skills: skills.map((s) => s.name).join(', '),
   },
 };
@@ -97,7 +103,12 @@ const breadcrumbJsonLd = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl('/') },
-    { '@type': 'ListItem', position: 2, name: 'About', item: siteUrl('/about') },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'About',
+      item: siteUrl('/about'),
+    },
   ],
 };
 ---
@@ -106,7 +117,7 @@ const breadcrumbJsonLd = {
   title="About"
   description={personal.tagline}
   ogImage="/og/about.png"
-  canonical={siteUrl('/about')}
+  canonical={siteUrl("/about")}
   pageType="profile"
   jsonLd={[personJsonLd, profilePageJsonLd, breadcrumbJsonLd]}
 >
@@ -114,9 +125,15 @@ const breadcrumbJsonLd = {
     <header class="mb-14">
       <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
         about · {personal.location} · {personal.timezone}
-        {personal.openToWork && <span class="ml-2 text-accent">· open to work</span>}
+        {
+          personal.openToWork && (
+            <span class="ml-2 text-accent">· open to work</span>
+          )
+        }
       </p>
-      <h1 class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+      <h1
+        class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
+      >
         {personal.name}
       </h1>
       <p class="mt-3 max-w-2xl text-balance text-base text-muted sm:text-lg">
@@ -168,6 +185,16 @@ const breadcrumbJsonLd = {
       </div>
     </header>
 
+    {/* EXPERIENCE — sticky-scroll timeline */}
+    <section class="mb-20">
+      <header class="mb-8">
+        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+          experience<span class="text-accent">.</span>
+        </h2>
+      </header>
+      <RolesTimeline roles={roles} />
+    </section>
+
     {/* SKILLS — typographic matrix, grouped by altitude */}
     <section class="mb-20">
       <header class="mb-5 flex items-baseline justify-between">
@@ -199,21 +226,27 @@ const breadcrumbJsonLd = {
                   >
                     {categoryLabel(cat)}
                   </h3>
-                  <span class="font-mono text-[10px] text-muted">{inCat.length}</span>
+                  <span class="font-mono text-[10px] text-muted">
+                    {inCat.length}
+                  </span>
                 </div>
                 <ul class="space-y-1.5 font-mono text-sm">
                   {inCat.map((s) => {
                     const dots = proficiencyDots(s.proficiency);
                     return (
                       <li class="flex items-center justify-between gap-3">
-                        <span class="truncate text-foreground/90">{s.name}</span>
+                        <span class="truncate text-foreground/90">
+                          {s.name}
+                        </span>
                         <span class="flex shrink-0 items-center gap-2">
-                          <span class="text-[11px] tabular-nums text-muted">{s.yearsUsing}y</span>
+                          <span class="text-[11px] tabular-nums text-muted">
+                            {s.yearsUsing}y
+                          </span>
                           <span class="flex gap-0.5">
                             {Array.from({ length: 4 }).map((_, i) => (
                               <span
                                 class="h-[5px] w-[5px] rounded-full"
-                                style={`background-color: ${i < dots ? `oklch(0.7 0.16 ${hue})` : 'oklch(0.28 0 0)'};`}
+                                style={`background-color: ${i < dots ? `oklch(0.7 0.16 ${hue})` : "oklch(0.28 0 0)"};`}
                               />
                             ))}
                           </span>
@@ -227,16 +260,6 @@ const breadcrumbJsonLd = {
           })
         }
       </div>
-    </section>
-
-    {/* EXPERIENCE — sticky-scroll timeline */}
-    <section class="mb-20">
-      <header class="mb-8">
-        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
-          experience<span class="text-accent">.</span>
-        </h2>
-      </header>
-      <RolesTimeline roles={roles} />
     </section>
 
     {/* EDUCATION */}
@@ -278,9 +301,9 @@ const breadcrumbJsonLd = {
             {certifications.map((c) => (
               <li>
                 <a
-                  href={c.credentialUrl || '#'}
+                  href={c.credentialUrl || "#"}
                   class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
-                  target={c.credentialUrl ? '_blank' : undefined}
+                  target={c.credentialUrl ? "_blank" : undefined}
                   rel="noopener"
                 >
                   {c.name} · {c.issuer}

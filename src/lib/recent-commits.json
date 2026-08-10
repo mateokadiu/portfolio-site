@@ -1,24 +1,24 @@
 [
   {
     "repo": "mateokadiu/portfolio-site",
+    "sha": "d11c35f",
+    "message": "refactor(about): reorder Skills section after Experience",
+    "date": "2026-08-10T20:09:17Z",
+    "url": "https://github.com/mateokadiu/portfolio-site/commit/d11c35f19feb104d6d7b4fdac2bb7d793fa9fd30"
+  },
+  {
+    "repo": "mateokadiu/portfolio-site",
+    "sha": "6a9e1f3",
+    "message": "seo: enforce trailing-slash canonical URLs across site, sitemap, and JSON-LD",
+    "date": "2026-07-09T14:54:52Z",
+    "url": "https://github.com/mateokadiu/portfolio-site/commit/6a9e1f3f217eeb3d33740e856007eb089550db1b"
+  },
+  {
+    "repo": "mateokadiu/portfolio-site",
     "sha": "bbaaf17",
     "message": "chore: update cv to latest changes",
     "date": "2026-07-09T14:23:09Z",
     "url": "https://github.com/mateokadiu/portfolio-site/commit/bbaaf173aea10d7fbc7af0f1dd896251a03dca0a"
-  },
-  {
-    "repo": "mateokadiu/portfolio-site",
-    "sha": "0135795",
-    "message": "og: dynamic build-time og image generation via satori + resvg — replaces stale static pngs, wires to live data",
-    "date": "2026-07-01T19:54:26Z",
-    "url": "https://github.com/mateokadiu/portfolio-site/commit/013579594b32aef5402f22c872dab8d9f45f9aba"
-  },
-  {
-    "repo": "mateokadiu/portfolio-site",
-    "sha": "971728f",
-    "message": "project: add companion-admin section to webhook-gateway page linking the angular twin",
-    "date": "2026-06-30T20:40:48Z",
-    "url": "https://github.com/mateokadiu/portfolio-site/commit/971728ff297ca65a7b0f808404f036f32f735317"
   },
   {
     "repo": "mateokadiu/webhook-gateway",
