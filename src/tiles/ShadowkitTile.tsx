@@ -86,7 +86,7 @@ function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
       >
         {active ? '✓' : ''}
       </span>
-      <span className="flex-1 truncate">
+      <span className="min-w-0 flex-1 leading-snug">
         <span className="text-foreground">{label}:</span>{' '}
         <span className="text-muted">{active ? onText : offText}</span>
       </span>
@@ -152,10 +152,13 @@ export default function ShadowkitTile() {
             3 shadow roots · synced through a typed postMessage bridge
           </p>
           {loaded === 'ready' ? (
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="flex flex-wrap gap-2">
               {[1, 2, 3].map((i) => (
+                // Each counter needs ~11rem (its own :host min-width), so wrap
+                // instead of squeezing: 3 across when there's room, 2 + 1 in a
+                // half-width tile, stacked on phones.
                 // @ts-expect-error custom element
-                <sk-counter key={i} id={`sk-${i}`} />
+                <sk-counter key={i} id={`sk-${i}`} style={{ flex: '1 1 11rem' }} />
               ))}
             </div>
           ) : loaded === 'fallback' ? (

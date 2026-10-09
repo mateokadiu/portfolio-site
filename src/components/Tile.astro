@@ -10,10 +10,12 @@ interface Props {
 
 const { size = '1x1', href, label, transitionName, className = '' } = Astro.props;
 
+// Desktop grid is 6 columns: 1x1 and 2x1 tiles take half a row, 2x2 is a
+// full-width feature row. Tablet (4 columns) stacks projects full width.
 const sizeClass = {
-  '1x1': 'lg:col-span-3 md:col-span-2',
-  '2x1': 'lg:col-span-4 md:col-span-4',
-  '2x2': 'lg:col-span-4 md:col-span-4 lg:row-span-2',
+  '1x1': 'md:col-span-2 lg:col-span-3',
+  '2x1': 'md:col-span-4 lg:col-span-3',
+  '2x2': 'md:col-span-4 lg:col-span-6',
 }[size];
 ---
 

@@ -91,7 +91,7 @@ export const PROJECTS: Project[] = [
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/tax-ledger',
     isPrivate: false,
-    tileSize: '2x2',
+    tileSize: '2x1',
   },
   {
     slug: 'webhook-gateway',
