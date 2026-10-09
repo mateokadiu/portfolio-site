@@ -19,7 +19,7 @@ const sizeClass = {
 }[size];
 ---
 
-<div
+<article
   data-tile
   data-size={size}
   data-href={href}
@@ -44,7 +44,7 @@ const sizeClass = {
     )
   }
   <slot />
-</div>
+</article>
 
 <script>
   import { navigate } from 'astro:transitions/client';

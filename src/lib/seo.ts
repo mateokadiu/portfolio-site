@@ -57,7 +57,6 @@ export async function buildPersonNode(): Promise<JsonLdNode> {
       '@type': 'Occupation',
       name: SITE.jobTitle,
       occupationLocation: { '@type': 'City', name: city(personal.location) },
-      skills: skills.map((s) => s.name).join(', '),
     },
   };
 }

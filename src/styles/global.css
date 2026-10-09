@@ -93,3 +93,25 @@ button:focus-visible {
     font-size: 12px;
   }
 }
+
+/* Skill proficiency: 4 dots drawn as one element (filled = --dots). Each dot
+   is 5px with a 2px gap, so one 7px background tile per dot. */
+.skill-dots,
+.skill-dots::before {
+  background-size: 7px 5px;
+  background-repeat: repeat-x;
+}
+.skill-dots {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 5px;
+  background-image: radial-gradient(circle 2.5px at 2.5px 50%, oklch(0.28 0 0) 95%, transparent);
+}
+.skill-dots::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--dots) * 7px);
+  background-image: radial-gradient(circle 2.5px at 2.5px 50%, var(--dot-color) 95%, transparent);
+}

@@ -36,6 +36,10 @@ const categories: SkillCategory[] = [
 ];
 
 const currentRole = roles.find((r) => r.endDate === null);
+const bioParagraphs = personal.bio
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
 const city = personal.location.split(',')[0]?.trim();
 
 const title = `About ${personal.name} — Experience, Skills & CV`;
@@ -131,10 +135,25 @@ const breadcrumbJsonLd = breadcrumbNode([
       </div>
     </header>
 
+    {
+      bioParagraphs.length > 0 && (
+        <section class="mb-20" aria-labelledby="bio">
+          <h2 id="bio" class="mb-5 font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+            bio<span class="text-accent">.</span>
+          </h2>
+          <div class="max-w-3xl space-y-4 text-[15px] leading-relaxed text-foreground/85">
+            {bioParagraphs.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
     {/* EXPERIENCE — sticky-scroll timeline */}
-    <section class="mb-20">
+    <section class="mb-20" aria-labelledby="experience">
       <header class="mb-8">
-        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+        <h2 id="experience" class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
           experience<span class="text-accent">.</span>
         </h2>
       </header>
@@ -142,9 +161,9 @@ const breadcrumbJsonLd = breadcrumbNode([
     </section>
 
     {/* SKILLS — typographic matrix, grouped by altitude */}
-    <section class="mb-20">
+    <section class="mb-20" aria-labelledby="skills">
       <header class="mb-5 flex items-baseline justify-between">
-        <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
+        <h2 id="skills" class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
           skills<span class="text-accent">.</span>
         </h2>
         <p class="font-mono text-[11px] uppercase tracking-wider text-muted">
@@ -164,7 +183,7 @@ const breadcrumbJsonLd = breadcrumbNode([
             if (inCat.length === 0) return null;
             const hue = categoryHue(cat);
             return (
-              <div class="bg-card p-5">
+              <section class="bg-card p-5">
                 <div class="mb-3 flex items-baseline justify-between">
                   <h3
                     class="font-mono text-[10px] uppercase tracking-[0.18em]"
@@ -186,22 +205,20 @@ const breadcrumbJsonLd = breadcrumbNode([
                         </span>
                         <span class="flex shrink-0 items-center gap-2">
                           <span class="text-[11px] tabular-nums text-muted">
-                            {s.yearsUsing}y
+                            {s.yearsUsing}y<span class="sr-only"> experience</span>
                           </span>
-                          <span class="flex gap-0.5">
-                            {Array.from({ length: 4 }).map((_, i) => (
-                              <span
-                                class="h-[5px] w-[5px] rounded-full"
-                                style={`background-color: ${i < dots ? `oklch(0.7 0.16 ${hue})` : "oklch(0.28 0 0)"};`}
-                              />
-                            ))}
-                          </span>
+                          <span
+                            class="skill-dots"
+                            role="img"
+                            aria-label={`${s.proficiency} proficiency`}
+                            style={`--dots: ${dots}; --dot-color: oklch(0.7 0.16 ${hue});`}
+                          />
                         </span>
                       </li>
                     );
                   })}
                 </ul>
-              </div>
+              </section>
             );
           })
         }
