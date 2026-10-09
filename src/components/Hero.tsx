@@ -6,10 +6,14 @@ import { useEffect, useRef } from 'react';
 function splitChars(node: HTMLElement): HTMLSpanElement[] {
   const text = node.textContent ?? '';
   node.textContent = '';
+  // Keep the heading readable as one word for assistive tech — otherwise
+  // screen readers spell out each per-character span.
+  node.setAttribute('aria-label', text);
   const out: HTMLSpanElement[] = [];
   for (const ch of text) {
     const span = document.createElement('span');
     span.textContent = ch === ' ' ? ' ' : ch;
+    span.setAttribute('aria-hidden', 'true');
     span.style.display = 'inline-block';
     span.style.willChange = 'transform, opacity';
     node.appendChild(span);

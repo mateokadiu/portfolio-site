@@ -26,8 +26,8 @@ export const PROJECTS: Project[] = [
     name: 'tide',
     tagline: 'Self-hostable read-later — Pocket / Omnivore replacement.',
     blurb:
-      'Next.js 16 + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
-    stack: ['Next.js 16', 'React 19', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
+      'Next.js + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
+    stack: ['Next.js', 'React', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/tide',
     isPrivate: false,
@@ -36,10 +36,10 @@ export const PROJECTS: Project[] = [
   {
     slug: 'webhook-gateway-admin',
     name: 'webhook-gateway-admin',
-    tagline: 'Angular 19 admin UI for webhook-gateway — zoneless, signals, standalone.',
+    tagline: 'Angular admin UI for webhook-gateway — zoneless, signals, standalone.',
     blurb:
-      'Second admin for webhook-gateway (the canonical one is Next.js). Zoneless change detection, signal-based filters, TanStack Query for Angular, Zod-validated responses, Tailwind v4 + @theme tokens, reactive forms for sources + targets CRUD. Same backend, angular twin — shipped to demonstrate modern Angular against a real domain model.',
-    stack: ['Angular 19', 'TypeScript', 'Tailwind v4', 'TanStack Query', 'Zod'],
+      'Second admin for webhook-gateway (the canonical one is Next.js). Zoneless change detection, signal-based filters, TanStack Query for Angular, Zod-validated responses, Tailwind + @theme tokens, reactive forms for sources + targets CRUD. Same backend, angular twin — shipped to demonstrate modern Angular against a real domain model.',
+    stack: ['Angular', 'TypeScript', 'Tailwind', 'TanStack Query', 'Zod'],
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/webhook-gateway-admin',
     isPrivate: false,
@@ -48,10 +48,10 @@ export const PROJECTS: Project[] = [
   {
     slug: 'shadowkit',
     name: 'shadowkit',
-    tagline: 'Tailwind v4 inside the Shadow DOM, the cascade-safe way.',
+    tagline: 'Tailwind inside the Shadow DOM, the cascade-safe way.',
     blurb:
       'Tiny set of helpers for building Web Components that survive the host page CSS — theme tokens scoped to :host, deduped stylesheet injection, a typed bridge for cross-instance state.',
-    stack: ['Web Components', 'Tailwind v4', 'Vite', 'TypeScript'],
+    stack: ['Web Components', 'Tailwind', 'Vite', 'TypeScript'],
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/shadowkit',
     isPrivate: false,
@@ -122,8 +122,8 @@ export const PROJECTS: Project[] = [
     name: 'stripe-eu-vat-moss',
     tagline: 'EU VAT One-Stop-Shop automation engine.',
     blurb:
-      'Java 21 + Spring Boot 3.4 + JOOQ + Liquibase. Bitemporal event store, 27-country VAT matrix, SAF-OSS XML returns, Stripe Tax + Connect (Art. 14a) ingestion, Pulumi-Java to Oracle Cloud Free.',
-    stack: ['Java 21', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi'],
+      'Java + Spring Boot + JOOQ + Liquibase. Bitemporal event store, 27-country VAT matrix, SAF-OSS XML returns, Stripe Tax + Connect (Art. 14a) ingestion, Pulumi-Java to Oracle Cloud Free.',
+    stack: ['Java', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi'],
     status: 'shipped',
     repoUrl: 'https://github.com/mateokadiu/stripe-eu-vat-moss',
     isPrivate: false,
@@ -144,9 +144,8 @@ export const SOCIAL = {
 export const SITE = {
   title: 'Mateo Kadiu — Senior Full-Stack Engineer',
   description:
-    'Senior full-stack engineer — React · Next.js · Angular · Tailwind · React Native on the front, NestJS · Java/Spring Boot · Kubernetes · Stripe Connect · gRPC on the back. Tirana, EU timezone, remote-friendly. Open to senior IC roles + contract work.',
-  keywords:
-    'senior full-stack engineer, full-stack engineer, frontend engineer, typescript, javascript, react, next.js, angular, tailwind css, web components, react native, nestjs, node.js, java, spring boot, postgres, kubernetes, pulumi, stripe connect, grpc, temporal, remote engineer, eu timezone, contract engineer, tirana',
+    'Mateo Kadiu, senior full-stack engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project tile is a live demo.',
+  jobTitle: 'Senior Full-Stack Engineer',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',

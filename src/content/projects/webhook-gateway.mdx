@@ -2,6 +2,8 @@
 slug: webhook-gateway
 name: webhook-gateway
 tagline: Self-hosted webhook reliability with exponential backoff + DLQ.
+seoTitle: 'webhook-gateway: Self-Hosted Webhook Retries'
+description: 'Self-hosted NestJS webhook gateway: persists inbound webhooks, retries delivery with exponential backoff via BullMQ and parks failures in a replayable DLQ.'
 status: shipped
 stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript']
 repoUrl: 'https://github.com/mateokadiu/webhook-gateway'
@@ -30,7 +32,7 @@ A NestJS service backed by Postgres + BullMQ. The flow is:
 | Repo | github.com/mateokadiu/webhook-gateway |
 | License | MIT |
 | Status | v1.0.0 |
-| Stack | NestJS 11, Postgres 16, BullMQ 5, Redis 7 |
+| Stack | NestJS, Postgres, BullMQ, Redis |
 
 ## The problem I was solving
 
@@ -43,9 +45,9 @@ I needed a layer in front of my own services that:
 - Retries with the right backoff curve for the downstream's actual recovery time
 - Lets me search and bulk-replay
 
-## Companion admin (Angular 19)
+## Companion admin (Angular)
 
-A second admin UI is published as a sibling repo: **[webhook-gateway-admin](https://github.com/mateokadiu/webhook-gateway-admin)** — Angular 19 with `provideExperimentalZonelessChangeDetection()`, signal-based filters, TanStack Query for Angular, and the same Zod schemas. Same backend, two frontends. See the [project page](/projects/webhook-gateway-admin/) for the writeup.
+A second admin UI is published as a sibling repo: **[webhook-gateway-admin](https://github.com/mateokadiu/webhook-gateway-admin)** — Angular with `provideExperimentalZonelessChangeDetection()`, signal-based filters, TanStack Query for Angular, and the same Zod schemas. Same backend, two frontends. See the [project page](/projects/webhook-gateway-admin/) for the writeup.
 
 ## Key decisions
 

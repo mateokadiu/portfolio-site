@@ -18,6 +18,7 @@ interface OgSpec {
 
 const HOME_STACK = ['astro', 'react', 'tailwind', 'three.js', 'framer motion'];
 const ABOUT_STACK = ['nestjs', 'next.js', 'stripe connect', 'kubernetes', 'pulumi'];
+const PROJECTS_STACK = ['temporal', 'stripe connect', 'nestjs', 'angular', 'spring boot'];
 
 async function loadOgSpecs(): Promise<OgSpec[]> {
   const specs: OgSpec[] = [
@@ -33,6 +34,12 @@ async function loadOgSpecs(): Promise<OgSpec[]> {
       title: 'Mateo Kadiu',
       tagline: 'Senior full-stack engineer · Tirana, AL · remote-friendly, EU timezone.',
       stack: ABOUT_STACK,
+    },
+    {
+      slug: 'projects',
+      title: 'projects',
+      tagline: `${PROJECTS.length} open-source projects, each with a live interactive demo.`,
+      stack: PROJECTS_STACK,
     },
   ];
 

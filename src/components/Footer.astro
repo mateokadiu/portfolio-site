@@ -9,7 +9,10 @@ import { SITE, SOCIAL } from '~/lib/data';
     <p class="font-mono text-xs text-muted">
       © {new Date().getFullYear()} {SITE.author} — MIT licensed
     </p>
-    <ul class="flex items-center gap-4 font-mono text-xs">
+    <ul class="flex flex-wrap items-center gap-4 font-mono text-xs">
+      <li>
+        <a href="/projects/" class="text-muted hover:text-foreground transition-colors">projects</a>
+      </li>
       <li>
         <a
           href="https://github.com/mateokadiu/portfolio-site"

@@ -138,7 +138,7 @@ export default function ShadowkitTile() {
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">shadowkit</h3>
           <p className="mt-1 text-xs text-muted">
-            Tailwind v4 inside Shadow DOM — cascade boundary holds
+            Tailwind inside Shadow DOM — cascade boundary holds
           </p>
         </div>
         <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">

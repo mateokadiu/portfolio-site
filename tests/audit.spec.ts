@@ -1,9 +1,10 @@
-import { expect, test } from '@playwright/test';
+import { type Page, expect, test } from '@playwright/test';
 import { PROJECTS_WITH_DEMO_HINTS, projectPath } from './site-urls';
 
 const PAGES = [
   '/',
   '/about/',
+  '/projects/',
   '/projects/temporal-stripe/',
   '/projects/webhook-gateway/',
   '/projects/webhook-gateway-admin/',
@@ -18,6 +19,7 @@ const PAGES = [
 const STATIC_ASSETS = [
   '/og/default.png',
   '/og/about.png',
+  '/og/projects.png',
   '/og/temporal-stripe.png',
   '/og/webhook-gateway.png',
   '/og/shadowkit.png',
@@ -30,10 +32,22 @@ const STATIC_ASSETS = [
   '/manifest.webmanifest',
   '/apple-touch-icon.png',
   '/favicon-32.png',
+  '/favicon.ico',
   '/favicon.svg',
   '/robots.txt',
+  '/llms.txt',
   '/sitemap-index.xml',
 ];
+
+type LdNode = Record<string, unknown> & { '@type'?: string };
+
+async function jsonLdNodes(page: Page): Promise<LdNode[]> {
+  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
+  return scripts.flatMap((s) => {
+    const doc = JSON.parse(s);
+    return (doc['@graph'] ?? [doc]) as LdNode[];
+  });
+}
 
 for (const path of PAGES) {
   test(`page returns 200: ${path}`, async ({ page }) => {
@@ -82,11 +96,63 @@ test('homepage has full SEO meta', async ({ page }) => {
 
 test('homepage has Person + WebSite + ItemList JSON-LD without duplicates', async ({ page }) => {
   await page.goto('/');
-  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
-  const types = scripts.map((s) => JSON.parse(s)['@type']);
+  const types = (await jsonLdNodes(page)).map((n) => n['@type']);
   expect(types.filter((t) => t === 'Person')).toHaveLength(1);
   expect(types.filter((t) => t === 'WebSite')).toHaveLength(1);
   expect(types).toContain('ItemList');
+});
+
+for (const path of PAGES) {
+  test(`one consistent Person entity: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const people = (await jsonLdNodes(page)).filter((n) => n['@type'] === 'Person');
+    expect(people).toHaveLength(1);
+    expect(people[0]['@id']).toBe('https://mateokadiu.com/#person');
+    expect(people[0].jobTitle).toBe('Senior Full-Stack Engineer');
+  });
+
+  test(`title + description fit search snippets: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const description = await page.locator('meta[name="description"]').getAttribute('content');
+    expect(description?.length ?? 0).toBeGreaterThanOrEqual(110);
+    expect(description?.length ?? 0).toBeLessThanOrEqual(160);
+    expect((await page.title()).length).toBeLessThanOrEqual(70);
+  });
+}
+
+test('page titles are unique', async ({ page }) => {
+  const titles = new Set<string>();
+  for (const path of PAGES) {
+    await page.goto(path);
+    titles.add(await page.title());
+  }
+  expect(titles.size).toBe(PAGES.length);
+});
+
+test('no twitter handle meta (no account)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[name="twitter:site"], meta[name="twitter:creator"]')).toHaveCount(
+    0,
+  );
+});
+
+test('unknown URLs return a real 404 that is not indexable', async ({ page }) => {
+  const res = await page.goto('/definitely-not-a-page/');
+  expect(res?.status()).toBe(404);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+});
+
+test('linked tiles use a real link without nesting controls inside it', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('a[data-tile-link][href="/projects/tide/"]')).toHaveCount(1);
+  await expect(page.locator('a button, a input, a sk-counter')).toHaveCount(0);
+});
+
+test('clicking a tile body opens its project page', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-tile][data-href="/projects/tide/"] h3').first().click();
+  await expect(page).toHaveURL(/\/projects\/tide\/$/);
 });
 
 test('about page canonical uses trailing slash', async ({ page }) => {
@@ -97,21 +163,20 @@ test('about page canonical uses trailing slash', async ({ page }) => {
   );
 });
 
-test('project page has article meta + SoftwareSourceCode JSON-LD', async ({ page }) => {
+test('project page has SoftwareSourceCode + breadcrumb JSON-LD', async ({ page }) => {
   await page.goto('/projects/temporal-stripe/');
-  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
-  await expect(page.locator('meta[property="article:author"]')).toHaveAttribute(
-    'content',
-    'Mateo Kadiu',
-  );
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     'https://mateokadiu.com/projects/temporal-stripe/',
   );
-  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
-  const types = scripts.map((s) => JSON.parse(s)['@type']);
-  expect(types).toContain('SoftwareSourceCode');
-  expect(types).toContain('BreadcrumbList');
+  const nodes = await jsonLdNodes(page);
+  const code = nodes.find((n) => n['@type'] === 'SoftwareSourceCode');
+  expect(code?.author).toEqual({ '@id': 'https://mateokadiu.com/#person' });
+  expect(code?.programmingLanguage).toBe('TypeScript');
+  const crumbs = nodes.find((n) => n['@type'] === 'BreadcrumbList');
+  expect(JSON.stringify(crumbs)).toContain('https://mateokadiu.com/projects/"');
+  expect(JSON.stringify(crumbs)).not.toContain('#work');
 });
 
 test('sitemap lists all indexable pages', async ({ request }) => {
@@ -123,13 +188,16 @@ test('sitemap lists all indexable pages', async ({ request }) => {
     expect(m).toContain(absolute);
   }
   expect(m).not.toContain('/embeds/');
+  expect(m).not.toContain('/404');
 });
 
-test('robots.txt allows crawl, blocks embeds, links sitemap', async ({ request }) => {
+test('robots.txt allows crawl (incl. demo embeds Google must render), links sitemap', async ({
+  request,
+}) => {
   const r = await (await request.get('/robots.txt')).text();
   expect(r).toMatch(/User-agent:\s*\*/);
   expect(r).toMatch(/Allow:\s*\//);
-  expect(r).toMatch(/Disallow:\s*\/embeds\//);
+  expect(r).not.toMatch(/Disallow:\s*\/embeds\//);
   expect(r).toMatch(/Sitemap:.+sitemap-index\.xml/);
 });
 

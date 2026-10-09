@@ -13,7 +13,8 @@ import {
   loadSkills,
   proficiencyDots,
 } from '~/lib/cv';
-import { siteUrl } from '~/lib/data';
+import { SITE, siteUrl } from '~/lib/data';
+import { breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
 
 const [personal, links, roles, skills, education, certifications] = await Promise.all([
   loadPersonal(),
@@ -34,92 +35,37 @@ const categories: SkillCategory[] = [
   'tools',
 ];
 
-const currentRole = roles[0];
+const currentRole = roles.find((r) => r.endDate === null);
+const city = personal.location.split(',')[0]?.trim();
 
-const personJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  '@id': `${siteUrl('/')}#person`,
-  name: personal.name,
-  givenName: personal.name.split(' ')[0],
-  familyName: personal.name.split(' ').slice(1).join(' '),
-  jobTitle: 'Software Engineer',
-  description: personal.tagline,
-  email: `mailto:${personal.email}`,
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: personal.location.split(',')[0]?.trim() ?? 'Tirana',
-    addressCountry: 'AL',
-  },
-  url: siteUrl('/'),
-  mainEntityOfPage: siteUrl('/about'),
-  image: siteUrl('/og/about.png'),
-  sameAs: [links.github, links.linkedin].filter(Boolean),
-  knowsAbout: skills.map((s) => s.name),
-  worksFor: currentRole
-    ? {
-        '@type': 'Organization',
-        name: currentRole.company,
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: currentRole.location.split(',')[0]?.trim(),
-        },
-      }
-    : undefined,
-  alumniOf: education.map((e) => ({
-    '@type': 'CollegeOrUniversity',
-    name: e.school,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: e.location.split(',')[0]?.trim(),
-    },
-  })),
-  hasOccupation: {
-    '@type': 'Occupation',
-    name: 'Software Engineer',
-    occupationLocation: {
-      '@type': 'City',
-      name: personal.location.split(',')[0]?.trim(),
-    },
-    skills: skills.map((s) => s.name).join(', '),
-  },
-};
+const title = `About ${personal.name} — Experience, Skills & CV`;
+const description = `${personal.name}: ${SITE.jobTitle.toLowerCase()}${currentRole ? ` at ${currentRole.company}` : ''}, based in ${city}. Experience, skills, education and a downloadable CV.`;
 
 const profilePageJsonLd = {
-  '@context': 'https://schema.org',
   '@type': 'ProfilePage',
-  '@id': `${siteUrl('/about')}#profile`,
+  '@id': `${siteUrl('/about')}#webpage`,
   url: siteUrl('/about'),
-  name: `${personal.name} — About`,
-  description: personal.tagline,
-  mainEntity: { '@id': `${siteUrl('/')}#person` },
-  primaryImageOfPage: siteUrl('/og/about.png'),
+  name: title,
+  description,
   inLanguage: 'en-US',
-  isPartOf: { '@type': 'WebSite', url: siteUrl('/'), name: 'Mateo Kadiu' },
+  isPartOf: websiteRef,
+  about: personRef,
+  mainEntity: personRef,
+  primaryImageOfPage: siteUrl('/og/about.png'),
 };
 
-const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl('/') },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'About',
-      item: siteUrl('/about'),
-    },
-  ],
-};
+const breadcrumbJsonLd = breadcrumbNode([
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+]);
 ---
 
 <Layout
-  title="About"
-  description={personal.tagline}
+  title={title}
+  description={description}
   ogImage="/og/about.png"
-  canonical={siteUrl("/about")}
   pageType="profile"
-  jsonLd={[personJsonLd, profilePageJsonLd, breadcrumbJsonLd]}
+  jsonLd={[profilePageJsonLd, breadcrumbJsonLd]}
 >
   <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
     <header class="mb-14">
@@ -300,14 +246,20 @@ const breadcrumbJsonLd = {
           <ul class="flex flex-wrap gap-2 font-mono text-xs">
             {certifications.map((c) => (
               <li>
-                <a
-                  href={c.credentialUrl || "#"}
-                  class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
-                  target={c.credentialUrl ? "_blank" : undefined}
-                  rel="noopener"
-                >
-                  {c.name} · {c.issuer}
-                </a>
+                {c.credentialUrl ? (
+                  <a
+                    href={c.credentialUrl}
+                    class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {c.name} · {c.issuer}
+                  </a>
+                ) : (
+                  <span class="rounded-md border border-border bg-card px-3 py-1.5 text-muted">
+                    {c.name} · {c.issuer}
+                  </span>
+                )}
               </li>
             ))}
           </ul>

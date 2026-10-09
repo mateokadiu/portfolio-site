@@ -1,0 +1,51 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { PROJECTS, sitePath } from '~/lib/data';
+---
+
+<Layout
+  title="Page not found"
+  description="This page doesn't exist. Head back to the portfolio or browse the projects."
+  noindex
+>
+  <section class="mx-auto flex min-h-[60vh] max-w-3xl flex-col justify-center px-6 py-16">
+    <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">error · 404</p>
+    <h1 class="mt-4 font-mono text-4xl font-semibold tracking-tight sm:text-5xl">
+      not found<span class="text-accent">.</span>
+    </h1>
+    <p class="mt-4 max-w-xl text-base text-muted">
+      Nothing lives at this URL. It may have moved, or the link has a typo.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-2 font-mono text-xs">
+      <a
+        href="/"
+        class="rounded-md border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent transition-colors hover:bg-accent/15"
+        >← home</a
+      >
+      <a
+        href="/projects/"
+        class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+        >all projects</a
+      >
+      <a
+        href="/about/"
+        class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+        >about</a
+      >
+    </div>
+    <ul class="mt-12 grid gap-x-6 gap-y-2 font-mono text-sm sm:grid-cols-2">
+      {
+        PROJECTS.map((p) => (
+          <li>
+            <a
+              href={sitePath(`/projects/${p.slug}`)}
+              class="text-muted transition-colors hover:text-foreground"
+            >
+              {p.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>

@@ -1,9 +1,11 @@
 ---
 slug: shadowkit
 name: shadowkit
-tagline: Tailwind v4 inside the Shadow DOM, the cascade-safe way.
+tagline: Tailwind inside the Shadow DOM, the cascade-safe way.
+seoTitle: 'shadowkit: Tailwind Inside the Shadow DOM'
+description: 'Helpers for using Tailwind inside Web Components without host-page CSS leaking in: theme tokens scoped to :host, deduped stylesheets, typed shared state.'
 status: shipped
-stack: ['Web Components', 'Tailwind v4', 'Vite', 'TypeScript']
+stack: ['Web Components', 'Tailwind', 'Vite', 'TypeScript']
 repoUrl: 'https://github.com/mateokadiu/shadowkit'
 isPrivate: false
 tileSize: '2x1'
@@ -19,7 +21,7 @@ A Turborepo containing four small packages plus a runnable example:
 
 - `@shadowkit/core` — `ShadowComponent` base class, `createStore`, `watchStore`, `defineElement`, cleanup-tracker for `disconnectedCallback`.
 - `@shadowkit/theme` — design-token DSL that compiles to `:host { --token: value }` blocks. No global CSS variables.
-- `@shadowkit/tailwind` — adopted-stylesheet injector that takes the Tailwind v4 output, content-hashes it, and dedupes across instances. The same CSS source produces one `CSSStyleSheet` object across an arbitrary number of `<sk-counter>` instances.
+- `@shadowkit/tailwind` — adopted-stylesheet injector that takes the Tailwind output, content-hashes it, and dedupes across instances. The same CSS source produces one `CSSStyleSheet` object across an arbitrary number of `<sk-counter>` instances.
 - `@shadowkit/bridge` — `makeCounterBridge()` returning a typed pub/sub attached to `window`. Lets sibling components agree on shared state without exposing internals.
 
 The `examples/embed-counter` demo proves the cascade boundary: three `<sk-counter>` instances on a host page, the host has its own hostile theme, and host CSS rules targeting `.sk-counter` or `sk-counter` cannot reach the component's internals.

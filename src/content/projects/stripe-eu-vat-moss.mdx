@@ -2,8 +2,11 @@
 slug: stripe-eu-vat-moss
 name: stripe-eu-vat-moss
 tagline: EU VAT One-Stop-Shop automation engine.
+seoTitle: 'stripe-eu-vat-moss: EU VAT OSS Engine in Java'
+description: 'EU VAT One-Stop-Shop engine in Java and Spring Boot: bitemporal event store, VAT rates for all 27 EU countries, SAF-OSS XML returns, Stripe Tax ingestion.'
+language: Java
 status: shipped
-stack: ['Java 21', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi']
+stack: ['Java', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi']
 repoUrl: 'https://github.com/mateokadiu/stripe-eu-vat-moss'
 isPrivate: false
 tileSize: '2x1'
@@ -15,7 +18,7 @@ tileSize: '2x1'
 
 ## What it is
 
-Java 21 + Spring Boot 3.4 + Spring Modulith. Eight modules:
+Java + Spring Boot + Spring Modulith. Eight modules:
 
 - **`moss-shared`** — primitive value types (Money, Country, Period, IsoCurrency, UUIDv7), jqwik property tests
 - **`moss-ledger`** — bitemporal Postgres event store via JOOQ (no JPA), append-only with effective + recorded time

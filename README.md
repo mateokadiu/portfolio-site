@@ -1,6 +1,6 @@
 # portfolio-site
 
-Personal portfolio at [mateokadiu.pages.dev](https://mateokadiu.pages.dev) — a bento-grid interactive showcase where every project tile is a live mini-demo of the actual work.
+Personal portfolio at [mateokadiu.com](https://mateokadiu.com) — a bento-grid interactive showcase where every project tile is a live mini-demo of the actual work.
 
 Astro 5 + Tailwind v4 + React islands + Framer Motion + GSAP + react-three-fiber. Zero JS on first paint, lazy-hydrated tiles, Lighthouse 95+ across the board.
 
@@ -51,7 +51,7 @@ pnpm test:visual  # playwright visual smoke
 
 ## Deploy
 
-Cloudflare Pages (free tier). Build command `pnpm build`, output `dist/`. Deploys to [mateokadiu.pages.dev](https://mateokadiu.pages.dev).
+Cloudflare Pages (free tier). Build command `pnpm build`, output `dist/`. Deploys to [mateokadiu.com](https://mateokadiu.com). `mateokadiu.pages.dev` 301s to it via a Cloudflare Bulk Redirect, and every `*.pages.dev` host (including preview deploys) is sent `X-Robots-Tag: noindex` from `public/_headers`.
 
 ## License
 

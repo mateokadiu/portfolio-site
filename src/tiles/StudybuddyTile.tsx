@@ -90,15 +90,7 @@ export default function StudybuddyTile() {
                 ease: [0.16, 1, 0.3, 1],
               }}
               onMouseEnter={() => setHover({ w: c.w, d: c.d, count: c.count })}
-            >
-              <title>
-                {dateForCell(c.w, c.d).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                })}
-                {` · ${c.count} reviews`}
-              </title>
-            </motion.rect>
+            />
           ))}
           {MONTHS.map((m, i) => (
             <text
@@ -119,7 +111,7 @@ export default function StudybuddyTile() {
               month: 'short',
               day: 'numeric',
             })}{' '}
-            · {hover.count} reviews
+            · {hover.count} {hover.count === 1 ? 'review' : 'reviews'}
           </div>
         )}
       </div>
@@ -130,6 +122,7 @@ export default function StudybuddyTile() {
           <span
             key={c}
             style={{ background: c }}
+            role="img"
             aria-label={`level ${i}`}
             className="inline-block h-2.5 w-2.5 rounded-sm"
           />

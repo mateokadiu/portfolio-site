@@ -12,7 +12,7 @@
   --color-accent-soft: oklch(0.65 0.18 25 / 0.18);
 
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "JetBrains Mono", monospace;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --font-display: "Geist Mono", ui-monospace, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -47,7 +47,10 @@ button:focus-visible {
   outline-offset: 4px;
 }
 
-[data-tile]:focus-visible {
+/* Linked tiles carry a visually hidden <a>; show its focus ring on the tile. */
+[data-tile]:has(> [data-tile-link]:focus-visible) {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 6px;
 }
 

@@ -3,17 +3,19 @@ import '~/styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Footer from '~/components/Footer.astro';
 import Nav from '~/components/Nav.astro';
-import { PROJECTS, SITE, SOCIAL, siteUrl } from '~/lib/data';
+import { SITE, SOCIAL, siteUrl } from '~/lib/data';
+import { type JsonLdNode, buildPersonNode, websiteNode } from '~/lib/seo';
 
 interface Props {
+  /** Page title. The author's name is appended unless the title already contains it. */
   title?: string;
   description?: string;
   ogImage?: string;
+  /** Defaults to the current page's URL. */
   canonical?: string;
-  pageType?: 'website' | 'article' | 'profile';
-  articleTags?: string[];
-  articlePublishedTime?: string;
-  jsonLd?: Record<string, unknown>[];
+  pageType?: 'website' | 'profile';
+  /** Page-level JSON-LD nodes; the site-wide Person + WebSite are always included. */
+  jsonLd?: JsonLdNode[];
   noindex?: boolean;
 }
 
@@ -21,88 +23,20 @@ const {
   title = SITE.title,
   description = SITE.description,
   ogImage = '/og/default.png',
-  canonical = siteUrl('/'),
+  canonical = siteUrl(Astro.url.pathname),
   pageType = 'website',
-  articleTags = [],
-  articlePublishedTime,
   jsonLd = [],
   noindex = false,
 } = Astro.props;
 
-const fullTitle = title === SITE.title ? title : `${title} — Mateo Kadiu`;
+const fullTitle = title.includes(SITE.author) ? title : `${title} — ${SITE.author}`;
 const absoluteOg = new URL(ogImage, SITE.url).toString();
+const [firstName, ...lastNames] = SITE.author.split(' ');
 
-const personLd = {
+const graph = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: SITE.author,
-  url: SITE.url,
-  image: new URL('/og/default.png', SITE.url).toString(),
-  jobTitle: 'Senior Full-Stack Engineer',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Tirana',
-    addressCountry: 'AL',
-  },
-  email: `mailto:${SOCIAL.email}`,
-  sameAs: [SOCIAL.github, SOCIAL.linkedin],
-  knowsAbout: [
-    'TypeScript',
-    'React',
-    'NestJS',
-    'Next.js',
-    'Stripe Connect',
-    'React Native',
-    'gRPC',
-    'Angular',
-    'Postgres',
-    'Tailwind CSS',
-    'Java',
-    'Spring Boot',
-    'Web Components',
-    'Kubernetes',
-    'Pulumi',
-    'Temporal',
-  ],
+  '@graph': [websiteNode, await buildPersonNode(), ...jsonLd],
 };
-
-const websiteLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: SITE.title,
-  url: SITE.url,
-  description: SITE.description,
-  inLanguage: 'en-US',
-  author: { '@type': 'Person', name: SITE.author, url: SITE.url },
-};
-
-const itemListLd =
-  canonical === siteUrl('/')
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
-        name: 'Projects by Mateo Kadiu',
-        itemListOrder: 'https://schema.org/ItemListOrderAscending',
-        numberOfItems: PROJECTS.length,
-        itemListElement: PROJECTS.map((p, i) => ({
-          '@type': 'ListItem',
-          position: i + 1,
-          url: siteUrl(`/projects/${p.slug}`),
-          name: p.name,
-          description: p.tagline,
-        })),
-      }
-    : null;
-
-const hasCustomPerson = jsonLd.some((ld) => ld['@type'] === 'Person');
-const hasCustomWebsite = jsonLd.some((ld) => ld['@type'] === 'WebSite');
-
-const allLd = [
-  ...(hasCustomPerson ? [] : [personLd]),
-  ...(hasCustomWebsite ? [] : [websiteLd]),
-  ...(itemListLd ? [itemListLd] : []),
-  ...jsonLd,
-];
 ---
 
 <!doctype html>
@@ -112,21 +46,20 @@ const allLd = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={SITE.keywords} />
     <meta name="author" content={SITE.author} />
     <meta
       name="robots"
       content={noindex
-        ? 'noindex, nofollow'
+        ? 'noindex, follow'
         : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
     />
-    <meta name="googlebot" content="index, follow" />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#252525" />
     <meta name="color-scheme" content="dark" />
     <meta name="generator" content={Astro.generator} />
     <meta name="google-site-verification" content="gxH_Zu8T9GiJLNEBvVIrNK2blZP78v0v0BEdrSUBkXM" />
 
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
@@ -135,7 +68,7 @@ const allLd = [
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <link rel="me" href={SOCIAL.github} />
     <link rel="me" href={SOCIAL.linkedin} />
-    <link rel="author" href={SITE.url} />
+    <link rel="author" href={siteUrl('/about')} />
 
     <link
       rel="preload"
@@ -151,42 +84,37 @@ const allLd = [
       type="font/woff2"
       crossorigin="anonymous"
     />
+    <link
+      rel="preload"
+      href="/fonts/GeistMono-SemiBold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
 
     <meta property="og:type" content={pageType} />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="Mateo Kadiu" />
+    <meta property="og:site_name" content={SITE.author} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={absoluteOg} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content={`${title} — preview card`} />
-
-    {pageType === 'article' && articlePublishedTime && (
-      <meta property="article:published_time" content={articlePublishedTime} />
-    )}
-    {pageType === 'article' && (
-      <meta property="article:author" content={SITE.author} />
-    )}
-    {articleTags.map((t) => (
-      <meta property="article:tag" content={t} />
-    ))}
+    <meta property="og:image:alt" content={`${fullTitle} — preview card`} />
+    {pageType === 'profile' && <meta property="profile:first_name" content={firstName} />}
+    {pageType === 'profile' && <meta property="profile:last_name" content={lastNames.join(' ')} />}
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteOg} />
-    <meta name="twitter:image:alt" content={`${title} — preview card`} />
-    <meta name="twitter:creator" content="@mateokadiu" />
-    <meta name="twitter:site" content="@mateokadiu" />
+    <meta name="twitter:image:alt" content={`${fullTitle} — preview card`} />
 
     <ClientRouter />
 
-    {allLd.map((ld) => (
-      <script type="application/ld+json" set:html={JSON.stringify(ld)} />
-    ))}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
   </head>
   <body class="min-h-screen bg-background font-sans text-foreground">
     <a

@@ -1,0 +1,106 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { PROJECTS, SITE, sitePath, siteUrl } from '~/lib/data';
+import { breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
+
+const title = 'Open-Source Projects';
+const description =
+  'Open-source projects by Mateo Kadiu: Stripe Connect on Temporal, a tax ledger, a webhook gateway, plus Next.js, Angular and React Native apps with live demos.';
+
+const collectionLd = {
+  '@type': 'CollectionPage',
+  '@id': `${siteUrl('/projects')}#webpage`,
+  url: siteUrl('/projects'),
+  name: `${title} — ${SITE.author}`,
+  description,
+  inLanguage: 'en-US',
+  isPartOf: websiteRef,
+  about: personRef,
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: PROJECTS.length,
+    itemListElement: PROJECTS.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: siteUrl(`/projects/${p.slug}`),
+      name: p.name,
+    })),
+  },
+};
+
+const breadcrumbLd = breadcrumbNode([
+  { name: 'Home', path: '/' },
+  { name: 'Projects', path: '/projects' },
+]);
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogImage="/og/projects.png"
+  jsonLd={[collectionLd, breadcrumbLd]}
+>
+  <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+    <header class="mb-12">
+      <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
+        projects · {PROJECTS.length} open source · MIT
+      </p>
+      <h1 class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+        projects<span class="text-accent">.</span>
+      </h1>
+      <p class="mt-3 max-w-2xl text-balance text-base text-muted sm:text-lg">
+        Everything here is public on GitHub. Each project page has an interactive demo of how it
+        works, plus the architecture and the decisions behind it.
+      </p>
+    </header>
+
+    <ul class="grid gap-4">
+      {
+        PROJECTS.map((p) => (
+          <li class="rounded-2xl border border-border bg-card p-5 sm:p-6">
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="font-mono text-lg font-semibold tracking-tight">
+                <a
+                  href={sitePath(`/projects/${p.slug}`)}
+                  class="text-foreground transition-colors hover:text-accent"
+                >
+                  {p.name}
+                </a>
+              </h2>
+              <span class="rounded-full border border-border px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-muted">
+                {p.status}
+              </span>
+            </div>
+            <p class="mt-1 text-sm text-foreground/90">{p.tagline}</p>
+            <p class="mt-3 text-sm leading-relaxed text-muted">{p.blurb}</p>
+            <ul class="mt-4 flex flex-wrap gap-1.5" aria-label={`${p.name} stack`}>
+              {p.stack.map((tech) => (
+                <li class="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-muted">
+                  {tech}
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4 flex flex-wrap gap-4 font-mono text-xs">
+              <a
+                href={sitePath(`/projects/${p.slug}`)}
+                class="text-accent transition-colors hover:text-foreground"
+              >
+                demo + case study →
+              </a>
+              {p.repoUrl && (
+                <a
+                  href={p.repoUrl}
+                  target="_blank"
+                  rel="noopener"
+                  class="text-muted transition-colors hover:text-foreground"
+                >
+                  github ↗
+                </a>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</Layout>

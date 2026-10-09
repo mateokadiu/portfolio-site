@@ -1,0 +1,28 @@
+# Cloudflare Pages response headers.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000
+
+# The site is also served from *.pages.dev (production + preview deploys).
+# Only https://mateokadiu.com should be indexed.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+# Vendored demo bundle: crawlable (Google needs it to render the shadowkit
+# tile) but not a page that should appear in search.
+/embeds/*
+  X-Robots-Tag: noindex
+
+# Content-hashed build assets never change.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=2592000

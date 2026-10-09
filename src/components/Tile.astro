@@ -2,6 +2,7 @@
 interface Props {
   size?: '1x1' | '2x1' | '2x2';
   href?: string;
+  /** Link text for linked tiles (read by screen readers and crawlers). */
   label?: string;
   transitionName?: string;
   className?: string;
@@ -14,55 +15,76 @@ const sizeClass = {
   '2x1': 'lg:col-span-4 md:col-span-4',
   '2x2': 'lg:col-span-4 md:col-span-4 lg:row-span-2',
 }[size];
-
-const Tag = href ? 'a' : 'div';
-const linkProps = href ? { href } : {};
-// `label` kept on the API for future use but not emitted as aria-label —
-// the tile's visible h3 + tagline already give the accessible name,
-// and adding aria-label here trips lighthouse label-content-name-mismatch.
-void label;
 ---
 
-<Tag
-  {...linkProps}
+<div
   data-tile
   data-size={size}
+  data-href={href}
   class:list={[
-    'group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-5 transition-colors hover:border-accent/40 hover:bg-card-hover focus-visible:border-accent',
+    'group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-5 transition-colors hover:border-accent/40 hover:bg-card-hover',
+    href && 'cursor-pointer',
     sizeClass,
     className,
   ]}
   transition:name={transitionName}
   transition:animate="initial"
 >
+  {
+    // Tiles host interactive demos (buttons, inputs, web components), which
+    // can't be nested inside an <a>. The real link is a visually hidden
+    // sibling — keyboard, screen readers and crawlers use it; mouse clicks on
+    // the rest of the tile are forwarded by the script below.
+    href && (
+      <a href={href} data-tile-link class="sr-only">
+        {label ?? 'Open'}
+      </a>
+    )
+  }
   <slot />
-</Tag>
+</div>
 
 <script>
-  // Tile anchors wrap interactive demos (buttons, web components, inputs). A
-  // click on those should drive the demo, not navigate to /projects/[slug].
-  // Single capture-phase listener catches every tile; survives ClientRouter
-  // navigations via a window-level guard.
+  import { navigate } from 'astro:transitions/client';
+
+  // One document-level listener for every tile; survives ClientRouter
+  // navigations via a window-level guard. Clicks on a demo's own controls
+  // drive the demo; clicks anywhere else on a linked tile open its page.
   declare global {
     interface Window {
-      __tileInteractGuard?: boolean;
+      __tileNavBound?: boolean;
     }
   }
-  if (!window.__tileInteractGuard) {
-    window.__tileInteractGuard = true;
+  if (!window.__tileNavBound) {
+    window.__tileNavBound = true;
     const INTERACTIVE_SELECTOR =
-      'button, [role="button"], input, textarea, select, label, [contenteditable="true"], sk-counter, [data-tile-interactive]';
-    document.addEventListener(
-      'click',
-      (event) => {
-        const target = event.target as HTMLElement | null;
-        if (!target) return;
-        if (!target.closest('a[data-tile]')) return;
-        if (target.closest(INTERACTIVE_SELECTOR)) {
-          event.preventDefault();
-        }
-      },
-      true,
-    );
+      'a, button, [role="button"], input, textarea, select, label, [contenteditable="true"], sk-counter, [data-tile-interactive]';
+
+    const tileHref = (event: MouseEvent): string | null => {
+      const target = event.target as Element | null;
+      if (!target || event.defaultPrevented) return null;
+      const tile = target.closest<HTMLElement>('[data-tile][data-href]');
+      if (!tile || target.closest(INTERACTIVE_SELECTOR)) return null;
+      return tile.dataset.href ?? null;
+    };
+
+    document.addEventListener('click', (event) => {
+      if (event.button !== 0) return;
+      const href = tileHref(event);
+      if (!href) return;
+      // Let people select text inside a tile without navigating away.
+      if (window.getSelection()?.toString()) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey) {
+        window.open(href, '_blank', 'noopener');
+        return;
+      }
+      navigate(href);
+    });
+
+    document.addEventListener('auxclick', (event) => {
+      if (event.button !== 1) return;
+      const href = tileHref(event);
+      if (href) window.open(href, '_blank', 'noopener');
+    });
   }
 </script>

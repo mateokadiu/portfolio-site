@@ -37,7 +37,7 @@ export default function TideTile() {
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">tide</h3>
           <p className="mt-1 text-xs text-muted">
-            Self-hostable read-later · Next.js 16 + RSC + pgvector + Anthropic
+            Self-hostable read-later · Next.js + RSC + pgvector + Anthropic
           </p>
         </div>
         <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">

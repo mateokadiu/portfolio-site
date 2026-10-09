@@ -1,9 +1,11 @@
 ---
 slug: webhook-gateway-admin
 name: webhook-gateway-admin
-tagline: Angular 19 admin UI for webhook-gateway — zoneless, signals, standalone.
+tagline: Angular admin UI for webhook-gateway — zoneless, signals, standalone.
+seoTitle: 'webhook-gateway-admin: Angular Signals Admin'
+description: 'Angular admin UI for webhook-gateway: zoneless change detection, signals, TanStack Query and Zod-validated responses, styled with Tailwind.'
 status: shipped
-stack: ['Angular 19', 'TypeScript', 'Tailwind v4', 'TanStack Query', 'Zod']
+stack: ['Angular', 'TypeScript', 'Tailwind', 'TanStack Query', 'Zod']
 repoUrl: 'https://github.com/mateokadiu/webhook-gateway-admin'
 isPrivate: false
 tileSize: '2x1'
@@ -11,7 +13,7 @@ tileSize: '2x1'
 
 ## Elevator pitch
 
-> Second admin for [`webhook-gateway`](https://github.com/mateokadiu/webhook-gateway). The canonical admin is Next.js + React 19; this one is Angular 19 with zoneless change detection, signal-based filters, and TanStack Query for Angular against the same backend. Built to demonstrate modern Angular against a real domain model, not a toy.
+> Second admin for [`webhook-gateway`](https://github.com/mateokadiu/webhook-gateway). The canonical admin is Next.js + React; this one is Angular with zoneless change detection, signal-based filters, and TanStack Query for Angular against the same backend. Built to demonstrate modern Angular against a real domain model, not a toy.
 
 ## What it is
 
@@ -44,7 +46,7 @@ The "same backend, two frontends" framing is also a real interview talking point
 | Zod validation at the I/O boundary | `core/models/schemas.ts` mirrors `@webhook-gateway/shared` 1-1 |
 | Reactive forms with `Zod.safeParse` on submit | source + target forms |
 | Functional router with lazy `loadComponent` | `app.routes.ts` |
-| Tailwind v4 `@theme` tokens | `src/styles.css` — single source of truth for the OKLCH palette |
+| Tailwind `@theme` tokens | `src/styles.css` — single source of truth for the OKLCH palette |
 
 ## Numbers
 

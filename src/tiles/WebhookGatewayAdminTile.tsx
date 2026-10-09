@@ -51,7 +51,7 @@ export default function WebhookGatewayAdminTile() {
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway-admin</h3>
           <p className="mt-1 text-xs text-muted">
-            Angular 19 admin · zoneless · <span className="font-mono text-accent">signal()</span>{' '}
+            Angular admin · zoneless · <span className="font-mono text-accent">signal()</span>{' '}
             filters
           </p>
         </div>
@@ -76,30 +76,32 @@ export default function WebhookGatewayAdminTile() {
           <div className="min-w-0 space-y-2">
             {/* stat cards (signal-driven counters) */}
             <div className="grid grid-cols-2 gap-1.5">
-              <motion.div
-                key={`rec-${received}`}
-                initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="rounded border border-border/60 px-2 py-1"
-              >
+              <div className="rounded border border-border/60 px-2 py-1">
                 <p className="font-mono text-[9px] uppercase tracking-wider text-muted">received</p>
-                <p className="font-mono text-base tabular-nums leading-tight">{received}</p>
-              </motion.div>
-              <motion.div
-                key={`del-${delivered}`}
-                initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="rounded border border-border/60 px-2 py-1"
-              >
+                <motion.p
+                  key={received}
+                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="font-mono text-base tabular-nums leading-tight"
+                >
+                  {received}
+                </motion.p>
+              </div>
+              <div className="rounded border border-border/60 px-2 py-1">
                 <p className="font-mono text-[9px] uppercase tracking-wider text-muted">
                   delivered
                 </p>
-                <p className="font-mono text-base tabular-nums leading-tight text-emerald-300">
+                <motion.p
+                  key={delivered}
+                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="font-mono text-base tabular-nums leading-tight text-emerald-300"
+                >
                   {delivered}
-                </p>
-              </motion.div>
+                </motion.p>
+              </div>
             </div>
 
             {/* filter pills */}
