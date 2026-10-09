@@ -27,8 +27,6 @@
     "@astrojs/react": "^4.2.4",
     "@astrojs/sitemap": "^3.2.1",
     "@keystatic/core": "^0.5.50",
-    "@react-three/drei": "^9.122.0",
-    "@react-three/fiber": "^8.18.0",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^5.7.0",
     "framer-motion": "^11.18.2",
@@ -37,7 +35,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "satori": "^0.12.1",
-    "three": "^0.170.0",
     "typescript": "^5.7.2",
     "zustand": "^5.0.2"
   },
@@ -48,7 +45,6 @@
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "@types/three": "^0.170.0",
     "sharp": "^0.33.5",
     "tailwindcss": "^4.0.0",
     "vitest": "^2.1.8"

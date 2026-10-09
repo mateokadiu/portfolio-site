@@ -2,7 +2,7 @@
 
 Personal portfolio at [mateokadiu.com](https://mateokadiu.com) — a bento-grid interactive showcase where every project tile is a live mini-demo of the actual work.
 
-Astro 5 + Tailwind v4 + React islands + Framer Motion + GSAP + react-three-fiber. Zero JS on first paint, lazy-hydrated tiles, Lighthouse 95+ across the board.
+Astro 5 + Tailwind v4 + React islands + Framer Motion + GSAP. Zero JS on first paint, lazy-hydrated tiles, Lighthouse 95+ across the board.
 
 ![bento grid homepage](./docs/screenshots/home.png)
 
@@ -15,15 +15,16 @@ A click on a tile takes you to its full deep-dive page — same demo at full siz
 
 | Tile | What it is |
 |---|---|
-| `temporal-stripe` | Animated state machine — reauth timer, multicapture, illegal-transition shake |
-| `webhook-gateway` | Retry-backoff timeline with exponential-backoff visualisation |
+| `tide` | Capture surfaces → extract / tag / embed / summarize pipeline of the read-later app |
+| `webhook-gateway-admin` | Miniature Angular admin — signal-driven counters and filter pills |
 | `shadowkit` | A real `<sk-counter>` Web Component embed proving the Shadow DOM cascade boundary |
 | `studybuddy` | 53×7 SVG heatmap with staggered fill animation |
+| `temporal-stripe` | Animated state machine — reauth timer, multicapture, illegal-transition shake |
 | `tax-ledger` | Refund-split visualiser — jurisdiction deltas with layout animations |
+| `webhook-gateway` | Retry-backoff timeline with exponential-backoff visualisation |
 | `grpc-monorepo-starter` | Proto-to-clients fan-out with typewriter codegen |
-| `ai-trading-copilot` | Typewriter narrative over a sample trade (private, links to write-up) |
-| `github-globe` | react-three-fiber rotating globe with commit dots |
-| `about`, `now`, `github`, `contact` | Static utility tiles |
+| `stripe-eu-vat-moss` | EU VAT One-Stop-Shop pricing per member state, with live rates |
+| `about`, `now`, `github`, `contact` | Utility tiles |
 
 ## Scripts
 
@@ -45,7 +46,6 @@ pnpm test:visual  # playwright visual smoke
 - React 18 for interactive islands
 - Framer Motion 11 for per-tile motion
 - GSAP 3 (SplitText + ScrollTrigger) for the hero
-- react-three-fiber + drei for the globe tile
 - MDX for per-project deep-dives via Astro Content Collections
 - Biome for lint + format, Vitest for units, Playwright for visual smoke
 

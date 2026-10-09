@@ -16,7 +16,7 @@ interface OgSpec {
   stack: string[];
 }
 
-const HOME_STACK = ['astro', 'react', 'tailwind', 'three.js', 'framer motion'];
+const HOME_STACK = ['astro', 'react', 'tailwind', 'typescript', 'framer motion'];
 const ABOUT_STACK = ['nestjs', 'next.js', 'stripe connect', 'kubernetes', 'pulumi'];
 const PROJECTS_STACK = ['temporal', 'stripe connect', 'nestjs', 'angular', 'spring boot'];
 
