@@ -5,15 +5,21 @@ import { type Page, expect } from '@playwright/test';
  * to the top. Without this, demos below the fold are never exercised.
  */
 export async function hydrateAll(page: Page): Promise<void> {
-  const height = await page.evaluate(() => document.documentElement.scrollHeight);
-  const step = await page.evaluate(() => window.innerHeight);
-  for (let y = 0; y <= height; y += step) {
-    await page.evaluate((top) => window.scrollTo(0, top), y);
-    await page.waitForTimeout(80);
+  const pending = page.locator('astro-island[ssr]');
+  // Visit each island that hasn't hydrated yet. Fast scrolling can skip past an
+  // element between two IntersectionObserver checks, so go one at a time.
+  for (let attempt = 0; attempt < 3 && (await pending.count()) > 0; attempt++) {
+    await page.evaluate(async () => {
+      for (const island of document.querySelectorAll('astro-island[ssr]')) {
+        // Islands are `display: contents`; scroll their first rendered child.
+        (island.firstElementChild ?? island).scrollIntoView({ block: 'center' });
+        await new Promise((resolve) => setTimeout(resolve, 120));
+      }
+    });
   }
-  await page.waitForLoadState('networkidle');
   // Islands mark themselves hydrated by dropping the `ssr` attribute.
-  await expect(page.locator('astro-island[ssr]')).toHaveCount(0, { timeout: 10_000 });
+  await expect(pending).toHaveCount(0, { timeout: 10_000 });
+  await page.waitForLoadState('networkidle');
   await page.evaluate(() => window.scrollTo(0, 0));
   await settleAnimations(page);
 }
