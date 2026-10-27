@@ -35,3 +35,4 @@ coverage/
 
 # generated at build time
 src/lib/github-activity.generated.json
+.lighthouseci/

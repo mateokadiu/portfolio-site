@@ -62,10 +62,7 @@ export default function GrpcMonorepoTile() {
   return (
     <div className="flex h-full flex-1 flex-col">
       <div className="flex-1 space-y-3">
-        <pre
-          className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[11px] leading-snug text-foreground"
-          aria-label="orders.proto"
-        >
+        <pre className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[11px] leading-snug text-foreground">
           <code>
             {PROTO_LINES.map((line, i) => (
               <div key={`${run}-${i}`} className="whitespace-pre">

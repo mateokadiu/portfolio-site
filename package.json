@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Personal portfolio — bento-grid interactive showcase.",
+  "description": "Personal portfolio \u2014 bento-grid interactive showcase.",
   "engines": {
     "node": ">=22"
   },
@@ -13,13 +13,20 @@
     "start": "astro dev",
     "prebuild": "node scripts/fetch-github-activity.mjs && node scripts/generate-icons.mjs",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "node tests/serve.mjs dist",
     "astro": "astro",
     "typecheck": "astro check",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "test": "vitest run --passWithNoTests",
-    "test:visual": "playwright test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:visual": "./scripts/visual.sh",
+    "test:visual:update": "./scripts/visual.sh --update-snapshots",
+    "test:lighthouse": "lhci autorun",
+    "test:live": "playwright test -c playwright.live.config.ts",
+    "screenshots:readme": "PW_README=1 playwright test --project=readme",
+    "qa": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e && pnpm test:visual && pnpm test:lighthouse"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -38,11 +45,13 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "^1.9.4",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.49.1",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "fast-check": "^4.10.2",
     "sharp": "^0.33.5",
     "tailwindcss": "^4.0.0",
     "vitest": "^2.1.8"

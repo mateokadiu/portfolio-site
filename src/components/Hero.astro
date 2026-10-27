@@ -103,19 +103,24 @@ const words = SITE.author.split(' ').map((word) => [...word].map((ch) => ({ ch, 
       transform: translateY(110%);
     }
   }
+  /* Transform-only entrances: the text is painted (and counts for LCP) from the
+     first frame instead of waiting out an opacity fade. */
+  @keyframes hero-lift {
+    from {
+      transform: translateY(var(--lift, 12px));
+    }
+  }
   .hero-tagline {
-    --enter-y: 14px;
-    animation: enter 0.7s var(--ease-out-expo) 0.45s both;
+    animation: hero-lift 0.8s var(--ease-out-expo) both;
   }
   .hero-cta {
-    --enter-y: 10px;
-    animation: enter 0.6s var(--ease-out-expo) 0.6s both;
+    --lift: 16px;
+    animation: hero-lift 0.9s var(--ease-out-expo) both;
   }
   .hero-cue {
-    --enter-y: 8px;
     animation:
-      enter 0.5s var(--ease-out-expo) 0.85s both,
-      hero-bob 1.4s ease-in-out 1.2s infinite alternate;
+      hero-lift 0.9s var(--ease-out-expo) both,
+      hero-bob 1.4s ease-in-out 1s infinite alternate;
   }
   @keyframes hero-bob {
     to {
