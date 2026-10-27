@@ -10,6 +10,14 @@ stack: ['Java', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi']
 repoUrl: 'https://github.com/mateokadiu/stripe-eu-vat-moss'
 isPrivate: false
 tileSize: '2x1'
+order: 9
+blurb: "Java + Spring Boot + JOOQ + Liquibase. Bitemporal event store, 27-country VAT matrix, SAF-OSS XML returns, Stripe Tax + Connect (Art. 14a) ingestion, Pulumi-Java to Oracle Cloud Free."
+demoHint:
+  headline: "Destination-country VAT on a €100 sale under the EU One-Stop-Shop."
+  steps:
+    - "Pick the customer’s member state — the VAT rate is the destination country’s, not the seller’s."
+    - "The VAT line shows which treasury the tax is owed to; the gross is what the customer pays."
+    - "Rates are the 2026 standard rates from the project’s Liquibase seed (27 member states)."
 ---
 
 ## Elevator pitch
@@ -69,7 +77,7 @@ The event store is bitemporal — every fact has `effective_at` (when the sale h
 
 ## Numbers worth knowing
 
-| | |
+| Metric | Value |
 |---|---|
 | Lines of Java | 5,433 |
 | Tests | 116 (unit + IT + property), 100% pass |
@@ -82,7 +90,7 @@ The event store is bitemporal — every fact has `effective_at` (when the sale h
 
 ## Status
 
-| | |
+| Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/stripe-eu-vat-moss |
 | License | MIT |

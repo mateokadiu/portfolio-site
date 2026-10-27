@@ -1,7 +1,4 @@
-name: Mateo Kadiu
-headline: Software Engineer · React / Next.js / Angular on web, React Native on mobile, NestJS + Stripe Connect on the back
-location: Tirana, Albania
-timezone: Europe/Tirane
+headline: Senior Software Engineer · React / Next.js / Angular on web, React Native on mobile, NestJS + Stripe Connect on the back
 tagline: Full-stack at the depth most teams skip — Next.js + React (RSC, Server Actions), Angular signals, Tailwind design systems, React Native (Fabric) on the front; multi-PaymentIntent Stripe Connect, gRPC between Nest services, Pulumi-Kubernetes, high-throughput webhook fan-out on the back. Open to senior IC roles + contract work.
 bio: |
   Software engineer working full-stack across the surfaces that ship to real users — Next.js + React frontends, Angular admin consoles, React Native mobile, and the NestJS / Java services + infrastructure behind them.
@@ -10,6 +7,5 @@ bio: |
 
   Master's in Software Engineering from Canadian Institute of Technology (Jul 2024).
 openToWork: true
-availability: Open to senior IC roles + contract work
-email: mateokadiu18@gmail.com
+availability: open to senior IC roles + contract work
 avatarUrl: ''

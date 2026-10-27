@@ -1,5 +1,6 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { cssVars } from '~/lib/cssVars';
+import { usePrefersReducedMotion } from '~/lib/usePrefersReducedMotion';
 
 const PROTO_LINES = [
   'service Orders {',
@@ -21,7 +22,7 @@ const TYPING_MS = 22; // per char
 const PER_LINE_PAUSE = 100;
 
 export default function GrpcMonorepoTile() {
-  const reduced = useReducedMotion();
+  const reduced = usePrefersReducedMotion();
   const [run, setRun] = useState(0);
   const [lineIdx, setLineIdx] = useState(0);
   const [charIdx, setCharIdx] = useState(0);
@@ -59,33 +60,18 @@ export default function GrpcMonorepoTile() {
   }, [run]);
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">grpc-monorepo-starter</h3>
-          <p className="mt-1 text-xs text-muted">proto → TS / Go / Python / Connect-Web on save</p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex-1 space-y-3">
-        <pre
-          className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[10px] leading-snug text-foreground"
-          aria-live="polite"
-        >
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex-1 space-y-3">
+        <pre className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[11px] leading-snug text-foreground">
           <code>
             {PROTO_LINES.map((line, i) => (
               <div key={`${run}-${i}`} className="whitespace-pre">
                 {i < lineIdx ? line : i === lineIdx ? line.slice(0, charIdx) : ''}
                 {i === lineIdx && !done && (
-                  <motion.span
+                  <span
                     aria-hidden="true"
-                    className="inline-block w-[6px] bg-accent/80"
+                    className="anim-blink inline-block w-[6px] bg-accent/80"
                     style={{ height: '0.85em', marginLeft: 1, verticalAlign: 'text-bottom' }}
-                    animate={reduced ? undefined : { opacity: [0, 1, 0] }}
-                    transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY }}
                   />
                 )}
               </div>
@@ -95,48 +81,40 @@ export default function GrpcMonorepoTile() {
 
         <div className="grid grid-cols-4 gap-1.5">
           {CLIENTS.map((c, i) => (
-            <motion.div
+            <div
               key={`${run}-${c.key}`}
-              initial={reduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
-              animate={done ? { opacity: 1, y: 0 } : { opacity: 0.3, y: 8 }}
-              transition={{
-                delay: reduced ? 0 : (i + 1) * 0.18,
-                duration: 0.4,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[10px]"
+              className={`flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                done
+                  ? 'translate-y-0 border-border/60'
+                  : 'translate-y-2 border-dashed border-border/60'
+              }`}
+              style={{ transitionDelay: done ? `${(i + 1) * 180}ms` : '0ms' }}
             >
-              <span className="text-foreground">{c.label}</span>
-              <AnimatePresence>
-                {done && (
-                  <motion.span
-                    initial={{ scale: 0.4, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.4, opacity: 0 }}
-                    transition={{
-                      delay: reduced ? 0 : (i + 1) * 0.18,
-                      type: 'spring',
-                      stiffness: 360,
-                      damping: 22,
-                    }}
-                    className="text-accent"
-                    aria-label="generated"
-                  >
-                    ✓
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              <span className={done ? 'text-foreground' : 'text-muted'}>{c.label}</span>
+              {done && (
+                <span
+                  className="anim-enter text-accent"
+                  style={cssVars({
+                    '--enter-y': '0',
+                    '--enter-scale': 0.4,
+                    '--delay': `${(i + 1) * 180}ms`,
+                  })}
+                >
+                  <span aria-hidden="true">✓</span>
+                  <span className="sr-only">generated</span>
+                </span>
+              )}
+            </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-muted">
-        <span>{done ? '4 clients regenerated' : 'codegen…'}</span>
+      <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-muted">
+        <span aria-live="polite">{done ? '4 clients regenerated' : 'codegen…'}</span>
         <button
           type="button"
           onClick={() => setRun((r) => r + 1)}
-          className="rounded border border-border/60 px-1.5 py-0.5 hover:border-accent/40 hover:text-foreground"
+          className="min-h-6 rounded border border-border/60 px-1.5 py-0.5 hover:border-accent/40 hover:text-foreground"
         >
           ▶ replay
         </button>

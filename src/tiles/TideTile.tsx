@@ -1,5 +1,6 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useIsActive } from '~/lib/useIsActive';
+import { usePrefersReducedMotion } from '~/lib/usePrefersReducedMotion';
 
 interface Surface {
   id: string;
@@ -17,37 +18,27 @@ const SURFACES: Surface[] = [
 const PIPELINE = ['extract', 'tag', 'embed', 'summarize'] as const;
 
 export default function TideTile() {
-  const reduced = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = useIsActive(rootRef);
+  const reduced = usePrefersReducedMotion();
   const [picked, setPicked] = useState('web');
-  const [step, setStep] = useState(0);
+  const [tick, setTick] = useState(0);
 
+  // Auto-advance only while on screen; with reduced motion show the finished run.
   useEffect(() => {
-    if (reduced) return;
-    const t = setInterval(() => {
-      setStep((s) => (s + 1) % (PIPELINE.length + 2));
-    }, 1100);
+    if (reduced || !active) return;
+    const t = setInterval(() => setTick((s) => (s + 1) % (PIPELINE.length + 2)), 1100);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, active]);
+  const step = reduced ? PIPELINE.length : tick;
 
   const surface = SURFACES.find((s) => s.id === picked) ?? SURFACES[0]!;
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">tide</h3>
-          <p className="mt-1 text-xs text-muted">
-            Self-hostable read-later · Next.js + RSC + pgvector + Anthropic
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div ref={rootRef} className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted">
             capture surface
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -58,7 +49,7 @@ export default function TideTile() {
                   key={s.id}
                   type="button"
                   onClick={() => setPicked(s.id)}
-                  className={`rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                  className={`min-h-6 rounded-md border px-2 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                     active
                       ? 'border-accent/60 bg-accent/10 text-accent'
                       : 'border-border/60 text-muted hover:border-accent/40 hover:text-foreground'
@@ -69,7 +60,7 @@ export default function TideTile() {
               );
             })}
           </div>
-          <p className="mt-2 font-mono text-[10px] text-muted">
+          <p className="mt-2 font-mono text-[11px] text-muted">
             <span className="text-foreground">→</span> {surface.detail}
           </p>
         </div>
@@ -79,33 +70,33 @@ export default function TideTile() {
             <span className="truncate">
               article · <span className="text-foreground">building tide v1</span>
             </span>
-            <span className="text-[10px]">2m read</span>
+            <span className="text-[11px]">2m read</span>
           </div>
           <ul className="space-y-1">
             {PIPELINE.map((label, i) => {
               const done = step > i;
-              const active = step === i;
+              const running = step === i;
               return (
                 <li key={label} className="flex items-center gap-2">
                   <span
                     className={`inline-block h-1.5 w-1.5 rounded-full ${
                       done
                         ? 'bg-accent shadow-[0_0_6px_oklch(0.65_0.18_25)]'
-                        : active
+                        : running
                           ? 'animate-pulse bg-accent/60'
                           : 'bg-muted/40'
                     }`}
                   />
-                  <span className={done || active ? 'text-foreground' : 'text-muted'}>{label}</span>
-                  {active && !reduced && (
-                    <motion.span
-                      key={`${label}-active`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="font-mono text-[10px] text-muted"
+                  <span className={done || running ? 'text-foreground' : 'text-muted'}>
+                    {label}
+                  </span>
+                  {running && (
+                    <span
+                      key={`${label}-running`}
+                      className="anim-enter font-mono text-[11px] text-muted"
                     >
                       …running
-                    </motion.span>
+                    </span>
                   )}
                 </li>
               );
@@ -113,7 +104,7 @@ export default function TideTile() {
           </ul>
         </div>
 
-        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
           <span>
             lighthouse <span className="text-foreground">100·100·96·100</span>
           </span>

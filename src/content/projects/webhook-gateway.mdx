@@ -9,6 +9,14 @@ stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript']
 repoUrl: 'https://github.com/mateokadiu/webhook-gateway'
 isPrivate: false
 tileSize: '2x1'
+order: 7
+blurb: "A small Nest service that takes inbound webhooks, persists them, retries with exp backoff, and parks the dead ones in a DLQ for replay."
+demoHint:
+  headline: "A simulated webhook gateway under load."
+  steps:
+    - "Toggle “downstream is down” to mark the receiver as unhealthy."
+    - "The next attempt enters the retry-backoff schedule: 30s · 2m · 10m · 1h · 6h · 24h (sped up for the demo)."
+    - "After enough failed retries the event lands in the DLQ — toggle back to healthy to drain."
 ---
 
 ## Elevator pitch
@@ -27,7 +35,7 @@ A NestJS service backed by Postgres + BullMQ. The flow is:
 
 ## Status
 
-| | |
+| Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/webhook-gateway |
 | License | MIT |

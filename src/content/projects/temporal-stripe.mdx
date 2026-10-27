@@ -9,6 +9,14 @@ stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest']
 repoUrl: 'https://github.com/mateokadiu/temporal-stripe'
 isPrivate: false
 tileSize: '2x2'
+order: 5
+blurb: "Open-source Temporal library covering reauthorization, multicapture, refunds and chargebacks behind type-safe signals and a saga primitive."
+demoHint:
+  headline: "Watch a Stripe Connect PaymentIntent live its full lifecycle."
+  steps:
+    - "Hit ▶ play — the workflow walks through authorize → reauth timer → re-authorize → multicapture → captured."
+    - "The orange ring above the “reauthorizing” node is the 4-day reauth timer compressed to ~4 seconds."
+    - "Click any state to jump there. Illegal transitions shake red."
 ---
 
 ## Elevator pitch
@@ -29,7 +37,7 @@ I made it BYO-storage — consumers implement `StripeOrderActivities` + `StripeR
 
 ## Status
 
-| | |
+| Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/temporal-stripe |
 | License | MIT |

@@ -9,6 +9,14 @@ stack: ['Next.js', 'React', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK']
 repoUrl: 'https://github.com/mateokadiu/tide'
 isPrivate: false
 tileSize: '2x1'
+order: 1
+blurb: "Next.js + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free."
+demoHint:
+  headline: "The capture → enrich pipeline of a self-hostable read-later app."
+  steps:
+    - "Pick a capture surface: web, browser extension, email-in or the REST API."
+    - "Every saved article runs the same pipeline: extract → tag → embed (pgvector) → summarize (streamed)."
+    - "The real app runs these as BullMQ jobs; the demo steps through them on a timer."
 ---
 
 ## Elevator pitch
@@ -74,7 +82,7 @@ The save endpoint runs on edge runtime for low-latency global ingest. Heavy work
 
 ## Numbers worth knowing
 
-| | |
+| Metric | Value |
 |---|---|
 | Commits | 91 (2026-01-15 → 2026-06-08) |
 | Lighthouse mobile | 100 / 100 / 96 / 100 (perf / a11y / best-practices / SEO) |
@@ -86,7 +94,7 @@ The save endpoint runs on edge runtime for low-latency global ingest. Heavy work
 
 ## Status
 
-| | |
+| Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/tide |
 | License | MIT |

@@ -1,27 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { projectPath } from './site-urls';
-
-const PROJECTS = [
-  'temporal-stripe',
-  'webhook-gateway',
-  'webhook-gateway-admin',
-  'shadowkit',
-  'tax-ledger',
-  'grpc-monorepo-starter',
-  'stripe-eu-vat-moss',
-  'tide',
-  'studybuddy',
-];
+import { PROJECT_SLUGS, projectPath, UTILITY_TILE_COUNT } from './site-urls';
 
 test('homepage renders with hero + bento grid', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveTitle(/Mateo Kadiu/);
   await expect(page.getByRole('main')).toBeVisible();
   const tiles = page.locator('[data-tile]');
-  await expect(tiles).toHaveCount(13);
+  await expect(tiles).toHaveCount(PROJECT_SLUGS.length + UTILITY_TILE_COUNT);
 });
 
-for (const slug of PROJECTS) {
+for (const slug of PROJECT_SLUGS) {
   test(`project page renders: ${slug}`, async ({ page }) => {
     const res = await page.goto(projectPath(slug));
     expect(res?.status()).toBe(200);

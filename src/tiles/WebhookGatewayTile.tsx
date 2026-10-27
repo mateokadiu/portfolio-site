@@ -1,129 +1,84 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
-
-interface Attempt {
-  label: string;
-  status: 'ok' | 'retrying' | 'failed';
-}
-
-// Real default schedule from the webhook-gateway repo.
-const BACKOFF_SECONDS = [30, 120, 600, 3600, 21600, 86400];
-
-const labelFor = (sec: number) => {
-  if (sec === 0) return 'fired';
-  if (sec < 60) return `+${sec}s`;
-  if (sec < 3600) return `+${sec / 60}m`;
-  if (sec < 86400) return `+${sec / 3600}h`;
-  return `+${sec / 86400}d`;
-};
-
-function attemptsAt(step: number, downstreamDown: boolean): Attempt[] {
-  if (!downstreamDown) {
-    return step > 0 ? [{ label: 'fired', status: 'ok' }] : [];
-  }
-  const out: Attempt[] = [{ label: 'fired', status: 'retrying' }];
-  for (let i = 0; i < step - 1 && i < BACKOFF_SECONDS.length; i += 1) {
-    const isLast = i === BACKOFF_SECONDS.length - 1 && step - 1 > i;
-    out.push({
-      label: labelFor(BACKOFF_SECONDS[i] ?? 0),
-      status: isLast ? 'failed' : 'retrying',
-    });
-  }
-  return out;
-}
+import { cssVars } from '~/lib/cssVars';
+import { attemptsAt, DLQ_STEP, statusMessage } from '~/lib/webhook';
 
 export default function WebhookGatewayTile() {
   const [downstreamDown, setDownstreamDown] = useState(true);
   const [step, setStep] = useState(0);
-  const reduced = useReducedMotion();
+  // Bumped on every replay so the entrance animation re-runs on the same step.
+  const [run, setRun] = useState(0);
 
   const attempts = attemptsAt(step, downstreamDown);
-  const maxStep = downstreamDown ? BACKOFF_SECONDS.length + 1 : 1;
-  const atEnd = step >= maxStep;
-  const atDlq = downstreamDown && step >= BACKOFF_SECONDS.length + 1;
+  const maxStep = downstreamDown ? DLQ_STEP : 1;
+  const atDlq = downstreamDown && step >= DLQ_STEP;
+
+  const fire = () => {
+    if (step >= maxStep) {
+      setStep(1);
+      setRun((r) => r + 1);
+    } else {
+      setStep((s) => s + 1);
+    }
+  };
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway</h3>
-          <p className="mt-1 text-xs text-muted">retry with exponential backoff, then DLQ</p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex-1 overflow-hidden">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex-1 overflow-hidden">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <div className="mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
+          <div className="mb-2 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-muted">
             <span>delivery timeline</span>
             <span>{step === 0 ? '—' : `step ${Math.min(step, maxStep)} / ${maxStep}`}</span>
           </div>
-          <div className="flex min-h-[44px] flex-wrap items-center gap-2">
+          <ol
+            className="flex min-h-[44px] flex-wrap items-center gap-2"
+            aria-label="delivery attempts"
+          >
             {attempts.map((a) => (
-              <motion.div
-                key={`${downstreamDown}-${a.label}`}
-                initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 0.85, y: -4 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[11px] ${
+              <li
+                key={`${run}-${downstreamDown}-${a.label}`}
+                className={`anim-enter flex items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[11px] ${
                   a.status === 'ok'
                     ? 'border-accent/30 bg-accent/10 text-foreground'
                     : a.status === 'retrying'
                       ? 'border-amber-500/40 bg-amber-500/10 text-amber-200'
                       : 'border-red-500/40 bg-red-500/10 text-red-200'
                 }`}
+                style={cssVars({ '--enter-y': '-4px', '--enter-scale': 0.85 })}
               >
                 <span aria-hidden="true">
                   {a.status === 'ok' ? '✓' : a.status === 'retrying' ? '⟳' : '✘'}
                 </span>
                 <span>{a.label}</span>
-              </motion.div>
+                <span className="sr-only">{a.status}</span>
+              </li>
             ))}
             {atDlq && (
-              <motion.span
-                key="dlq"
-                initial={reduced ? { opacity: 1 } : { opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.32 }}
-                className="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-1 font-mono text-[11px] text-red-200"
+              <li
+                className="anim-enter rounded-md border border-red-500/40 bg-red-500/10 px-2 py-1 font-mono text-[11px] text-red-200"
+                style={cssVars({ '--enter-x': '-8px', '--enter-y': '0' })}
               >
                 → DLQ
-              </motion.span>
+              </li>
             )}
             {step === 0 && (
-              <span className="font-mono text-[11px] text-muted">
+              <li className="font-mono text-[11px] text-muted">
                 click &ldquo;fire delivery&rdquo; to start
-              </span>
+              </li>
             )}
-          </div>
+          </ol>
         </div>
 
-        <p className="mt-3 font-mono text-[10px] leading-relaxed text-muted" aria-live="polite">
-          {step === 0 && 'no attempts yet'}
-          {step === 1 && downstreamDown && '1st attempt failed — backing off 30s'}
-          {step >= 2 &&
-            step <= BACKOFF_SECONDS.length &&
-            downstreamDown &&
-            `retry ${step - 1} failed — backing off ${labelFor(BACKOFF_SECONDS[step - 1] ?? 0).replace('+', '')}`}
-          {atDlq && 'parked in DLQ after 5 retries — needs manual replay'}
-          {!downstreamDown && step >= 1 && 'delivered on the first try'}
+        <p className="mt-3 font-mono text-[11px] leading-relaxed text-muted" aria-live="polite">
+          {statusMessage(step, downstreamDown)}
         </p>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[11px]">
         <button
           type="button"
-          onClick={() => {
-            if (atEnd) {
-              setStep(downstreamDown ? 1 : 1);
-            } else {
-              setStep((s) => s + 1);
-            }
-          }}
+          onClick={fire}
           disabled={atDlq}
-          className="min-h-[28px] rounded-md border border-accent/40 bg-accent/10 px-3 py-1 text-accent transition-colors hover:bg-accent/15 disabled:opacity-40"
+          className="min-h-7 rounded-md border border-accent/40 bg-accent/10 px-3 py-1 text-accent transition-colors hover:bg-accent/15 disabled:opacity-40"
         >
           {step === 0
             ? '▶ fire delivery'
@@ -136,11 +91,11 @@ export default function WebhookGatewayTile() {
         <button
           type="button"
           onClick={() => setStep(0)}
-          className="min-h-[28px] rounded-md border border-border/60 px-3 py-1 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+          className="min-h-7 rounded-md border border-border/60 px-3 py-1 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
         >
           ⟳ reset
         </button>
-        <label className="ml-auto flex cursor-pointer items-center gap-2 text-muted">
+        <label className="ml-auto flex min-h-7 cursor-pointer items-center gap-2 text-muted">
           <input
             type="checkbox"
             checked={downstreamDown}

@@ -1,7 +1,8 @@
-// Real EU27 standard VAT rates, mirrored from the stripe-eu-vat-moss project's
+// EU27 standard VAT rates, matching the stripe-eu-vat-moss project's
 // Liquibase changeset at
 // moss-ledger/src/main/resources/db/changelog/data/003-vat-rates-eu27.sql
-// Source: EU Commission VAT rates database. Rates effective for 2026-current.
+// Source: EU Commission VAT rates database. Standard rates as of 2026 (no
+// member state changed its standard rate in 2026). Not fetched live.
 // rate_basis_points: 1900 = 19.00%
 
 export interface VatRate {
@@ -20,7 +21,7 @@ export const EU27_VAT: VatRate[] = [
   { code: 'CZ', name: 'Czechia', flag: '🇨🇿', rateBp: 2100 },
   { code: 'DE', name: 'Germany', flag: '🇩🇪', rateBp: 1900 },
   { code: 'DK', name: 'Denmark', flag: '🇩🇰', rateBp: 2500 },
-  { code: 'EE', name: 'Estonia', flag: '🇪🇪', rateBp: 2200, note: 'from 2024' },
+  { code: 'EE', name: 'Estonia', flag: '🇪🇪', rateBp: 2400, note: 'raised 2025-07' },
   { code: 'ES', name: 'Spain', flag: '🇪🇸', rateBp: 2100 },
   { code: 'FI', name: 'Finland', flag: '🇫🇮', rateBp: 2550, note: 'raised 2024-09' },
   { code: 'FR', name: 'France', flag: '🇫🇷', rateBp: 2000 },
@@ -36,7 +37,7 @@ export const EU27_VAT: VatRate[] = [
   { code: 'NL', name: 'Netherlands', flag: '🇳🇱', rateBp: 2100 },
   { code: 'PL', name: 'Poland', flag: '🇵🇱', rateBp: 2300 },
   { code: 'PT', name: 'Portugal', flag: '🇵🇹', rateBp: 2300 },
-  { code: 'RO', name: 'Romania', flag: '🇷🇴', rateBp: 1900 },
+  { code: 'RO', name: 'Romania', flag: '🇷🇴', rateBp: 2100, note: 'raised 2025-08' },
   { code: 'SE', name: 'Sweden', flag: '🇸🇪', rateBp: 2500 },
   { code: 'SI', name: 'Slovenia', flag: '🇸🇮', rateBp: 2200 },
   { code: 'SK', name: 'Slovakia', flag: '🇸🇰', rateBp: 2300, note: 'from 2025' },

@@ -1,0 +1,48 @@
+---
+// The one place that maps a project slug to its interactive demo. Astro needs
+// a static import per hydrated component, so this stays an explicit switch;
+// a project without a demo fails the build instead of rendering a placeholder.
+import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
+import MossTile from '~/tiles/MossTile';
+import ShadowkitTile from '~/tiles/ShadowkitTile';
+import StudybuddyTile from '~/tiles/StudybuddyTile';
+import TaxLedgerTile from '~/tiles/TaxLedgerTile';
+import TemporalStripeTile from '~/tiles/TemporalStripeTile';
+import TideTile from '~/tiles/TideTile';
+import WebhookGatewayAdminTile from '~/tiles/WebhookGatewayAdminTile';
+import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
+
+interface Props {
+  slug: string;
+  /** `visible` for the home grid (hydrate on scroll), `idle` on the project page. */
+  hydrate: 'visible' | 'idle';
+}
+
+const { slug, hydrate } = Astro.props;
+
+const DEMO_SLUGS = [
+  'grpc-monorepo-starter',
+  'stripe-eu-vat-moss',
+  'shadowkit',
+  'studybuddy',
+  'tax-ledger',
+  'temporal-stripe',
+  'tide',
+  'webhook-gateway-admin',
+  'webhook-gateway',
+];
+if (!DEMO_SLUGS.includes(slug)) {
+  throw new Error(`No demo registered for project "${slug}" — add it to ProjectDemo.astro.`);
+}
+const idle = hydrate === 'idle';
+---
+
+{slug === 'grpc-monorepo-starter' && (idle ? <GrpcMonorepoTile client:idle /> : <GrpcMonorepoTile client:visible />)}
+{slug === 'stripe-eu-vat-moss' && (idle ? <MossTile client:idle /> : <MossTile client:visible />)}
+{slug === 'shadowkit' && (idle ? <ShadowkitTile client:idle /> : <ShadowkitTile client:visible />)}
+{slug === 'studybuddy' && (idle ? <StudybuddyTile client:idle /> : <StudybuddyTile client:visible />)}
+{slug === 'tax-ledger' && (idle ? <TaxLedgerTile client:idle /> : <TaxLedgerTile client:visible />)}
+{slug === 'temporal-stripe' && (idle ? <TemporalStripeTile client:idle /> : <TemporalStripeTile client:visible />)}
+{slug === 'tide' && (idle ? <TideTile client:idle /> : <TideTile client:visible />)}
+{slug === 'webhook-gateway-admin' && (idle ? <WebhookGatewayAdminTile client:idle /> : <WebhookGatewayAdminTile client:visible />)}
+{slug === 'webhook-gateway' && (idle ? <WebhookGatewayTile client:idle /> : <WebhookGatewayTile client:visible />)}

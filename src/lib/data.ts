@@ -1,17 +1,6 @@
-export type ProjectStatus = 'shipped' | 'beta' | 'private' | 'wip';
-export type TileSize = '1x1' | '2x1' | '2x2';
-
-export interface Project {
-  slug: string;
-  name: string;
-  tagline: string;
-  blurb: string;
-  stack: string[];
-  status: ProjectStatus;
-  repoUrl: string | null;
-  isPrivate: boolean;
-  tileSize: TileSize;
-}
+// Site identity — the single source for name, contact and location. Projects
+// live in the `projects` content collection (src/lib/projects.ts); CV prose in
+// src/content/cv.
 
 export const NOW = [
   'on-device LLMs · llama.rn on RN',
@@ -20,121 +9,6 @@ export const NOW = [
   'temporal workflows for retries',
 ];
 
-export const PROJECTS: Project[] = [
-  {
-    slug: 'tide',
-    name: 'tide',
-    tagline: 'Self-hostable read-later — Pocket / Omnivore replacement.',
-    blurb:
-      'Next.js + RSC + Drizzle + Postgres + pgvector. Save from web / extension (MV3) / email / API. Streaming AI summaries via Anthropic, semantic search, RSC reader with typographic theming. Docker compose + Pulumi-TS to Oracle Cloud Free.',
-    stack: ['Next.js', 'React', 'Drizzle', 'pgvector', 'BullMQ', 'Anthropic SDK'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/tide',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'webhook-gateway-admin',
-    name: 'webhook-gateway-admin',
-    tagline: 'Angular admin UI for webhook-gateway — zoneless, signals, standalone.',
-    blurb:
-      'Second admin for webhook-gateway (the canonical one is Next.js). Zoneless change detection, signal-based filters, TanStack Query for Angular, Zod-validated responses, Tailwind + @theme tokens, reactive forms for sources + targets CRUD. Same backend, angular twin — shipped to demonstrate modern Angular against a real domain model.',
-    stack: ['Angular', 'TypeScript', 'Tailwind', 'TanStack Query', 'Zod'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/webhook-gateway-admin',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'shadowkit',
-    name: 'shadowkit',
-    tagline: 'Tailwind inside the Shadow DOM, the cascade-safe way.',
-    blurb:
-      'Tiny set of helpers for building Web Components that survive the host page CSS — theme tokens scoped to :host, deduped stylesheet injection, a typed bridge for cross-instance state.',
-    stack: ['Web Components', 'Tailwind', 'Vite', 'TypeScript'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/shadowkit',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'studybuddy',
-    name: 'studybuddy',
-    tagline: 'On-device RAG study app for React Native.',
-    blurb:
-      'A flashcard / study app with retrieval-augmented question generation, all model inference on-device via llama.rn. Skia for the heatmap.',
-    stack: ['React Native', 'Skia', 'llama.rn', 'SQLite'],
-    status: 'beta',
-    repoUrl: 'https://github.com/mateokadiu/studybuddy',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'temporal-stripe',
-    name: 'temporal-stripe',
-    tagline: 'Temporal workflows for the full Stripe Connect lifecycle.',
-    blurb:
-      'Open-source Temporal library covering reauthorization, multicapture, refunds and chargebacks behind type-safe signals and a saga primitive.',
-    stack: ['Temporal', 'TypeScript', 'Stripe Connect', 'Vitest'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/temporal-stripe',
-    isPrivate: false,
-    tileSize: '2x2',
-  },
-  {
-    slug: 'tax-ledger',
-    name: 'tax-ledger',
-    tagline: 'Append-only tax ledger downstream of Avalara / TaxJar / Stripe Tax / Fonoa.',
-    blurb:
-      'Takes the engine response + your line items and emits a deterministic ledger that sums to the engine total to the cent and stays reconciled across refunds, partial captures, revisions, and engine-quoted reversals. Decimal.js + Hamilton allocator + Zod + fast-check property tests. Drizzle adapter for PG/SQLite.',
-    stack: ['TypeScript', 'Decimal.js', 'Zod', 'fast-check', 'Drizzle'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/tax-ledger',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'webhook-gateway',
-    name: 'webhook-gateway',
-    tagline: 'Self-hosted webhook reliability with exponential backoff + DLQ.',
-    blurb:
-      'A small Nest service that takes inbound webhooks, persists them, retries with exp backoff, and parks the dead ones in a DLQ for replay.',
-    stack: ['NestJS', 'Postgres', 'BullMQ', 'TypeScript'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/webhook-gateway',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'grpc-monorepo-starter',
-    name: 'grpc-monorepo-starter',
-    tagline: 'Turborepo + NestJS + gRPC + multi-language clients.',
-    blurb:
-      'Opinionated monorepo template — define a service in proto, get TS / Go / Python / Connect-Web clients regenerated on save.',
-    stack: ['Turborepo', 'NestJS', 'gRPC', 'Buf'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/grpc-monorepo-starter',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-  {
-    slug: 'stripe-eu-vat-moss',
-    name: 'stripe-eu-vat-moss',
-    tagline: 'EU VAT One-Stop-Shop automation engine.',
-    blurb:
-      'Java + Spring Boot + JOOQ + Liquibase. Bitemporal event store, 27-country VAT matrix, SAF-OSS XML returns, Stripe Tax + Connect (Art. 14a) ingestion, Pulumi-Java to Oracle Cloud Free.',
-    stack: ['Java', 'Spring Boot', 'JOOQ', 'Postgres', 'Pulumi'],
-    status: 'shipped',
-    repoUrl: 'https://github.com/mateokadiu/stripe-eu-vat-moss',
-    isPrivate: false,
-    tileSize: '2x1',
-  },
-];
-
-export const PROJECT_BY_SLUG: Record<string, Project> = Object.fromEntries(
-  PROJECTS.map((p) => [p.slug, p]),
-);
-
 export const SOCIAL = {
   email: 'mateokadiu18@gmail.com',
   github: 'https://github.com/mateokadiu',
@@ -142,13 +16,19 @@ export const SOCIAL = {
 };
 
 export const SITE = {
-  title: 'Mateo Kadiu — Senior Full-Stack Engineer',
+  title: 'Mateo Kadiu — Senior Software Engineer',
   description:
-    'Mateo Kadiu, senior full-stack engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project tile is a live demo.',
-  jobTitle: 'Senior Full-Stack Engineer',
+    'Mateo Kadiu, senior software engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project has an interactive demo.',
+  jobTitle: 'Senior Software Engineer',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',
+  city: 'Tirana',
+  country: 'Albania',
+  countryCode: 'AL',
+  timezone: 'Europe/Tirane',
+  /** Path of the downloadable CV. */
+  cvPath: '/Mateo%20Kadiu%20-%20CV.pdf',
 };
 
 /** Site-relative path with trailing slash (hash paths like /#work are unchanged). */
@@ -162,7 +42,5 @@ export function sitePath(path = '/'): string {
 /** Absolute canonical URL for a site path. */
 export function siteUrl(path = '/'): string {
   if (!path || path === '/') return `${SITE.url}/`;
-  const relative = sitePath(path);
-  if (relative.includes('#')) return `${SITE.url}${relative}`;
-  return `${SITE.url}${relative}`;
+  return `${SITE.url}${sitePath(path)}`;
 }

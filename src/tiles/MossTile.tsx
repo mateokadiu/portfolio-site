@@ -1,6 +1,6 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
-import { EU27_VAT, bpToPercent } from '~/lib/vat-rates';
+import { cssVars } from '~/lib/cssVars';
+import { bpToPercent, EU27_VAT } from '~/lib/vat-rates';
 
 const NET_EUR = 100;
 const fmt = (n: number) => `€${n.toFixed(2)}`;
@@ -11,7 +11,6 @@ const FEATURED = ['DE', 'FR', 'IT', 'ES', 'FI', 'HU'];
 const FALLBACK = EU27_VAT[0]!;
 
 export default function MossTile() {
-  const reduced = useReducedMotion();
   const [picked, setPicked] = useState('DE');
   const member = EU27_VAT.find((m) => m.code === picked) ?? FALLBACK;
   const ratePct = bpToPercent(member.rateBp);
@@ -19,24 +18,12 @@ export default function MossTile() {
   const gross = NET_EUR + vat;
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">stripe-eu-vat-moss</h3>
-          <p className="mt-1 text-xs text-muted">
-            EU One-Stop-Shop · destination-rate VAT routing per Art. 58
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
+          <div className="mb-2 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-wider text-muted">
             <span>customer in</span>
-            <span>{EU27_VAT.length} member states · live rates</span>
+            <span>{EU27_VAT.length} member states · standard rates</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {FEATURED.map((code) => {
@@ -48,7 +35,7 @@ export default function MossTile() {
                   key={m.code}
                   type="button"
                   onClick={() => setPicked(m.code)}
-                  className={`rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                  className={`min-h-6 rounded-md border px-2 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                     active
                       ? 'border-accent/60 bg-accent/10 text-accent'
                       : 'border-border/60 text-muted hover:border-accent/40 hover:text-foreground'
@@ -69,34 +56,30 @@ export default function MossTile() {
             <span>net</span>
             <span className="text-foreground">{fmt(NET_EUR)}</span>
           </div>
-          <motion.div
+          <div
             key={member.code}
-            initial={reduced ? false : { opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-            className="mt-1.5 flex items-center justify-between text-muted"
+            className="anim-enter mt-1.5 flex items-center justify-between text-muted"
+            style={cssVars({ '--enter-y': '-4px' })}
           >
             <span>
               vat <span className="text-foreground">{ratePct.toFixed(1)}%</span>{' '}
-              <span className="text-[10px]">→ {member.code} treasury</span>
+              <span className="text-[11px]">→ {member.code} treasury</span>
             </span>
             <span className="text-foreground">+ {fmt(vat)}</span>
-          </motion.div>
+          </div>
           <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2 text-foreground">
             <span className="text-muted">customer pays</span>
-            <motion.span
+            <span
               key={`gross-${member.code}`}
-              initial={reduced ? false : { scale: 0.96 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-              className="font-semibold"
+              className="anim-enter inline-block font-semibold"
+              style={cssVars({ '--enter-y': '0', '--enter-scale': 0.96 })}
             >
               {fmt(gross)}
-            </motion.span>
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
           <span>
             period <span className="text-foreground">2026-Q2</span>
           </span>

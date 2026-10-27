@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { getCollection } from 'astro:content';
 import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
 import satori from 'satori';
-import { PROJECTS } from '~/lib/data';
+import { SITE } from '~/lib/data';
+import { getProjects } from '~/lib/projects';
 
 const WIDTH = 1200;
 const HEIGHT = 630;
@@ -16,41 +16,37 @@ interface OgSpec {
   stack: string[];
 }
 
-const HOME_STACK = ['astro', 'react', 'tailwind', 'typescript', 'framer motion'];
+const HOME_STACK = ['react', 'next.js', 'angular', 'nestjs', 'typescript'];
 const ABOUT_STACK = ['nestjs', 'next.js', 'stripe connect', 'kubernetes', 'pulumi'];
 const PROJECTS_STACK = ['temporal', 'stripe connect', 'nestjs', 'angular', 'spring boot'];
 
 async function loadOgSpecs(): Promise<OgSpec[]> {
+  const projects = await getProjects();
   const specs: OgSpec[] = [
     {
       slug: 'default',
-      title: 'Mateo Kadiu',
+      title: SITE.author,
       tagline:
-        'Senior full-stack — React · Next.js · NestJS · Kubernetes · Stripe Connect. Bento-grid interactive portfolio.',
+        'Senior software engineer — React · Next.js · Angular · NestJS · Stripe Connect. Every project has an interactive demo.',
       stack: HOME_STACK,
     },
     {
       slug: 'about',
-      title: 'Mateo Kadiu',
-      tagline: 'Senior full-stack engineer · Tirana, AL · remote-friendly, EU timezone.',
+      title: SITE.author,
+      tagline: `${SITE.jobTitle} · ${SITE.city}, ${SITE.countryCode} · remote-friendly, EU timezone.`,
       stack: ABOUT_STACK,
     },
     {
       slug: 'projects',
       title: 'projects',
-      tagline: `${PROJECTS.length} open-source projects, each with a live interactive demo.`,
+      tagline: `${projects.length} open-source projects, each with an interactive demo.`,
       stack: PROJECTS_STACK,
     },
   ];
 
-  const entries = await getCollection('projects');
-  const bySlug = new Map(entries.map((e) => [e.id.replace(/\.mdx$/, ''), e.data]));
-
-  for (const p of PROJECTS) {
-    const data = bySlug.get(p.slug);
-    const tagline = data?.tagline ?? p.tagline;
-    const stack = (data?.stack ?? p.stack).slice(0, 5).map((s) => s.toLowerCase());
-    specs.push({ slug: p.slug, title: p.name, tagline, stack });
+  for (const p of projects) {
+    const stack = p.stack.slice(0, 5).map((s) => s.toLowerCase());
+    specs.push({ slug: p.slug, title: p.name, tagline: p.tagline, stack });
   }
 
   return specs;
@@ -82,9 +78,12 @@ function template(spec: OgSpec) {
         flexDirection: 'column',
         width: '100%',
         height: '100%',
+        // Satori (Yoga 3) defaults to content-box: without this the padding is
+        // added to the canvas size and the footer + dots render off-canvas.
+        boxSizing: 'border-box',
         backgroundColor: '#1a1a1a',
         backgroundImage:
-          'radial-gradient(circle at 85% 15%, rgba(240, 138, 62, 0.22), rgba(240, 138, 62, 0) 55%)',
+          'radial-gradient(circle at 85% 15%, rgba(232, 88, 84, 0.22), rgba(232, 88, 84, 0) 55%)',
         color: '#fafafa',
         fontFamily: 'JetBrains Mono',
         position: 'relative',
@@ -101,7 +100,7 @@ function template(spec: OgSpec) {
               top: 0,
               bottom: 0,
               width: '8px',
-              backgroundColor: '#f08a3e',
+              backgroundColor: '#e85854',
             },
           },
         },
@@ -214,7 +213,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: '#f08a3e',
+                    backgroundColor: '#e85854',
                   },
                 },
               },
@@ -225,7 +224,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(240, 138, 62, 0.55)',
+                    backgroundColor: 'rgba(232, 88, 84, 0.55)',
                   },
                 },
               },
@@ -236,7 +235,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(240, 138, 62, 0.25)',
+                    backgroundColor: 'rgba(232, 88, 84, 0.25)',
                   },
                 },
               },

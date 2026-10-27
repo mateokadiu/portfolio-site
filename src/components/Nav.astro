@@ -1,5 +1,5 @@
 ---
-import { SOCIAL } from '~/lib/data';
+import { SITE, SOCIAL } from '~/lib/data';
 ---
 
 <header
@@ -11,7 +11,7 @@ import { SOCIAL } from '~/lib/data';
       href="/"
       class="rounded font-mono text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-accent"
     >
-      <span class="sr-only">Mateo Kadiu — home</span>
+      <span class="sr-only">{SITE.author} — home</span>
       <span aria-hidden="true">mk<span class="text-accent">.</span></span>
     </a>
     <ul class="flex items-center gap-6 text-sm text-muted">
@@ -19,7 +19,7 @@ import { SOCIAL } from '~/lib/data';
         <a href="/#work" data-anchor class="transition-colors hover:text-foreground">work</a>
       </li>
       <li>
-        <a href="/about/" class="transition-colors hover:text-foreground">about</a>
+        <a href="/about/" data-nav-link class="transition-colors hover:text-foreground aria-[current=page]:text-foreground">about</a>
       </li>
       <li>
         <a
@@ -66,4 +66,14 @@ import { SOCIAL } from '~/lib/data';
   }
   bindAnchors();
   document.addEventListener('astro:page-load', bindAnchors);
+
+  // The nav persists across view transitions, so mark the current page here.
+  function markCurrent() {
+    for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-nav-link]')) {
+      if (new URL(a.href).pathname === window.location.pathname) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    }
+  }
+  markCurrent();
+  document.addEventListener('astro:page-load', markCurrent);
 </script>

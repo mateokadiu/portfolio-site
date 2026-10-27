@@ -1,10 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Post-deploy check against production: `pnpm test:live`.
 export default defineConfig({
   testDir: './tests',
-  testMatch: ['**/audit.spec.ts'],
+  testMatch: ['**/smoke.spec.ts', '**/audit.spec.ts'],
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  use: { baseURL: 'https://mateokadiu.pages.dev', trace: 'off' },
+  retries: 1,
+  use: { baseURL: 'https://mateokadiu.com', trace: 'off' },
   projects: [{ name: 'desktop', use: { ...devices['Desktop Chrome'] } }],
 });

@@ -32,3 +32,8 @@ pnpm-debug.log*
 playwright-report/
 test-results/
 coverage/
+
+# generated at build time
+src/lib/github-activity.generated.json
+.lighthouseci/
+.vitest/

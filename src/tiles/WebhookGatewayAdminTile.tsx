@@ -1,5 +1,7 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { cssVars } from '~/lib/cssVars';
+import { useIsActive } from '~/lib/useIsActive';
+import { usePrefersReducedMotion } from '~/lib/usePrefersReducedMotion';
 
 type Filter = 'all' | 'ok' | 'failed';
 
@@ -26,19 +28,22 @@ const STATUS_DOT: Record<Row['status'], string> = {
 };
 
 export default function WebhookGatewayAdminTile() {
-  const reduced = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = useIsActive(rootRef);
+  const reduced = usePrefersReducedMotion();
   const [filter, setFilter] = useState<Filter>('all');
   const [received, setReceived] = useState(127);
   const [delivered, setDelivered] = useState(118);
 
+  // Live counters tick only while the tile is on screen.
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !active) return;
     const t = setInterval(() => {
       setReceived((n) => n + 1);
       if (Math.random() > 0.2) setDelivered((n) => n + 1);
     }, 2400);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, active]);
 
   const visibleRows = useMemo(
     () => (filter === 'all' ? ROWS : ROWS.filter((r) => r.status === filter)),
@@ -46,26 +51,13 @@ export default function WebhookGatewayAdminTile() {
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway-admin</h3>
-          <p className="mt-1 text-xs text-muted">
-            Angular admin · zoneless · <span className="font-mono text-accent">signal()</span>{' '}
-            filters
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex-1 overflow-hidden">
+    <div ref={rootRef} className="flex h-full flex-1 flex-col">
+      <div className="flex-1 overflow-hidden">
         {/* mini sidebar + content layout, mimicking the real admin */}
         <div className="grid grid-cols-[88px_1fr] gap-2 rounded-lg border border-border/60 bg-background/40 p-2">
           <aside className="border-r border-border/60 pr-2">
-            <p className="mb-2 font-mono text-[9px] uppercase tracking-widest text-muted">nav</p>
-            <ul className="space-y-1 font-mono text-[10px] text-muted">
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-muted">nav</p>
+            <ul className="space-y-1 font-mono text-[11px] text-muted">
               <li className="rounded bg-card-hover px-1.5 py-0.5 text-foreground">▣ dashboard</li>
               <li className="px-1.5 py-0.5">◫ events</li>
               <li className="px-1.5 py-0.5">↳ deliveries</li>
@@ -77,61 +69,57 @@ export default function WebhookGatewayAdminTile() {
             {/* stat cards (signal-driven counters) */}
             <div className="grid grid-cols-2 gap-1.5">
               <div className="rounded border border-border/60 px-2 py-1">
-                <p className="font-mono text-[9px] uppercase tracking-wider text-muted">received</p>
-                <motion.p
+                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  received
+                </p>
+                <p
                   key={received}
-                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="font-mono text-base tabular-nums leading-tight"
+                  className="anim-enter font-mono text-base tabular-nums leading-tight"
+                  style={cssVars({ '--enter-y': '-2px' })}
                 >
                   {received}
-                </motion.p>
+                </p>
               </div>
               <div className="rounded border border-border/60 px-2 py-1">
-                <p className="font-mono text-[9px] uppercase tracking-wider text-muted">
+                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
                   delivered
                 </p>
-                <motion.p
+                <p
                   key={delivered}
-                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="font-mono text-base tabular-nums leading-tight text-emerald-300"
+                  className="anim-enter font-mono text-base tabular-nums leading-tight text-emerald-300"
+                  style={cssVars({ '--enter-y': '-2px' })}
                 >
                   {delivered}
-                </motion.p>
+                </p>
               </div>
             </div>
 
             {/* filter pills */}
-            <div className="flex items-center gap-1 font-mono text-[10px]">
+            <div className="flex items-center gap-1 font-mono text-[11px]">
               {(['all', 'ok', 'failed'] as Filter[]).map((f) => (
                 <button
                   key={f}
                   type="button"
                   onClick={() => setFilter(f)}
-                  className={`rounded px-1.5 py-0.5 transition-colors ${
+                  className={`min-h-6 rounded px-1.5 py-0.5 transition-colors ${
                     filter === f
-                      ? 'border border-accent/40 bg-accent/15 text-accent'
+                      ? 'border border-accent/40 bg-accent/10 text-accent'
                       : 'border border-border/60 text-muted hover:text-foreground'
                   }`}
                 >
                   {f}
                 </button>
               ))}
-              <span className="ml-auto text-[9px] text-muted">{visibleRows.length} rows</span>
+              <span className="ml-auto text-[11px] text-muted">{visibleRows.length} rows</span>
             </div>
 
             {/* events table */}
-            <ul className="space-y-1 overflow-hidden font-mono text-[10px]">
+            <ul className="space-y-1 overflow-hidden font-mono text-[11px]">
               {visibleRows.slice(0, 4).map((r) => (
-                <motion.li
+                <li
                   key={`${filter}-${r.id}`}
-                  initial={reduced ? false : { opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.18 }}
-                  className="flex items-center gap-2 rounded border border-border/40 px-1.5 py-1"
+                  className="anim-enter flex items-center gap-2 rounded border border-border/40 px-1.5 py-1"
+                  style={cssVars({ '--enter-x': '-4px', '--enter-y': '0' })}
                 >
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[r.status]}`}
@@ -139,11 +127,12 @@ export default function WebhookGatewayAdminTile() {
                   />
                   <span className="text-muted">{r.id.slice(0, 6)}</span>
                   <span className="truncate">{r.source}</span>
-                  <span className="ml-auto text-[9px] text-muted">{r.age}</span>
-                </motion.li>
+                  <span className="sr-only">{r.status}</span>
+                  <span className="ml-auto text-[11px] text-muted">{r.age}</span>
+                </li>
               ))}
               {visibleRows.length === 0 && (
-                <li className="rounded border border-dashed border-border/60 px-2 py-3 text-center text-[10px] text-muted">
+                <li className="rounded border border-dashed border-border/60 px-2 py-3 text-center text-[11px] text-muted">
                   no matches
                 </li>
               )}
@@ -152,7 +141,7 @@ export default function WebhookGatewayAdminTile() {
         </div>
       </div>
 
-      <p className="mt-2 font-mono text-[10px] text-muted">
+      <p className="mt-2 font-mono text-[11px] text-muted">
         filter is a <span className="text-accent">signal()</span>;{' '}
         <span className="text-accent">computed()</span> derives the visible rows
       </p>

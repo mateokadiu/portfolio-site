@@ -1,34 +1,12 @@
-import { type Page, expect, test } from '@playwright/test';
-import { PROJECTS_WITH_DEMO_HINTS, projectPath } from './site-urls';
-
-const PAGES = [
-  '/',
-  '/about/',
-  '/projects/',
-  '/projects/temporal-stripe/',
-  '/projects/webhook-gateway/',
-  '/projects/webhook-gateway-admin/',
-  '/projects/shadowkit/',
-  '/projects/studybuddy/',
-  '/projects/tax-ledger/',
-  '/projects/grpc-monorepo-starter/',
-  '/projects/stripe-eu-vat-moss/',
-  '/projects/tide/',
-];
+import { expect, type Page, test } from '@playwright/test';
+import { hydrateAll, trackErrors } from './helpers';
+import { PAGES, PROJECT_SLUGS, projectPath } from './site-urls';
 
 const STATIC_ASSETS = [
   '/og/default.png',
   '/og/about.png',
   '/og/projects.png',
-  '/og/temporal-stripe.png',
-  '/og/webhook-gateway.png',
-  '/og/shadowkit.png',
-  '/og/studybuddy.png',
-  '/og/tax-ledger.png',
-  '/og/grpc-monorepo-starter.png',
-  '/og/tide.png',
-  '/og/webhook-gateway-admin.png',
-  '/og/stripe-eu-vat-moss.png',
+  ...PROJECT_SLUGS.map((slug) => `/og/${slug}.png`),
   '/manifest.webmanifest',
   '/apple-touch-icon.png',
   '/favicon-32.png',
@@ -50,15 +28,11 @@ async function jsonLdNodes(page: Page): Promise<LdNode[]> {
 }
 
 for (const path of PAGES) {
-  test(`page returns 200: ${path}`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
-    page.on('console', (m) => {
-      if (m.type() === 'error') errors.push(`console.error: ${m.text()}`);
-    });
+  test(`page returns 200 and every demo hydrates without errors: ${path}`, async ({ page }) => {
+    const errors = trackErrors(page);
     const res = await page.goto(path);
     expect(res?.status()).toBe(200);
-    await page.waitForLoadState('networkidle', { timeout: 15_000 });
+    await hydrateAll(page);
     expect(errors, `errors on ${path}:\n${errors.join('\n')}`).toEqual([]);
   });
 }
@@ -74,7 +48,7 @@ test('homepage has full SEO meta', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
-    /senior full-stack/i,
+    /senior software engineer/i,
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
@@ -108,7 +82,7 @@ for (const path of PAGES) {
     const people = (await jsonLdNodes(page)).filter((n) => n['@type'] === 'Person');
     expect(people).toHaveLength(1);
     expect(people[0]['@id']).toBe('https://mateokadiu.com/#person');
-    expect(people[0].jobTitle).toBe('Senior Full-Stack Engineer');
+    expect(people[0].jobTitle).toBe('Senior Software Engineer');
   });
 
   test(`title + description fit search snippets: ${path}`, async ({ page }) => {
@@ -209,6 +183,20 @@ test('manifest has icons + theme color', async ({ request }) => {
   expect(m.start_url).toBe('/');
 });
 
+test('nav marks the current page', async ({ page }) => {
+  await page.goto('/about/');
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'about' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+});
+
+test('hero offers contact and CV above the fold', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: 'email me' })).toBeInViewport();
+  await expect(page.getByRole('link', { name: /cv\.pdf/ }).first()).toBeInViewport();
+});
+
 test('internal nav links use trailing slashes', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('navigation').getByRole('link', { name: 'about' })).toHaveAttribute(
@@ -217,21 +205,12 @@ test('internal nav links use trailing slashes', async ({ page }) => {
   );
 });
 
-test('temporal-stripe live demo: play advances, reauth ring renders cleanly', async ({ page }) => {
-  await page.goto('/projects/temporal-stripe/');
-  const state = page.locator('[aria-live="polite"]').first();
-  await expect(state).toContainText('authorized');
-  await page.getByRole('button', { name: /play/i }).click();
-  await page.waitForTimeout(3500);
-  await expect(state).not.toContainText('state · authorized', { timeout: 2000 });
-});
-
 test('homepage hero copy is the new version', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText(/Every tile below is a project I shipped/i)).toBeVisible();
 });
 
-for (const slug of PROJECTS_WITH_DEMO_HINTS) {
+for (const slug of PROJECT_SLUGS) {
   test(`demo hint shows on project page: ${slug}`, async ({ page }) => {
     await page.goto(projectPath(slug));
     await expect(page.getByText(/try the demo/i)).toBeVisible();

@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 // Vendored from ~/Desktop/development/personal/shadowkit/examples/embed-counter/dist
@@ -12,6 +11,14 @@ const HOST_DESCENDANT_RULE =
 declare global {
   interface HTMLElementTagNameMap {
     'sk-counter': HTMLElement;
+  }
+}
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'sk-counter': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
   }
 }
 
@@ -76,10 +83,10 @@ function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-2 rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[10px] transition-colors hover:border-accent/40"
+      className="flex w-full items-center gap-2 rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:border-accent/40"
     >
       <span
-        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[10px] ${
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[11px] ${
           active ? 'bg-accent text-background' : 'bg-border/60 text-muted'
         }`}
         aria-hidden="true"
@@ -97,7 +104,6 @@ function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
 export default function ShadowkitTile() {
   const { loaded, hostLogRef } = useBundle();
   const [active, setActive] = useState<Set<ProbeKey>>(new Set());
-  const reduced = useReducedMotion();
   const styleRefs = useRef<Record<ProbeKey, HTMLStyleElement | null>>({
     css: null,
     descendant: null,
@@ -133,22 +139,10 @@ export default function ShadowkitTile() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">shadowkit</h3>
-          <p className="mt-1 text-xs text-muted">
-            Tailwind inside Shadow DOM — cascade boundary holds
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted">
             3 shadow roots · synced through a typed postMessage bridge
           </p>
           {loaded === 'ready' ? (
@@ -157,7 +151,6 @@ export default function ShadowkitTile() {
                 // Each counter needs ~11rem (its own :host min-width), so wrap
                 // instead of squeezing: 3 across when there's room, 2 + 1 in a
                 // half-width tile, stacked on phones.
-                // @ts-expect-error custom element
                 <sk-counter key={i} id={`sk-${i}`} style={{ flex: '1 1 11rem' }} />
               ))}
             </div>
@@ -170,11 +163,7 @@ export default function ShadowkitTile() {
           )}
         </div>
 
-        <motion.div
-          className="space-y-1.5"
-          initial={false}
-          animate={reduced ? undefined : { opacity: 1 }}
-        >
+        <div className="space-y-1.5">
           <ProbeRow
             active={active.has('css')}
             label="inject host CSS"
@@ -189,7 +178,7 @@ export default function ShadowkitTile() {
             offText="try a body * !important that nukes every element on the page"
             onClick={() => toggle('descendant', HOST_DESCENDANT_RULE)}
           />
-        </motion.div>
+        </div>
       </div>
 
       <pre ref={hostLogRef} className="hidden" aria-hidden="true" />

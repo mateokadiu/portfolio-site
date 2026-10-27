@@ -1,15 +1,18 @@
 ---
 import BentoGrid from '~/components/BentoGrid.astro';
-import Hero from '~/components/Hero';
+import Hero from '~/components/Hero.astro';
 import ProjectTile from '~/components/ProjectTile.astro';
 import Tile from '~/components/Tile.astro';
 import Layout from '~/layouts/Layout.astro';
-import { PROJECTS, SITE, siteUrl } from '~/lib/data';
+import { SITE, siteUrl } from '~/lib/data';
+import { getProjects } from '~/lib/projects';
 import { personRef, websiteRef } from '~/lib/seo';
 import AboutTile from '~/tiles/AboutTile.astro';
 import ContactTile from '~/tiles/ContactTile.astro';
 import GithubTile from '~/tiles/GithubTile.astro';
 import NowTile from '~/tiles/NowTile.astro';
+
+const projects = await getProjects();
 
 const homePageJsonLd = {
   '@type': 'WebPage',
@@ -26,8 +29,8 @@ const homePageJsonLd = {
 const projectListJsonLd = {
   '@type': 'ItemList',
   name: `Projects by ${SITE.author}`,
-  numberOfItems: PROJECTS.length,
-  itemListElement: PROJECTS.map((p, i) => ({
+  numberOfItems: projects.length,
+  itemListElement: projects.map((p, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     url: siteUrl(`/projects/${p.slug}`),
@@ -37,12 +40,12 @@ const projectListJsonLd = {
 ---
 
 <Layout jsonLd={[homePageJsonLd, projectListJsonLd]}>
-  <Hero client:idle />
+  <Hero />
 
   <BentoGrid id="work">
-    {PROJECTS.map((project) => <ProjectTile project={project} />)}
+    {projects.map((project) => <ProjectTile project={project} />)}
 
-    <Tile size="1x1" href="/about/" label="About Mateo Kadiu"><AboutTile /></Tile>
+    <Tile size="1x1" href="/about/" label={`About ${SITE.author}`}><AboutTile /></Tile>
     <Tile size="1x1"><NowTile /></Tile>
     <Tile size="1x1"><GithubTile /></Tile>
     <Tile size="1x1"><ContactTile /></Tile>

@@ -1,14 +1,49 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import {
+  dwellMs,
+  isLegalTransition,
   REAUTH_TIMER_MS,
   STRIPE_EDGES,
-  STRIPE_NODES,
   STRIPE_NODE_BY_ID,
-  STRIPE_SCRIPT,
+  STRIPE_NODES,
   STRIPE_TERMINAL,
+  type StripeState,
   useTemporalStripeStore,
 } from '~/lib/temporalStripeStore';
+
+const NODE_R = 11;
+const CURRENT_R = 14;
+
+/** Edge endpoints trimmed to the node circles; two-way edges are split apart. */
+function edgeLine(from: StripeState, to: StripeState) {
+  const a = STRIPE_NODE_BY_ID[from];
+  const b = STRIPE_NODE_BY_ID[to];
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy);
+  const ux = dx / len;
+  const uy = dy / len;
+  const offset = isLegalTransition(to, from) ? 4 : 0;
+  const nx = -uy * offset;
+  const ny = ux * offset;
+  return {
+    x1: a.x + ux * (CURRENT_R + 3) + nx,
+    y1: a.y + uy * (CURRENT_R + 3) + ny,
+    x2: b.x - ux * (CURRENT_R + 5) + nx,
+    y2: b.y - uy * (CURRENT_R + 5) + ny,
+  };
+}
+
+function labelProps(node: (typeof STRIPE_NODES)[number]) {
+  switch (node.labelPos) {
+    case 'above':
+      return { x: node.x, y: node.y - 20, textAnchor: 'middle' as const };
+    case 'right':
+      return { x: node.x + 20, y: node.y + 3, textAnchor: 'start' as const };
+    default:
+      return { x: node.x, y: node.y + 27, textAnchor: 'middle' as const };
+  }
+}
 
 export default function TemporalStripeTile() {
   const current = useTemporalStripeStore((s) => s.current);
@@ -24,22 +59,15 @@ export default function TemporalStripeTile() {
   const clearIllegal = useTemporalStripeStore((s) => s.clearIllegal);
   const setReauthMs = useTemporalStripeStore((s) => s.setReauthMs);
 
-  const reduced = useReducedMotion();
   const lastTickRef = useRef<number | null>(null);
 
-  // Scripted walk while playing.
+  // Scripted walk while playing. Reduced motion only removes the animation
+  // (via CSS) — the walk itself still runs.
   useEffect(() => {
-    if (!playing || reduced) return;
-    const id = setTimeout(() => {
-      const next = STRIPE_SCRIPT[step + 1];
-      if (!next) {
-        pause();
-        return;
-      }
-      advance(next);
-    }, 1100);
+    if (!playing) return;
+    const id = setTimeout(advance, dwellMs(current));
     return () => clearTimeout(id);
-  }, [playing, step, reduced, pause, advance]);
+  }, [playing, step, current, advance]);
 
   // Reauth countdown ticks only inside reauthorizing.
   useEffect(() => {
@@ -67,26 +95,16 @@ export default function TemporalStripeTile() {
     return () => clearTimeout(id);
   }, [illegal, clearIllegal]);
 
-  return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">temporal-stripe</h3>
-          <p className="mt-1 text-xs text-muted">
-            Temporal workflows for the Stripe Connect lifecycle
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
+  const reauthNode = STRIPE_NODE_BY_ID.reauthorizing;
 
-      <div className="relative mt-4 flex-1 overflow-hidden rounded-lg border border-border/60 bg-background/40">
+  return (
+    <div className="flex h-full flex-1 flex-col">
+      <div className="relative flex-1 overflow-hidden rounded-lg border border-border/60 bg-background/40">
         <svg
-          viewBox="0 0 400 160"
+          viewBox="0 0 400 170"
           className="h-full w-full"
-          role="img"
-          aria-label="Stripe Connect state machine — authorize, reauth, multicapture, captured"
+          role="group"
+          aria-label="Stripe Connect state machine. Select a state to transition to it."
         >
           <defs>
             <marker
@@ -103,23 +121,17 @@ export default function TemporalStripeTile() {
           </defs>
 
           {STRIPE_EDGES.map((e) => {
-            const from = STRIPE_NODE_BY_ID[e.from];
-            const to = STRIPE_NODE_BY_ID[e.to];
             const active = current === e.to && step > 0;
             return (
-              <motion.line
+              <line
                 key={`${e.from}-${e.to}`}
-                x1={from.x + 30}
-                y1={from.y}
-                x2={to.x - 30}
-                y2={to.y}
+                {...edgeLine(e.from, e.to)}
                 stroke={active ? 'oklch(0.7 0.18 25)' : 'oklch(0.45 0 0)'}
                 strokeWidth={active ? 1.8 : 1}
                 strokeDasharray={active ? '0' : '3 3'}
                 markerEnd="url(#ts-arrow)"
-                initial={false}
-                animate={{ opacity: active ? 1 : 0.55 }}
-                transition={{ duration: 0.4 }}
+                opacity={active ? 1 : 0.55}
+                className="transition-opacity duration-300"
               />
             );
           })}
@@ -134,7 +146,8 @@ export default function TemporalStripeTile() {
                 className="cursor-pointer"
                 role="button"
                 tabIndex={0}
-                aria-label={`jump to ${n.label}`}
+                aria-label={`${n.label}${isCurrent ? ' (current state)' : ''}`}
+                aria-current={isCurrent ? 'step' : undefined}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -142,10 +155,12 @@ export default function TemporalStripeTile() {
                   }
                 }}
               >
-                <motion.circle
+                <circle
+                  // Re-keying restarts the CSS animation on every state change.
+                  key={`${n.id}-${isCurrent}-${isIllegal}`}
                   cx={n.x}
                   cy={n.y}
-                  r={isCurrent ? 14 : 11}
+                  r={isCurrent ? CURRENT_R : NODE_R}
                   fill={
                     isIllegal
                       ? 'oklch(0.55 0.22 25 / 0.5)'
@@ -155,20 +170,11 @@ export default function TemporalStripeTile() {
                   }
                   stroke={isCurrent ? 'oklch(0.85 0.16 25)' : 'oklch(0.45 0 0)'}
                   strokeWidth={isCurrent ? 1.6 : 1}
-                  animate={
-                    isIllegal && !reduced
-                      ? { x: [0, -3, 3, -2, 2, 0] }
-                      : isCurrent && !reduced
-                        ? { scale: [1, 1.08, 1] }
-                        : { scale: 1 }
-                  }
-                  transition={{ duration: isIllegal ? 0.32 : 0.6 }}
+                  className={isIllegal ? 'anim-shake' : isCurrent ? 'anim-beat' : undefined}
                 />
                 <text
-                  x={n.x}
-                  y={n.y + 28}
-                  textAnchor="middle"
-                  className="fill-current font-mono text-[8px]"
+                  {...labelProps(n)}
+                  className="font-mono text-[8px]"
                   fill={isCurrent ? 'oklch(0.985 0 0)' : 'oklch(0.708 0 0)'}
                 >
                   {n.label}
@@ -177,49 +183,39 @@ export default function TemporalStripeTile() {
             );
           })}
 
-          <AnimatePresence>
-            {current === 'reauthorizing' && !reduced && (
-              <motion.g
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
+          {current === 'reauthorizing' && (
+            <g className="anim-enter">
+              <circle
+                cx={reauthNode.x + 32}
+                cy={reauthNode.y}
+                r={7}
+                fill="oklch(0.145 0 0)"
+                stroke="oklch(0.3 0 0)"
+                strokeWidth={1.5}
+              />
+              <circle
+                cx={reauthNode.x + 32}
+                cy={reauthNode.y}
+                r={7}
+                fill="none"
+                stroke="oklch(0.7 0.18 25)"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                pathLength={1}
+                strokeDasharray={1}
+                strokeDashoffset={1 - reauthMs / REAUTH_TIMER_MS}
+                transform={`rotate(-90 ${reauthNode.x + 32} ${reauthNode.y})`}
+              />
+              <text
+                x={reauthNode.x + 44}
+                y={reauthNode.y + 3}
+                className="font-mono text-[7px]"
+                fill="oklch(0.708 0 0)"
               >
-                <circle
-                  cx={200}
-                  cy={12}
-                  r={7}
-                  fill="oklch(0.145 0 0)"
-                  stroke="oklch(0.3 0 0)"
-                  strokeWidth={1.5}
-                />
-                <motion.circle
-                  cx={200}
-                  cy={12}
-                  r={7}
-                  fill="none"
-                  stroke="oklch(0.7 0.18 25)"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  pathLength={1}
-                  strokeDasharray={1}
-                  initial={false}
-                  animate={{ strokeDashoffset: 1 - reauthMs / REAUTH_TIMER_MS }}
-                  transition={{ duration: 0.12, ease: 'linear' }}
-                  style={{ transform: 'rotate(-90deg)', transformOrigin: '200px 12px' }}
-                />
-                <text
-                  x={213}
-                  y={15}
-                  textAnchor="start"
-                  className="font-mono text-[7px]"
-                  fill="oklch(0.708 0 0)"
-                >
-                  reauth in {(reauthMs / 1000).toFixed(1)}s
-                </text>
-              </motion.g>
-            )}
-          </AnimatePresence>
+                reauth in {(reauthMs / 1000).toFixed(1)}s
+              </text>
+            </g>
+          )}
         </svg>
       </div>
 
@@ -228,16 +224,16 @@ export default function TemporalStripeTile() {
         role="group"
         aria-label="state machine controls"
       >
-        <p className="font-mono text-[10px] uppercase tracking-wider text-muted" aria-live="polite">
+        <p className="font-mono text-[11px] uppercase tracking-wider text-muted" aria-live="polite">
           state · <span className="text-foreground">{current}</span>
           {STRIPE_TERMINAL.has(current) && <span className="ml-2 text-accent">final</span>}
         </p>
-        <div className="flex gap-1.5 font-mono text-[10px]">
+        <div className="flex shrink-0 gap-1.5 whitespace-nowrap font-mono text-[11px]">
           <button
             type="button"
             onClick={play}
             disabled={playing}
-            className="min-h-[28px] rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
+            className="min-h-7 rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
           >
             ▶ play
           </button>
@@ -245,14 +241,14 @@ export default function TemporalStripeTile() {
             type="button"
             onClick={pause}
             disabled={!playing}
-            className="min-h-[28px] rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
+            className="min-h-7 rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground disabled:opacity-40"
           >
             ⏸ pause
           </button>
           <button
             type="button"
             onClick={reset}
-            className="rounded border border-border/60 px-1.5 py-0.5 text-muted hover:border-accent/40 hover:text-foreground"
+            className="min-h-7 rounded border border-border/60 px-2.5 py-1 text-muted hover:border-accent/40 hover:text-foreground"
           >
             ⟳ reset
           </button>
