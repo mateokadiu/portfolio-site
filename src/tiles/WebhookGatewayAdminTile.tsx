@@ -56,8 +56,8 @@ export default function WebhookGatewayAdminTile() {
         {/* mini sidebar + content layout, mimicking the real admin */}
         <div className="grid grid-cols-[88px_1fr] gap-2 rounded-lg border border-border/60 bg-background/40 p-2">
           <aside className="border-r border-border/60 pr-2">
-            <p className="mb-2 font-mono text-[9px] uppercase tracking-widest text-muted">nav</p>
-            <ul className="space-y-1 font-mono text-[10px] text-muted">
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-muted">nav</p>
+            <ul className="space-y-1 font-mono text-[11px] text-muted">
               <li className="rounded bg-card-hover px-1.5 py-0.5 text-foreground">▣ dashboard</li>
               <li className="px-1.5 py-0.5">◫ events</li>
               <li className="px-1.5 py-0.5">↳ deliveries</li>
@@ -69,7 +69,9 @@ export default function WebhookGatewayAdminTile() {
             {/* stat cards (signal-driven counters) */}
             <div className="grid grid-cols-2 gap-1.5">
               <div className="rounded border border-border/60 px-2 py-1">
-                <p className="font-mono text-[9px] uppercase tracking-wider text-muted">received</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  received
+                </p>
                 <p
                   key={received}
                   className="anim-enter font-mono text-base tabular-nums leading-tight"
@@ -79,7 +81,7 @@ export default function WebhookGatewayAdminTile() {
                 </p>
               </div>
               <div className="rounded border border-border/60 px-2 py-1">
-                <p className="font-mono text-[9px] uppercase tracking-wider text-muted">
+                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
                   delivered
                 </p>
                 <p
@@ -93,26 +95,26 @@ export default function WebhookGatewayAdminTile() {
             </div>
 
             {/* filter pills */}
-            <div className="flex items-center gap-1 font-mono text-[10px]">
+            <div className="flex items-center gap-1 font-mono text-[11px]">
               {(['all', 'ok', 'failed'] as Filter[]).map((f) => (
                 <button
                   key={f}
                   type="button"
                   onClick={() => setFilter(f)}
-                  className={`rounded px-1.5 py-0.5 transition-colors ${
+                  className={`min-h-6 rounded px-1.5 py-0.5 transition-colors ${
                     filter === f
-                      ? 'border border-accent/40 bg-accent/15 text-accent'
+                      ? 'border border-accent/40 bg-accent/10 text-accent'
                       : 'border border-border/60 text-muted hover:text-foreground'
                   }`}
                 >
                   {f}
                 </button>
               ))}
-              <span className="ml-auto text-[9px] text-muted">{visibleRows.length} rows</span>
+              <span className="ml-auto text-[11px] text-muted">{visibleRows.length} rows</span>
             </div>
 
             {/* events table */}
-            <ul className="space-y-1 overflow-hidden font-mono text-[10px]">
+            <ul className="space-y-1 overflow-hidden font-mono text-[11px]">
               {visibleRows.slice(0, 4).map((r) => (
                 <li
                   key={`${filter}-${r.id}`}
@@ -126,11 +128,11 @@ export default function WebhookGatewayAdminTile() {
                   <span className="text-muted">{r.id.slice(0, 6)}</span>
                   <span className="truncate">{r.source}</span>
                   <span className="sr-only">{r.status}</span>
-                  <span className="ml-auto text-[9px] text-muted">{r.age}</span>
+                  <span className="ml-auto text-[11px] text-muted">{r.age}</span>
                 </li>
               ))}
               {visibleRows.length === 0 && (
-                <li className="rounded border border-dashed border-border/60 px-2 py-3 text-center text-[10px] text-muted">
+                <li className="rounded border border-dashed border-border/60 px-2 py-3 text-center text-[11px] text-muted">
                   no matches
                 </li>
               )}
@@ -139,7 +141,7 @@ export default function WebhookGatewayAdminTile() {
         </div>
       </div>
 
-      <p className="mt-2 font-mono text-[10px] text-muted">
+      <p className="mt-2 font-mono text-[11px] text-muted">
         filter is a <span className="text-accent">signal()</span>;{' '}
         <span className="text-accent">computed()</span> derives the visible rows
       </p>

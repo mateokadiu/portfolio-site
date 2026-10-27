@@ -75,10 +75,10 @@ function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-2 rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[10px] transition-colors hover:border-accent/40"
+      className="flex w-full items-center gap-2 rounded-md border border-border/60 px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:border-accent/40"
     >
       <span
-        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[10px] ${
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[11px] ${
           active ? 'bg-accent text-background' : 'bg-border/60 text-muted'
         }`}
         aria-hidden="true"
@@ -134,7 +134,7 @@ export default function ShadowkitTile() {
     <div className="flex h-full flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted">
             3 shadow roots · synced through a typed postMessage bridge
           </p>
           {loaded === 'ready' ? (

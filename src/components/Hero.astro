@@ -1,5 +1,8 @@
 ---
-import { SITE } from '~/lib/data';
+import { loadPersonal } from '~/lib/cv';
+import { SITE, SOCIAL } from '~/lib/data';
+
+const personal = await loadPersonal();
 
 // Per-character reveal, rendered at build time and animated in CSS: no JS, and
 // no flash from hiding server-rendered text during hydration. Words stay
@@ -9,7 +12,7 @@ const words = SITE.author.split(' ').map((word) => [...word].map((ch) => ({ ch, 
 ---
 
 <section
-  class="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-6 pb-12 pt-20 sm:pt-28"
+  class="relative mx-auto flex min-h-[62vh] max-w-6xl flex-col justify-center px-6 pb-12 pt-16 sm:min-h-[70vh] sm:pt-24"
 >
   <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
     {SITE.city.toLowerCase()}, {SITE.countryCode.toLowerCase()} · {SITE.jobTitle.toLowerCase()}
@@ -39,10 +42,41 @@ const words = SITE.author.split(' ').map((word) => [...word].map((ch) => ({ ch, 
     Every tile below is a project I shipped. Click in for an interactive demo of how it works.
   </p>
 
-  <slot />
+  <div class="hero-cta mt-8 flex flex-wrap items-center gap-2 font-mono text-xs">
+    {
+      personal.openToWork && (
+        <span class="inline-flex min-h-8 items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 text-accent">
+          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
+          {personal.availability}
+        </span>
+      )
+    }
+    <a
+      href={`mailto:${SOCIAL.email}`}
+      class="inline-flex min-h-8 items-center rounded-md border border-border bg-card px-3 text-foreground transition-colors hover:border-accent/40 hover:text-accent"
+    >
+      email me
+    </a>
+    <a
+      href={SITE.cvPath}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex min-h-8 items-center rounded-md border border-border bg-card px-3 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+    >
+      cv.pdf ↗
+    </a>
+    <a
+      href={SOCIAL.linkedin}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex min-h-8 items-center rounded-md border border-border bg-card px-3 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+    >
+      linkedin ↗
+    </a>
+  </div>
 
   <div
-    class="hero-cue mt-14 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted"
+    class="hero-cue mt-12 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted"
     aria-hidden="true"
   >
     <span>scroll</span>
@@ -73,10 +107,14 @@ const words = SITE.author.split(' ').map((word) => [...word].map((ch) => ({ ch, 
     --enter-y: 14px;
     animation: enter 0.7s var(--ease-out-expo) 0.45s both;
   }
+  .hero-cta {
+    --enter-y: 10px;
+    animation: enter 0.6s var(--ease-out-expo) 0.6s both;
+  }
   .hero-cue {
     --enter-y: 8px;
     animation:
-      enter 0.5s var(--ease-out-expo) 0.7s both,
+      enter 0.5s var(--ease-out-expo) 0.85s both,
       hero-bob 1.4s ease-in-out 1.2s infinite alternate;
   }
   @keyframes hero-bob {

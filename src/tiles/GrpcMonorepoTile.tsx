@@ -63,7 +63,7 @@ export default function GrpcMonorepoTile() {
     <div className="flex h-full flex-1 flex-col">
       <div className="flex-1 space-y-3">
         <pre
-          className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[10px] leading-snug text-foreground"
+          className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[11px] leading-snug text-foreground"
           aria-label="orders.proto"
         >
           <code>
@@ -86,12 +86,14 @@ export default function GrpcMonorepoTile() {
           {CLIENTS.map((c, i) => (
             <div
               key={`${run}-${c.key}`}
-              className={`flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] transition-[opacity,transform] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                done ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-30'
+              className={`flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                done
+                  ? 'translate-y-0 border-border/60'
+                  : 'translate-y-2 border-dashed border-border/60'
               }`}
               style={{ transitionDelay: done ? `${(i + 1) * 180}ms` : '0ms' }}
             >
-              <span className="text-foreground">{c.label}</span>
+              <span className={done ? 'text-foreground' : 'text-muted'}>{c.label}</span>
               {done && (
                 <span
                   className="anim-enter text-accent"
@@ -110,12 +112,12 @@ export default function GrpcMonorepoTile() {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-muted">
+      <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-muted">
         <span aria-live="polite">{done ? '4 clients regenerated' : 'codegen…'}</span>
         <button
           type="button"
           onClick={() => setRun((r) => r + 1)}
-          className="rounded border border-border/60 px-1.5 py-0.5 hover:border-accent/40 hover:text-foreground"
+          className="min-h-6 rounded border border-border/60 px-1.5 py-0.5 hover:border-accent/40 hover:text-foreground"
         >
           ▶ replay
         </button>

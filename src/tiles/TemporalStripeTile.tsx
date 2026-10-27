@@ -228,7 +228,7 @@ export default function TemporalStripeTile() {
           state · <span className="text-foreground">{current}</span>
           {STRIPE_TERMINAL.has(current) && <span className="ml-2 text-accent">final</span>}
         </p>
-        <div className="flex gap-1.5 font-mono text-[11px]">
+        <div className="flex shrink-0 gap-1.5 whitespace-nowrap font-mono text-[11px]">
           <button
             type="button"
             onClick={play}

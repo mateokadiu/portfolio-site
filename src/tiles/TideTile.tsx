@@ -38,7 +38,7 @@ export default function TideTile() {
     <div ref={rootRef} className="flex h-full flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted">
             capture surface
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -49,7 +49,7 @@ export default function TideTile() {
                   key={s.id}
                   type="button"
                   onClick={() => setPicked(s.id)}
-                  className={`rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                  className={`min-h-6 rounded-md border px-2 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                     active
                       ? 'border-accent/60 bg-accent/10 text-accent'
                       : 'border-border/60 text-muted hover:border-accent/40 hover:text-foreground'
@@ -60,7 +60,7 @@ export default function TideTile() {
               );
             })}
           </div>
-          <p className="mt-2 font-mono text-[10px] text-muted">
+          <p className="mt-2 font-mono text-[11px] text-muted">
             <span className="text-foreground">→</span> {surface.detail}
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function TideTile() {
             <span className="truncate">
               article · <span className="text-foreground">building tide v1</span>
             </span>
-            <span className="text-[10px]">2m read</span>
+            <span className="text-[11px]">2m read</span>
           </div>
           <ul className="space-y-1">
             {PIPELINE.map((label, i) => {
@@ -104,7 +104,7 @@ export default function TideTile() {
           </ul>
         </div>
 
-        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
           <span>
             lighthouse <span className="text-foreground">100·100·96·100</span>
           </span>

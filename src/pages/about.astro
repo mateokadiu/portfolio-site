@@ -32,6 +32,21 @@ const categories: SkillCategory[] = [
 ];
 
 const currentRole = roles.find((r) => r.endDate === null);
+const skillGroups = categories
+  .map((cat) => ({
+    cat,
+    inCat: skills
+      .filter((s) => s.category === cat)
+      .sort((a, b) => b.yearsUsing - a.yearsUsing || a.order - b.order),
+  }))
+  .filter((g) => g.inCat.length > 0);
+// Last cell spans the leftover columns of the 3-column grid (literal classes for Tailwind).
+const LG_SPAN: Record<number, string> = {
+  0: 'lg:col-span-1',
+  1: 'lg:col-span-3',
+  2: 'lg:col-span-2',
+};
+
 const bioParagraphs = personal.bio
   .split(/\n\s*\n/)
   .map((p) => p.trim())
@@ -162,23 +177,25 @@ const breadcrumbJsonLd = breadcrumbNode([
         class="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3"
       >
         {
-          categories.map((cat) => {
-            const inCat = skills
-              .filter((s) => s.category === cat)
-              .slice()
-              .sort((a, b) => b.yearsUsing - a.yearsUsing || a.order - b.order);
-            if (inCat.length === 0) return null;
+          skillGroups.map(({ cat, inCat }, i) => {
             const hue = categoryHue(cat);
+            const isLast = i === skillGroups.length - 1;
             return (
-              <section class="bg-card p-5">
+              <section
+                class:list={[
+                  'bg-card p-5',
+                  isLast && skillGroups.length % 2 === 1 && 'sm:col-span-2',
+                  isLast && LG_SPAN[skillGroups.length % 3],
+                ]}
+              >
                 <div class="mb-3 flex items-baseline justify-between">
                   <h3
-                    class="font-mono text-[10px] uppercase tracking-[0.18em]"
+                    class="font-mono text-[11px] uppercase tracking-[0.18em]"
                     style={`color: oklch(0.78 0.12 ${hue});`}
                   >
                     {categoryLabel(cat)}
                   </h3>
-                  <span class="font-mono text-[10px] text-muted">
+                  <span class="font-mono text-[11px] text-muted">
                     {inCat.length}
                   </span>
                 </div>

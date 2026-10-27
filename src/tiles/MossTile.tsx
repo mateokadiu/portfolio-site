@@ -21,7 +21,7 @@ export default function MossTile() {
     <div className="flex h-full flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
-          <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
+          <div className="mb-2 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-wider text-muted">
             <span>customer in</span>
             <span>{EU27_VAT.length} member states · standard rates</span>
           </div>
@@ -35,7 +35,7 @@ export default function MossTile() {
                   key={m.code}
                   type="button"
                   onClick={() => setPicked(m.code)}
-                  className={`rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                  className={`min-h-6 rounded-md border px-2 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                     active
                       ? 'border-accent/60 bg-accent/10 text-accent'
                       : 'border-border/60 text-muted hover:border-accent/40 hover:text-foreground'
@@ -63,7 +63,7 @@ export default function MossTile() {
           >
             <span>
               vat <span className="text-foreground">{ratePct.toFixed(1)}%</span>{' '}
-              <span className="text-[10px]">→ {member.code} treasury</span>
+              <span className="text-[11px]">→ {member.code} treasury</span>
             </span>
             <span className="text-foreground">+ {fmt(vat)}</span>
           </div>
@@ -79,7 +79,7 @@ export default function MossTile() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+        <div className="flex items-center justify-between rounded border border-border/60 bg-card px-2 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
           <span>
             period <span className="text-foreground">2026-Q2</span>
           </span>
