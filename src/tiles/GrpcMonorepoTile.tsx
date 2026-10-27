@@ -73,7 +73,7 @@ export default function GrpcMonorepoTile() {
       <div className="mt-4 flex-1 space-y-3">
         <pre
           className="rounded-lg border border-border/60 bg-background/60 p-2.5 font-mono text-[10px] leading-snug text-foreground"
-          aria-live="polite"
+          aria-label="orders.proto"
         >
           <code>
             {PROTO_LINES.map((line, i) => (
@@ -132,7 +132,7 @@ export default function GrpcMonorepoTile() {
       </div>
 
       <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-muted">
-        <span>{done ? '4 clients regenerated' : 'codegen…'}</span>
+        <span aria-live="polite">{done ? '4 clients regenerated' : 'codegen…'}</span>
         <button
           type="button"
           onClick={() => setRun((r) => r + 1)}

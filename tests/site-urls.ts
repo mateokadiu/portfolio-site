@@ -7,6 +7,8 @@ export const PROJECTS_WITH_DEMO_HINTS = [
   'studybuddy',
   'tax-ledger',
   'grpc-monorepo-starter',
+  'stripe-eu-vat-moss',
+  'tide',
 ] as const;
 
 export function projectPath(slug: string): string {

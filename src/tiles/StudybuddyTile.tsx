@@ -1,35 +1,11 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import { useMemo, useState } from 'react';
-import { mulberry32 } from '~/lib/seededRandom';
+import { type KeyboardEvent, type PointerEvent, useEffect, useId, useRef, useState } from 'react';
+import { DAYS, WEEKS, buildHeatmap, formatCellDate, monthLabels, summarize } from '~/lib/heatmap';
 
-const WEEKS = 53;
-const DAYS = 7;
 const CELL = 6;
 const GAP = 2;
-const WIDTH = WEEKS * (CELL + GAP);
-const HEIGHT = DAYS * (CELL + GAP);
-
-// Deterministic year-of-reviews fixture.
-function buildHeatmap(seed: number) {
-  const rand = mulberry32(seed);
-  const cells: Array<{ w: number; d: number; level: number; count: number }> = [];
-  // The cluster pattern: dense in winter (study season), light in summer, no Sundays-of-vacation gap.
-  for (let w = 0; w < WEEKS; w++) {
-    for (let d = 0; d < DAYS; d++) {
-      const seasonal = Math.cos((w / WEEKS) * Math.PI * 2 + Math.PI) * 0.4 + 0.5; // 0..1
-      const base = seasonal * rand();
-      const lull = w > 18 && w < 32 ? 0.4 : 1;
-      const v = base * lull * 60;
-      let level = 0;
-      if (v > 4) level = 1;
-      if (v > 14) level = 2;
-      if (v > 28) level = 3;
-      if (v > 44) level = 4;
-      cells.push({ w, d, level, count: Math.round(v) });
-    }
-  }
-  return cells;
-}
+const PITCH = CELL + GAP;
+const WIDTH = WEEKS * PITCH;
+const HEIGHT = DAYS * PITCH;
 
 const LEVEL_COLORS = [
   'oklch(0.2 0 0)',
@@ -39,19 +15,58 @@ const LEVEL_COLORS = [
   'oklch(0.72 0.18 25)',
 ];
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const CELLS = buildHeatmap(42);
+const MONTH_LABELS = monthLabels();
+const SUMMARY = summarize(CELLS);
+const BUSIEST_LABEL = formatCellDate(SUMMARY.busiest.date);
 
-const dateForCell = (w: number, d: number) => {
-  const start = new Date(2025, 5, 1); // arbitrary anchor
-  const dt = new Date(start);
-  dt.setDate(start.getDate() + w * 7 + d);
-  return dt;
+const KEY_STEP: Record<string, number> = {
+  ArrowLeft: -DAYS,
+  ArrowRight: DAYS,
+  ArrowUp: -1,
+  ArrowDown: 1,
 };
 
 export default function StudybuddyTile() {
-  const cells = useMemo(() => buildHeatmap(42), []);
-  const [hover, setHover] = useState<{ w: number; d: number; count: number } | null>(null);
-  const reduced = useReducedMotion();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [selected, setSelected] = useState<number | null>(null);
+  // Cells stay paused (invisible) until hydration, then fade in — so the
+  // stagger plays when the tile scrolls into view, not before.
+  const [ready, setReady] = useState(false);
+  const summaryId = useId();
+
+  useEffect(() => setReady(true), []);
+
+  const cell = selected == null ? null : CELLS[selected];
+
+  const selectAt = (e: PointerEvent<SVGSVGElement>) => {
+    const svg = svgRef.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !ctm) return;
+    const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    const week = Math.floor(point.x / PITCH);
+    const day = Math.floor(point.y / PITCH);
+    if (week >= 0 && week < WEEKS && day >= 0 && day < DAYS) setSelected(week * DAYS + day);
+  };
+
+  const onKeyDown = (e: KeyboardEvent<SVGSVGElement>) => {
+    if (e.key === 'Escape') {
+      setSelected(null);
+      return;
+    }
+    const delta = KEY_STEP[e.key];
+    if (delta == null) return;
+    e.preventDefault();
+    setSelected((current) => {
+      if (current == null) return 0;
+      const next = current + delta;
+      // Up/down stay inside the week column; left/right stay inside the grid.
+      if (Math.abs(delta) === 1 && Math.floor(next / DAYS) !== Math.floor(current / DAYS)) {
+        return current;
+      }
+      return next >= 0 && next < CELLS.length ? next : current;
+    });
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -65,69 +80,92 @@ export default function StudybuddyTile() {
         </span>
       </header>
 
-      <div className="relative mt-4 flex-1" onMouseLeave={() => setHover(null)}>
+      <div className="relative mt-4 flex-1" data-ready={ready || undefined}>
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${WIDTH} ${HEIGHT + 14}`}
-          className="h-full w-full"
+          className="h-full w-full touch-pan-y rounded"
           preserveAspectRatio="xMidYMid meet"
-          role="img"
-          aria-label="A year of review activity — heatmap"
+          role="application"
+          aria-roledescription="heatmap"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: custom 2-D keyboard widget — arrow keys move a day cursor
+          tabIndex={0}
+          aria-label="Review heatmap, one cell per day. Use arrow keys to inspect days."
+          aria-describedby={summaryId}
+          data-tile-interactive
+          onPointerMove={selectAt}
+          onPointerDown={selectAt}
+          onPointerLeave={(e) => {
+            if (e.pointerType === 'mouse') setSelected(null);
+          }}
+          onKeyDown={onKeyDown}
+          onFocus={() => setSelected((s) => s ?? CELLS.indexOf(SUMMARY.busiest))}
+          onBlur={() => setSelected(null)}
         >
-          {cells.map((c, i) => (
-            <motion.rect
-              key={`${c.w}-${c.d}`}
-              x={c.w * (CELL + GAP)}
-              y={c.d * (CELL + GAP)}
+          {CELLS.map((c, i) => (
+            <rect
+              key={c.date}
+              x={c.week * PITCH}
+              y={c.day * PITCH}
               width={CELL}
               height={CELL}
               rx={1.5}
               fill={LEVEL_COLORS[c.level]}
-              initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                delay: reduced ? 0 : Math.min(i, 200) * 0.004,
-                duration: 0.3,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              onMouseEnter={() => setHover({ w: c.w, d: c.d, count: c.count })}
+              className="heat-cell"
+              style={{ animationDelay: `${Math.min(i, 200) * 4}ms` }}
             />
           ))}
-          {MONTHS.map((m, i) => (
+          {cell && (
+            <rect
+              x={cell.week * PITCH - 1}
+              y={cell.day * PITCH - 1}
+              width={CELL + 2}
+              height={CELL + 2}
+              rx={2}
+              fill="none"
+              stroke="oklch(0.985 0 0)"
+              strokeWidth={1}
+              pointerEvents="none"
+            />
+          )}
+          {MONTH_LABELS.map((m) => (
             <text
-              key={m}
-              x={(i / MONTHS.length) * WIDTH}
+              key={`${m.label}-${m.week}`}
+              x={m.week * PITCH}
               y={HEIGHT + 10}
               className="font-mono"
-              fill="oklch(0.5 0 0)"
-              fontSize="6"
+              fill="oklch(0.6 0 0)"
+              fontSize="7"
             >
-              {m}
+              {m.label}
             </text>
           ))}
         </svg>
-        {hover && (
-          <div className="pointer-events-none absolute right-0 top-0 rounded bg-card px-2 py-1 font-mono text-[10px] text-foreground shadow">
-            {dateForCell(hover.w, hover.d).toLocaleDateString(undefined, {
-              month: 'short',
-              day: 'numeric',
-            })}{' '}
-            · {hover.count} {hover.count === 1 ? 'review' : 'reviews'}
-          </div>
-        )}
+        <p
+          className={`pointer-events-none absolute right-0 top-0 rounded bg-card px-2 py-1 font-mono text-[11px] text-foreground shadow ${
+            cell ? '' : 'sr-only'
+          }`}
+          aria-live="polite"
+        >
+          {cell &&
+            `${formatCellDate(cell.date)} · ${cell.count} ${cell.count === 1 ? 'review' : 'reviews'}`}
+        </p>
       </div>
 
-      <div className="mt-3 flex items-center gap-1.5 font-mono text-[10px] text-muted">
-        less
-        {LEVEL_COLORS.map((c, i) => (
+      <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] text-muted">
+        <span id={summaryId} className="mr-auto">
+          {SUMMARY.total.toLocaleString('en-US')} reviews · busiest {BUSIEST_LABEL}
+        </span>
+        <span aria-hidden="true">less</span>
+        {LEVEL_COLORS.map((c) => (
           <span
             key={c}
             style={{ background: c }}
-            role="img"
-            aria-label={`level ${i}`}
+            aria-hidden="true"
             className="inline-block h-2.5 w-2.5 rounded-sm"
           />
         ))}
-        more
+        <span aria-hidden="true">more</span>
       </div>
     </div>
   );

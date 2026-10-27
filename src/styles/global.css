@@ -64,6 +64,7 @@ button:focus-visible {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
@@ -86,6 +87,80 @@ button:focus-visible {
 
 [data-motion-fallback] {
   display: none;
+}
+
+/* Motion primitives for the tile demos. Re-run an entrance by changing the
+   element's React `key`. The reduced-motion block above collapses them all. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--enter-x, 0), var(--enter-y, 4px)) scale(var(--enter-scale, 1));
+  }
+}
+.anim-enter {
+  animation: enter 0.28s var(--ease-out-expo) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes shake {
+  20% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(3px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+.anim-shake {
+  animation: shake 0.32s ease-in-out;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes beat {
+  50% {
+    transform: scale(1.08);
+  }
+}
+.anim-beat {
+  animation: beat 0.6s ease-in-out;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.anim-blink {
+  animation: blink 0.8s steps(1) infinite;
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 0 4px var(--color-accent-soft);
+  }
+}
+.anim-glow {
+  animation: glow 0.7s ease-out;
+}
+
+/* studybuddy heatmap: paused until the island hydrates (see StudybuddyTile). */
+.heat-cell {
+  --enter-y: 0;
+  --enter-scale: 0.6;
+  animation: enter 0.3s var(--ease-out-expo) both paused;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+[data-ready] .heat-cell {
+  animation-play-state: running;
 }
 
 @media (max-width: 640px) {
