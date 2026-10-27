@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  attemptsAt,
   BACKOFF_SECONDS,
+  backoffLabel,
   DLQ_STEP,
   RETRY_COUNT,
-  attemptsAt,
-  backoffLabel,
   statusMessage,
 } from '../webhook';
 

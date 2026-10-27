@@ -3,8 +3,8 @@ import { getCollection, render } from 'astro:content';
 import ProjectDemo from '~/components/ProjectDemo.astro';
 import Layout from '~/layouts/Layout.astro';
 import { sitePath, siteUrl } from '~/lib/data';
-import { type ProjectEntry, getProjects } from '~/lib/projects';
-import { type JsonLdNode, breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
+import { getProjects, type ProjectEntry } from '~/lib/projects';
+import { breadcrumbNode, type JsonLdNode, personRef, websiteRef } from '~/lib/seo';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');

@@ -1,4 +1,4 @@
-import { type PlaywrightTestConfig, defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type PlaywrightTestConfig } from '@playwright/test';
 
 const CI = !!process.env.CI;
 // Visual baselines only exist for the Linux Playwright image; run them through

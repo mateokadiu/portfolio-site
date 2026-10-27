@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  REAUTH_TIMER_MS,
-  STEP_MS,
-  STRIPE_SCRIPT,
   createTemporalStripeStore,
   dwellMs,
   isLegalTransition,
+  REAUTH_TIMER_MS,
+  STEP_MS,
+  STRIPE_SCRIPT,
 } from '../temporalStripeStore';
 
 let store: ReturnType<typeof createTemporalStripeStore>;

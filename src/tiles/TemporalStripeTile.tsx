@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import {
-  REAUTH_TIMER_MS,
-  STRIPE_EDGES,
-  STRIPE_NODES,
-  STRIPE_NODE_BY_ID,
-  STRIPE_TERMINAL,
-  type StripeState,
   dwellMs,
   isLegalTransition,
+  REAUTH_TIMER_MS,
+  STRIPE_EDGES,
+  STRIPE_NODE_BY_ID,
+  STRIPE_NODES,
+  STRIPE_TERMINAL,
+  type StripeState,
   useTemporalStripeStore,
 } from '~/lib/temporalStripeStore';
 

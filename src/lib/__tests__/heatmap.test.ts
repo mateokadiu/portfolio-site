@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DAYS, WEEKS, buildHeatmap, cellDate, levelFor, monthLabels, summarize } from '../heatmap';
+import { buildHeatmap, cellDate, DAYS, levelFor, monthLabels, summarize, WEEKS } from '../heatmap';
 
 describe('heatmap fixture', () => {
   const cells = buildHeatmap(42);

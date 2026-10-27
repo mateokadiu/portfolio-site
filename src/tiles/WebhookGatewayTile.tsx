@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { cssVars } from '~/lib/cssVars';
-import { DLQ_STEP, attemptsAt, statusMessage } from '~/lib/webhook';
+import { attemptsAt, DLQ_STEP, statusMessage } from '~/lib/webhook';
 
 export default function WebhookGatewayTile() {
   const [downstreamDown, setDownstreamDown] = useState(true);

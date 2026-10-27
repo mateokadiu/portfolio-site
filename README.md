@@ -13,18 +13,18 @@ A click on a tile takes you to its full deep-dive page — same demo at full siz
 
 ## What's in the grid
 
-| Tile | What it is |
-|---|---|
-| `tide` | Capture surfaces → extract / tag / embed / summarize pipeline of the read-later app |
-| `webhook-gateway-admin` | Miniature Angular admin — signal-driven counters and filter pills |
-| `shadowkit` | A real `<sk-counter>` Web Component embed proving the Shadow DOM cascade boundary |
-| `studybuddy` | 53×7 review heatmap — hover, tap or arrow keys to inspect a day |
-| `temporal-stripe` | Stripe Connect state machine — reauth timer, multicapture, illegal-transition shake |
-| `tax-ledger` | Cent-exact largest-remainder allocation, and refunds that reverse it |
-| `webhook-gateway` | Retry-backoff timeline ending in the DLQ |
-| `grpc-monorepo-starter` | One `.proto` fanning out to four generated clients |
-| `stripe-eu-vat-moss` | EU One-Stop-Shop destination-country VAT (2026 standard rates) |
-| `about`, `now`, `github`, `contact` | Utility tiles |
+| Tile                                | What it is                                                                          |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `tide`                              | Capture surfaces → extract / tag / embed / summarize pipeline of the read-later app |
+| `webhook-gateway-admin`             | Miniature Angular admin — signal-driven counters and filter pills                   |
+| `shadowkit`                         | A real `<sk-counter>` Web Component embed proving the Shadow DOM cascade boundary   |
+| `studybuddy`                        | 53×7 review heatmap — hover, tap or arrow keys to inspect a day                     |
+| `temporal-stripe`                   | Stripe Connect state machine — reauth timer, multicapture, illegal-transition shake |
+| `tax-ledger`                        | Cent-exact largest-remainder allocation, and refunds that reverse it                |
+| `webhook-gateway`                   | Retry-backoff timeline ending in the DLQ                                            |
+| `grpc-monorepo-starter`             | One `.proto` fanning out to four generated clients                                  |
+| `stripe-eu-vat-moss`                | EU One-Stop-Shop destination-country VAT (2026 standard rates)                      |
+| `about`, `now`, `github`, `contact` | Utility tiles                                                                       |
 
 ## Where things live
 
@@ -46,14 +46,14 @@ pnpm lint                 # biome check
 
 ## QA
 
-| Command | What it guards |
-|---|---|
-| `pnpm test` | Vitest unit + property tests (fast-check) for the demo logic |
-| `pnpm test:e2e` | Playwright on desktop + mobile: smoke, SEO/structured-data audit, real interaction tests for every demo, axe (WCAG 2.2 AA) on every page |
-| `pnpm test:visual` | Visual regression, rendered in the official Playwright Docker image so baselines match CI. After an intentional UI change: `pnpm test:visual:update` and commit `tests/__screenshots__` |
-| `pnpm test:lighthouse` | Lighthouse CI: performance ≥ 0.9, accessibility / SEO = 100, best practices ≥ 0.95, LCP / CLS / TBT and a 90 KB script budget |
-| `pnpm test:live` | Smoke + audit against production after a deploy |
-| `pnpm qa` | Everything above (except live), in order |
+| Command                | What it guards                                                                                                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm test`            | Vitest unit + property tests (fast-check) for the demo logic                                                                                                                            |
+| `pnpm test:e2e`        | Playwright on desktop + mobile: smoke, SEO/structured-data audit, real interaction tests for every demo, axe (WCAG 2.2 AA) on every page                                                |
+| `pnpm test:visual`     | Visual regression, rendered in the official Playwright Docker image so baselines match CI. After an intentional UI change: `pnpm test:visual:update` and commit `tests/__screenshots__` |
+| `pnpm test:lighthouse` | Lighthouse CI: performance ≥ 0.9, accessibility / SEO = 100, best practices ≥ 0.95, LCP / CLS / TBT and a 90 KB script budget                                                           |
+| `pnpm test:live`       | Smoke + audit against production after a deploy                                                                                                                                         |
+| `pnpm qa`              | Everything above (except live), in order                                                                                                                                                |
 
 E2E, visual and Lighthouse runs need a fresh `pnpm build`; visual runs need Docker. CI runs all of it on every push and pull request (`.github/workflows/ci.yml`).
 

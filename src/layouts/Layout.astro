@@ -4,7 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import Footer from '~/components/Footer.astro';
 import Nav from '~/components/Nav.astro';
 import { SITE, SOCIAL, siteUrl } from '~/lib/data';
-import { type JsonLdNode, buildPersonNode, websiteNode } from '~/lib/seo';
+import { buildPersonNode, type JsonLdNode, websiteNode } from '~/lib/seo';
 
 interface Props {
   /** Page title. The author's name is appended unless the title already contains it. */

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { PROJECT_SLUGS, UTILITY_TILE_COUNT, projectPath } from './site-urls';
+import { PROJECT_SLUGS, projectPath, UTILITY_TILE_COUNT } from './site-urls';
 
 test('homepage renders with hero + bento grid', async ({ page }) => {
   await page.goto('/');

@@ -1,6 +1,6 @@
 import { type KeyboardEvent, type PointerEvent, useEffect, useId, useRef, useState } from 'react';
 import { cssVars } from '~/lib/cssVars';
-import { DAYS, WEEKS, buildHeatmap, formatCellDate, monthLabels, summarize } from '~/lib/heatmap';
+import { buildHeatmap, DAYS, formatCellDate, monthLabels, summarize, WEEKS } from '~/lib/heatmap';
 
 const CELL = 6;
 const GAP = 2;

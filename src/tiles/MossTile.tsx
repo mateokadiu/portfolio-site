@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { cssVars } from '~/lib/cssVars';
-import { EU27_VAT, bpToPercent } from '~/lib/vat-rates';
+import { bpToPercent, EU27_VAT } from '~/lib/vat-rates';
 
 const NET_EUR = 100;
 const fmt = (n: number) => `€${n.toFixed(2)}`;
