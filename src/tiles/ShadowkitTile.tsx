@@ -14,6 +14,14 @@ declare global {
   }
 }
 
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'sk-counter': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
 function useBundle() {
   const [loaded, setLoaded] = useState<'idle' | 'loading' | 'ready' | 'fallback'>('idle');
   const hostLogRef = useRef<HTMLPreElement>(null);
@@ -143,7 +151,6 @@ export default function ShadowkitTile() {
                 // Each counter needs ~11rem (its own :host min-width), so wrap
                 // instead of squeezing: 3 across when there's room, 2 + 1 in a
                 // half-width tile, stacked on phones.
-                // @ts-expect-error custom element
                 <sk-counter key={i} id={`sk-${i}`} style={{ flex: '1 1 11rem' }} />
               ))}
             </div>
