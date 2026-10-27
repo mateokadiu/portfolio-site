@@ -78,7 +78,7 @@ const manifest = {
   name: 'Mateo Kadiu — portfolio',
   short_name: 'mateokadiu',
   description:
-    'Senior full-stack engineer. Bento-grid interactive showcase: every project tile is a live mini-demo of the real work.',
+    'Senior software engineer. Bento-grid portfolio: every project tile is an interactive demo of how the real project works.',
   start_url: '/',
   scope: '/',
   display: 'standalone',

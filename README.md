@@ -1,6 +1,6 @@
 # portfolio-site
 
-Personal portfolio at [mateokadiu.com](https://mateokadiu.com) — a bento-grid interactive showcase where every project tile is a live mini-demo of the actual work.
+Personal portfolio at [mateokadiu.com](https://mateokadiu.com) — a bento-grid portfolio where every project tile is an interactive demo of how the real project works.
 
 Astro 5 + Tailwind v4 + React islands + Framer Motion + GSAP. Zero JS on first paint, lazy-hydrated tiles, Lighthouse 95+ across the board.
 
@@ -23,7 +23,7 @@ A click on a tile takes you to its full deep-dive page — same demo at full siz
 | `tax-ledger` | Refund-split visualiser — jurisdiction deltas with layout animations |
 | `webhook-gateway` | Retry-backoff timeline with exponential-backoff visualisation |
 | `grpc-monorepo-starter` | Proto-to-clients fan-out with typewriter codegen |
-| `stripe-eu-vat-moss` | EU VAT One-Stop-Shop pricing per member state, with live rates |
+| `stripe-eu-vat-moss` | EU VAT One-Stop-Shop pricing per member state (2026 standard rates) |
 | `about`, `now`, `github`, `contact` | Utility tiles |
 
 ## Scripts

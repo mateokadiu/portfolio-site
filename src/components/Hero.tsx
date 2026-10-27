@@ -65,7 +65,7 @@ export default function Hero() {
   return (
     <section className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-6 pb-12 pt-20 sm:pt-28">
       <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-        tirana, al · senior full-stack
+        tirana, al · senior software engineer
       </p>
       <h1
         ref={nameRef}

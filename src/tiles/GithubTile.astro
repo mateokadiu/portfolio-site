@@ -1,55 +1,107 @@
 ---
-import commits from '~/lib/recent-commits.json';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { PROJECTS, SOCIAL } from '~/lib/data';
+import { formatShortDate } from '~/lib/time';
 
-interface CommitEntry {
-  repo: string;
-  sha: string;
-  message: string;
-  date: string | null;
+interface RepoActivity {
+  name: string;
+  description: string | null;
+  language: string | null;
+  pushedAt: string | null;
   url: string;
 }
 
-const items = (commits as CommitEntry[]).slice(0, 5);
+// Written by scripts/fetch-github-activity.mjs during prebuild.
+const ACTIVITY_PATH = resolve(process.cwd(), 'src/lib/github-activity.generated.json');
 
-const relative = (iso: string | null) => {
-  if (!iso) return '';
-  const then = new Date(iso).getTime();
-  const now = Date.now();
-  const sec = Math.max(0, Math.floor((now - then) / 1000));
-  if (sec < 60) return `${sec}s`;
-  if (sec < 3600) return `${Math.floor(sec / 60)}m`;
-  if (sec < 86400) return `${Math.floor(sec / 3600)}h`;
-  if (sec < 86400 * 30) return `${Math.floor(sec / 86400)}d`;
-  if (sec < 86400 * 365) return `${Math.floor(sec / (86400 * 30))}mo`;
-  return `${Math.floor(sec / (86400 * 365))}y`;
+function loadActivity(): RepoActivity[] {
+  if (existsSync(ACTIVITY_PATH)) {
+    try {
+      const data = JSON.parse(readFileSync(ACTIVITY_PATH, 'utf8')) as RepoActivity[];
+      if (Array.isArray(data) && data.length > 0) return data;
+    } catch {
+      // fall through to the static list
+    }
+  }
+  return PROJECTS.filter((p) => p.repoUrl).map((p) => ({
+    name: p.slug,
+    description: p.tagline,
+    language: null,
+    pushedAt: null,
+    url: p.repoUrl!,
+  }));
+}
+
+const repos = loadActivity().slice(0, 5);
+
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: 'oklch(0.62 0.13 250)',
+  JavaScript: 'oklch(0.85 0.15 95)',
+  Java: 'oklch(0.65 0.13 55)',
+  Go: 'oklch(0.75 0.11 210)',
+  Python: 'oklch(0.6 0.1 250)',
 };
 ---
 
 <div class="flex h-full flex-col">
   <header class="flex items-start justify-between">
     <h3 class="font-mono text-sm font-medium text-foreground">github</h3>
-    <span class="font-mono text-[10px] uppercase text-muted">latest</span>
+    <span class="font-mono text-[11px] uppercase text-muted">recently pushed</span>
   </header>
 
-  <ul class="mt-3 space-y-2 font-mono text-[11px]">
+  <ul class="mt-3 space-y-2 font-mono text-xs">
     {
-      items.map((item) => (
-        <li class="leading-tight">
+      repos.map((repo) => (
+        <li>
           <a
-            href={item.url}
+            href={repo.url}
             target="_blank"
             rel="noopener"
-            class="group flex items-start gap-2 text-foreground/80 transition-colors hover:text-foreground"
+            class="flex items-center gap-2 rounded text-foreground/85 transition-colors hover:text-foreground"
           >
-            <span class="mt-0.5 inline-block rounded bg-background px-1 py-px font-mono text-[10px] text-accent">
-              {item.sha}
-            </span>
-            <span class="min-w-0 flex-1 truncate">{item.message}</span>
-            <span class="shrink-0 text-[11px] text-muted">{relative(item.date)}</span>
+            <span
+              class="inline-block h-2 w-2 shrink-0 rounded-full"
+              style={`background: ${(repo.language && LANGUAGE_COLORS[repo.language]) ?? 'var(--color-border)'}`}
+              aria-hidden="true"
+            />
+            <span class="min-w-0 flex-1 truncate">{repo.name}</span>
+            {repo.pushedAt && (
+              <time
+                datetime={repo.pushedAt}
+                data-relative
+                class="shrink-0 text-[11px] text-muted"
+              >
+                {formatShortDate(repo.pushedAt)}
+              </time>
+            )}
           </a>
-          <p class="ml-12 text-[11px] text-muted">{item.repo.split('/')[1]}</p>
         </li>
       ))
     }
   </ul>
+
+  <a
+    href={SOCIAL.github}
+    target="_blank"
+    rel="noopener"
+    class="mt-auto pt-3 font-mono text-[11px] text-muted transition-colors hover:text-foreground"
+  >
+    all repositories ↗
+  </a>
 </div>
+
+<script>
+  import { formatRelative, formatShortDate } from '~/lib/time';
+
+  // Dates are baked in at build time; relabel them relative to *now* so a
+  // months-old deploy never claims something happened "2d" ago.
+  function relabel() {
+    for (const el of document.querySelectorAll<HTMLTimeElement>('time[data-relative]')) {
+      el.title = formatShortDate(el.dateTime);
+      el.textContent = formatRelative(el.dateTime);
+    }
+  }
+  relabel();
+  document.addEventListener('astro:page-load', relabel);
+</script>

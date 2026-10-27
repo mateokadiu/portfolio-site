@@ -16,7 +16,7 @@ interface OgSpec {
   stack: string[];
 }
 
-const HOME_STACK = ['astro', 'react', 'tailwind', 'typescript', 'framer motion'];
+const HOME_STACK = ['react', 'next.js', 'angular', 'nestjs', 'typescript'];
 const ABOUT_STACK = ['nestjs', 'next.js', 'stripe connect', 'kubernetes', 'pulumi'];
 const PROJECTS_STACK = ['temporal', 'stripe connect', 'nestjs', 'angular', 'spring boot'];
 
@@ -26,13 +26,13 @@ async function loadOgSpecs(): Promise<OgSpec[]> {
       slug: 'default',
       title: 'Mateo Kadiu',
       tagline:
-        'Senior full-stack — React · Next.js · NestJS · Kubernetes · Stripe Connect. Bento-grid interactive portfolio.',
+        'Senior software engineer — React · Next.js · Angular · NestJS · Stripe Connect. Every project has an interactive demo.',
       stack: HOME_STACK,
     },
     {
       slug: 'about',
       title: 'Mateo Kadiu',
-      tagline: 'Senior full-stack engineer · Tirana, AL · remote-friendly, EU timezone.',
+      tagline: 'Senior software engineer · Tirana, AL · remote-friendly, EU timezone.',
       stack: ABOUT_STACK,
     },
     {
@@ -84,7 +84,7 @@ function template(spec: OgSpec) {
         height: '100%',
         backgroundColor: '#1a1a1a',
         backgroundImage:
-          'radial-gradient(circle at 85% 15%, rgba(240, 138, 62, 0.22), rgba(240, 138, 62, 0) 55%)',
+          'radial-gradient(circle at 85% 15%, rgba(232, 88, 84, 0.22), rgba(232, 88, 84, 0) 55%)',
         color: '#fafafa',
         fontFamily: 'JetBrains Mono',
         position: 'relative',
@@ -101,7 +101,7 @@ function template(spec: OgSpec) {
               top: 0,
               bottom: 0,
               width: '8px',
-              backgroundColor: '#f08a3e',
+              backgroundColor: '#e85854',
             },
           },
         },
@@ -214,7 +214,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: '#f08a3e',
+                    backgroundColor: '#e85854',
                   },
                 },
               },
@@ -225,7 +225,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(240, 138, 62, 0.55)',
+                    backgroundColor: 'rgba(232, 88, 84, 0.55)',
                   },
                 },
               },
@@ -236,7 +236,7 @@ function template(spec: OgSpec) {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(240, 138, 62, 0.25)',
+                    backgroundColor: 'rgba(232, 88, 84, 0.25)',
                   },
                 },
               },

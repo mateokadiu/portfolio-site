@@ -74,7 +74,7 @@ test('homepage has full SEO meta', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
-    /senior full-stack/i,
+    /senior software engineer/i,
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
@@ -108,7 +108,7 @@ for (const path of PAGES) {
     const people = (await jsonLdNodes(page)).filter((n) => n['@type'] === 'Person');
     expect(people).toHaveLength(1);
     expect(people[0]['@id']).toBe('https://mateokadiu.com/#person');
-    expect(people[0].jobTitle).toBe('Senior Full-Stack Engineer');
+    expect(people[0].jobTitle).toBe('Senior Software Engineer');
   });
 
   test(`title + description fit search snippets: ${path}`, async ({ page }) => {

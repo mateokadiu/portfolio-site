@@ -107,7 +107,7 @@ export default function WebhookGatewayTile() {
             step <= BACKOFF_SECONDS.length &&
             downstreamDown &&
             `retry ${step - 1} failed — backing off ${labelFor(BACKOFF_SECONDS[step - 1] ?? 0).replace('+', '')}`}
-          {atDlq && 'parked in DLQ after 5 retries — needs manual replay'}
+          {atDlq && 'parked in DLQ after 6 retries — needs manual replay'}
           {!downstreamDown && step >= 1 && 'delivered on the first try'}
         </p>
       </div>

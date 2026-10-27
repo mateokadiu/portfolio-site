@@ -142,10 +142,10 @@ export const SOCIAL = {
 };
 
 export const SITE = {
-  title: 'Mateo Kadiu — Senior Full-Stack Engineer',
+  title: 'Mateo Kadiu — Senior Software Engineer',
   description:
-    'Mateo Kadiu, senior full-stack engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project tile is a live demo.',
-  jobTitle: 'Senior Full-Stack Engineer',
+    'Mateo Kadiu, senior software engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project has an interactive demo.',
+  jobTitle: 'Senior Software Engineer',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',

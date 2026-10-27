@@ -36,7 +36,7 @@ export default function MossTile() {
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
             <span>customer in</span>
-            <span>{EU27_VAT.length} member states · live rates</span>
+            <span>{EU27_VAT.length} member states · standard rates</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {FEATURED.map((code) => {
