@@ -1,4 +1,5 @@
 import { type KeyboardEvent, type PointerEvent, useEffect, useId, useRef, useState } from 'react';
+import { cssVars } from '~/lib/cssVars';
 import { DAYS, WEEKS, buildHeatmap, formatCellDate, monthLabels, summarize } from '~/lib/heatmap';
 
 const CELL = 6;
@@ -16,6 +17,7 @@ const LEVEL_COLORS = [
 ];
 
 const CELLS = buildHeatmap(42);
+const WEEK_COLUMNS = Array.from({ length: WEEKS }, (_, w) => CELLS.slice(w * DAYS, (w + 1) * DAYS));
 const MONTH_LABELS = monthLabels();
 const SUMMARY = summarize(CELLS);
 const BUSIEST_LABEL = formatCellDate(SUMMARY.busiest.date);
@@ -102,18 +104,22 @@ export default function StudybuddyTile() {
           onFocus={() => setSelected((s) => s ?? CELLS.indexOf(SUMMARY.busiest))}
           onBlur={() => setSelected(null)}
         >
-          {CELLS.map((c, i) => (
-            <rect
-              key={c.date}
-              x={c.week * PITCH}
-              y={c.day * PITCH}
-              width={CELL}
-              height={CELL}
-              rx={1.5}
-              fill={LEVEL_COLORS[c.level]}
-              className="heat-cell"
-              style={{ animationDelay: `${Math.min(i, 200) * 4}ms` }}
-            />
+          {WEEK_COLUMNS.map((column, week) => (
+            // One delay per week column: the cells sweep in left to right.
+            <g key={week} className="heat-week" style={cssVars({ '--week': week })}>
+              {column.map((c) => (
+                <rect
+                  key={c.date}
+                  x={c.week * PITCH}
+                  y={c.day * PITCH}
+                  width={CELL}
+                  height={CELL}
+                  rx={1.5}
+                  fill={LEVEL_COLORS[c.level]}
+                  className="heat-cell"
+                />
+              ))}
+            </g>
           ))}
           {cell && (
             <rect

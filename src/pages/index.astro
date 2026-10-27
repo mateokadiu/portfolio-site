@@ -1,6 +1,6 @@
 ---
 import BentoGrid from '~/components/BentoGrid.astro';
-import Hero from '~/components/Hero';
+import Hero from '~/components/Hero.astro';
 import ProjectTile from '~/components/ProjectTile.astro';
 import Tile from '~/components/Tile.astro';
 import Layout from '~/layouts/Layout.astro';
@@ -37,7 +37,7 @@ const projectListJsonLd = {
 ---
 
 <Layout jsonLd={[homePageJsonLd, projectListJsonLd]}>
-  <Hero client:idle />
+  <Hero />
 
   <BentoGrid id="work">
     {PROJECTS.map((project) => <ProjectTile project={project} />)}

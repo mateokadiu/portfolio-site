@@ -149,6 +149,9 @@ export const SITE = {
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
   location: 'Tirana, AL',
+  city: 'Tirana',
+  country: 'Albania',
+  countryCode: 'AL',
 };
 
 /** Site-relative path with trailing slash (hash paths like /#work are unchanged). */

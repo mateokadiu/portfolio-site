@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 // Vendored from ~/Desktop/development/personal/shadowkit/examples/embed-counter/dist
@@ -97,7 +96,6 @@ function ProbeRow({ active, label, onText, offText, onClick }: ProbeRowProps) {
 export default function ShadowkitTile() {
   const { loaded, hostLogRef } = useBundle();
   const [active, setActive] = useState<Set<ProbeKey>>(new Set());
-  const reduced = useReducedMotion();
   const styleRefs = useRef<Record<ProbeKey, HTMLStyleElement | null>>({
     css: null,
     descendant: null,
@@ -170,11 +168,7 @@ export default function ShadowkitTile() {
           )}
         </div>
 
-        <motion.div
-          className="space-y-1.5"
-          initial={false}
-          animate={reduced ? undefined : { opacity: 1 }}
-        >
+        <div className="space-y-1.5">
           <ProbeRow
             active={active.has('css')}
             label="inject host CSS"
@@ -189,7 +183,7 @@ export default function ShadowkitTile() {
             offText="try a body * !important that nukes every element on the page"
             onClick={() => toggle('descendant', HOST_DESCENDANT_RULE)}
           />
-        </motion.div>
+        </div>
       </div>
 
       <pre ref={hostLogRef} className="hidden" aria-hidden="true" />

@@ -61,7 +61,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      noExternal: ['gsap', 'zustand', 'framer-motion'],
+      noExternal: ['zustand'],
     },
   },
   build: {

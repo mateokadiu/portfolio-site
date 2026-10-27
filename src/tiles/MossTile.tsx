@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
+import { cssVars } from '~/lib/cssVars';
 import { EU27_VAT, bpToPercent } from '~/lib/vat-rates';
 
 const NET_EUR = 100;
@@ -11,7 +11,6 @@ const FEATURED = ['DE', 'FR', 'IT', 'ES', 'FI', 'HU'];
 const FALLBACK = EU27_VAT[0]!;
 
 export default function MossTile() {
-  const reduced = useReducedMotion();
   const [picked, setPicked] = useState('DE');
   const member = EU27_VAT.find((m) => m.code === picked) ?? FALLBACK;
   const ratePct = bpToPercent(member.rateBp);
@@ -69,30 +68,26 @@ export default function MossTile() {
             <span>net</span>
             <span className="text-foreground">{fmt(NET_EUR)}</span>
           </div>
-          <motion.div
+          <div
             key={member.code}
-            initial={reduced ? false : { opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-            className="mt-1.5 flex items-center justify-between text-muted"
+            className="anim-enter mt-1.5 flex items-center justify-between text-muted"
+            style={cssVars({ '--enter-y': '-4px' })}
           >
             <span>
               vat <span className="text-foreground">{ratePct.toFixed(1)}%</span>{' '}
               <span className="text-[10px]">→ {member.code} treasury</span>
             </span>
             <span className="text-foreground">+ {fmt(vat)}</span>
-          </motion.div>
+          </div>
           <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2 text-foreground">
             <span className="text-muted">customer pays</span>
-            <motion.span
+            <span
               key={`gross-${member.code}`}
-              initial={reduced ? false : { scale: 0.96 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-              className="font-semibold"
+              className="anim-enter inline-block font-semibold"
+              style={cssVars({ '--enter-y': '0', '--enter-scale': 0.96 })}
             >
               {fmt(gross)}
-            </motion.span>
+            </span>
           </div>
         </div>
 

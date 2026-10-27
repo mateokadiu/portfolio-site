@@ -254,17 +254,17 @@ const hint = DEMO_HINTS[slug];
   .prose-project h2 {
     margin-top: 2.25rem;
     margin-bottom: 0.75rem;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 1.35rem;
     font-weight: 600;
-    color: rgb(245 245 245);
+    color: var(--color-foreground);
   }
   .prose-project h3 {
     margin-top: 2rem;
     margin-bottom: 0.75rem;
     font-size: 1.15rem;
     font-weight: 600;
-    color: rgb(245 245 245);
+    color: var(--color-foreground);
   }
   .prose-project p {
     margin-bottom: 1rem;
@@ -288,16 +288,16 @@ const hint = DEMO_HINTS[slug];
     text-underline-offset: 3px;
   }
   .prose-project code {
-    background: oklch(0.205 0 0);
-    border: 1px solid oklch(0.269 0 0);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     padding: 1px 5px;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 0.85em;
   }
   .prose-project pre {
     background: oklch(0.18 0 0);
-    border: 1px solid oklch(0.269 0 0);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 1rem;
     overflow-x: auto;
@@ -312,7 +312,7 @@ const hint = DEMO_HINTS[slug];
   .prose-project blockquote {
     margin: 1.25rem 0;
     padding: 0.75rem 1rem;
-    border-left: 3px solid oklch(0.65 0.18 25);
+    border-left: 3px solid var(--color-accent);
     background: oklch(0.18 0 0);
     border-radius: 0 6px 6px 0;
     color: rgb(228 228 231);
@@ -330,22 +330,22 @@ const hint = DEMO_HINTS[slug];
   }
   .prose-project th,
   .prose-project td {
-    border: 1px solid oklch(0.269 0 0);
+    border: 1px solid var(--color-border);
     padding: 0.5rem 0.75rem;
     text-align: left;
   }
   .prose-project th {
-    background: oklch(0.205 0 0);
+    background: var(--color-card);
     font-weight: 600;
-    color: rgb(245 245 245);
+    color: var(--color-foreground);
   }
   .prose-project hr {
     border: 0;
-    border-top: 1px solid oklch(0.269 0 0);
+    border-top: 1px solid var(--color-border);
     margin: 2rem 0;
   }
   .prose-project strong {
-    color: rgb(245 245 245);
+    color: var(--color-foreground);
     font-weight: 600;
   }
 </style>

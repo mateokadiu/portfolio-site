@@ -1,5 +1,7 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { cssVars } from '~/lib/cssVars';
+import { useIsActive } from '~/lib/useIsActive';
+import { usePrefersReducedMotion } from '~/lib/usePrefersReducedMotion';
 
 type Filter = 'all' | 'ok' | 'failed';
 
@@ -26,19 +28,22 @@ const STATUS_DOT: Record<Row['status'], string> = {
 };
 
 export default function WebhookGatewayAdminTile() {
-  const reduced = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = useIsActive(rootRef);
+  const reduced = usePrefersReducedMotion();
   const [filter, setFilter] = useState<Filter>('all');
   const [received, setReceived] = useState(127);
   const [delivered, setDelivered] = useState(118);
 
+  // Live counters tick only while the tile is on screen.
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !active) return;
     const t = setInterval(() => {
       setReceived((n) => n + 1);
       if (Math.random() > 0.2) setDelivered((n) => n + 1);
     }, 2400);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, active]);
 
   const visibleRows = useMemo(
     () => (filter === 'all' ? ROWS : ROWS.filter((r) => r.status === filter)),
@@ -46,7 +51,7 @@ export default function WebhookGatewayAdminTile() {
   );
 
   return (
-    <div className="flex h-full flex-col">
+    <div ref={rootRef} className="flex h-full flex-col">
       <header className="flex items-start justify-between">
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway-admin</h3>
@@ -78,29 +83,25 @@ export default function WebhookGatewayAdminTile() {
             <div className="grid grid-cols-2 gap-1.5">
               <div className="rounded border border-border/60 px-2 py-1">
                 <p className="font-mono text-[9px] uppercase tracking-wider text-muted">received</p>
-                <motion.p
+                <p
                   key={received}
-                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="font-mono text-base tabular-nums leading-tight"
+                  className="anim-enter font-mono text-base tabular-nums leading-tight"
+                  style={cssVars({ '--enter-y': '-2px' })}
                 >
                   {received}
-                </motion.p>
+                </p>
               </div>
               <div className="rounded border border-border/60 px-2 py-1">
                 <p className="font-mono text-[9px] uppercase tracking-wider text-muted">
                   delivered
                 </p>
-                <motion.p
+                <p
                   key={delivered}
-                  initial={reduced ? false : { opacity: 0.6, y: -2 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="font-mono text-base tabular-nums leading-tight text-emerald-300"
+                  className="anim-enter font-mono text-base tabular-nums leading-tight text-emerald-300"
+                  style={cssVars({ '--enter-y': '-2px' })}
                 >
                   {delivered}
-                </motion.p>
+                </p>
               </div>
             </div>
 
@@ -126,12 +127,10 @@ export default function WebhookGatewayAdminTile() {
             {/* events table */}
             <ul className="space-y-1 overflow-hidden font-mono text-[10px]">
               {visibleRows.slice(0, 4).map((r) => (
-                <motion.li
+                <li
                   key={`${filter}-${r.id}`}
-                  initial={reduced ? false : { opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.18 }}
-                  className="flex items-center gap-2 rounded border border-border/40 px-1.5 py-1"
+                  className="anim-enter flex items-center gap-2 rounded border border-border/40 px-1.5 py-1"
+                  style={cssVars({ '--enter-x': '-4px', '--enter-y': '0' })}
                 >
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[r.status]}`}
@@ -139,8 +138,9 @@ export default function WebhookGatewayAdminTile() {
                   />
                   <span className="text-muted">{r.id.slice(0, 6)}</span>
                   <span className="truncate">{r.source}</span>
+                  <span className="sr-only">{r.status}</span>
                   <span className="ml-auto text-[9px] text-muted">{r.age}</span>
-                </motion.li>
+                </li>
               ))}
               {visibleRows.length === 0 && (
                 <li className="rounded border border-dashed border-border/60 px-2 py-3 text-center text-[10px] text-muted">

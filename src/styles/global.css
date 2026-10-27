@@ -156,6 +156,7 @@ button:focus-visible {
   --enter-y: 0;
   --enter-scale: 0.6;
   animation: enter 0.3s var(--ease-out-expo) both paused;
+  animation-delay: calc(var(--week, 0) * 16ms);
   transform-box: fill-box;
   transform-origin: center;
 }

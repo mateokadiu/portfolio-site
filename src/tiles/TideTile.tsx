@@ -1,5 +1,6 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useIsActive } from '~/lib/useIsActive';
+import { usePrefersReducedMotion } from '~/lib/usePrefersReducedMotion';
 
 interface Surface {
   id: string;
@@ -17,22 +18,24 @@ const SURFACES: Surface[] = [
 const PIPELINE = ['extract', 'tag', 'embed', 'summarize'] as const;
 
 export default function TideTile() {
-  const reduced = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = useIsActive(rootRef);
+  const reduced = usePrefersReducedMotion();
   const [picked, setPicked] = useState('web');
-  const [step, setStep] = useState(0);
+  const [tick, setTick] = useState(0);
 
+  // Auto-advance only while on screen; with reduced motion show the finished run.
   useEffect(() => {
-    if (reduced) return;
-    const t = setInterval(() => {
-      setStep((s) => (s + 1) % (PIPELINE.length + 2));
-    }, 1100);
+    if (reduced || !active) return;
+    const t = setInterval(() => setTick((s) => (s + 1) % (PIPELINE.length + 2)), 1100);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, active]);
+  const step = reduced ? PIPELINE.length : tick;
 
   const surface = SURFACES.find((s) => s.id === picked) ?? SURFACES[0]!;
 
   return (
-    <div className="flex h-full flex-col">
+    <div ref={rootRef} className="flex h-full flex-col">
       <header className="flex items-start justify-between">
         <div>
           <h3 className="font-mono text-sm font-medium text-foreground">tide</h3>
@@ -84,28 +87,28 @@ export default function TideTile() {
           <ul className="space-y-1">
             {PIPELINE.map((label, i) => {
               const done = step > i;
-              const active = step === i;
+              const running = step === i;
               return (
                 <li key={label} className="flex items-center gap-2">
                   <span
                     className={`inline-block h-1.5 w-1.5 rounded-full ${
                       done
                         ? 'bg-accent shadow-[0_0_6px_oklch(0.65_0.18_25)]'
-                        : active
+                        : running
                           ? 'animate-pulse bg-accent/60'
                           : 'bg-muted/40'
                     }`}
                   />
-                  <span className={done || active ? 'text-foreground' : 'text-muted'}>{label}</span>
-                  {active && !reduced && (
-                    <motion.span
-                      key={`${label}-active`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="font-mono text-[10px] text-muted"
+                  <span className={done || running ? 'text-foreground' : 'text-muted'}>
+                    {label}
+                  </span>
+                  {running && (
+                    <span
+                      key={`${label}-running`}
+                      className="anim-enter font-mono text-[11px] text-muted"
                     >
                       …running
-                    </motion.span>
+                    </span>
                   )}
                 </li>
               );
