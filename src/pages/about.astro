@@ -5,24 +5,20 @@ import {
   type SkillCategory,
   categoryHue,
   categoryLabel,
-  loadCertifications,
   loadEducation,
-  loadLinks,
   loadPersonal,
   loadRoles,
   loadSkills,
   proficiencyDots,
 } from '~/lib/cv';
-import { SITE, siteUrl } from '~/lib/data';
+import { SITE, SOCIAL, siteUrl } from '~/lib/data';
 import { breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
 
-const [personal, links, roles, skills, education, certifications] = await Promise.all([
+const [personal, roles, skills, education] = await Promise.all([
   loadPersonal(),
-  loadLinks(),
   loadRoles(),
   loadSkills(),
   loadEducation(),
-  loadCertifications(),
 ]);
 
 const categories: SkillCategory[] = [
@@ -40,10 +36,9 @@ const bioParagraphs = personal.bio
   .split(/\n\s*\n/)
   .map((p) => p.trim())
   .filter(Boolean);
-const city = personal.location.split(',')[0]?.trim();
 
-const title = `About ${personal.name} — Experience, Skills & CV`;
-const description = `${personal.name}: ${SITE.jobTitle.toLowerCase()}${currentRole ? ` at ${currentRole.company}` : ''}, based in ${city}. Experience, skills, education and a downloadable CV.`;
+const title = `About ${SITE.author} — Experience, Skills & CV`;
+const description = `${SITE.author}: ${SITE.jobTitle.toLowerCase()}${currentRole ? ` at ${currentRole.company}` : ''}, based in ${SITE.city}. Experience, skills, education and a downloadable CV.`;
 
 const profilePageJsonLd = {
   '@type': 'ProfilePage',
@@ -74,7 +69,7 @@ const breadcrumbJsonLd = breadcrumbNode([
   <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
     <header class="mb-14">
       <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-        about · {personal.location} · {personal.timezone}
+        about · {SITE.city}, {SITE.country} · {SITE.timezone}
         {
           personal.openToWork && (
             <span class="ml-2 text-accent">· open to work</span>
@@ -84,7 +79,7 @@ const breadcrumbJsonLd = breadcrumbNode([
       <h1
         class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
       >
-        {personal.name}
+        {SITE.author}
       </h1>
       <p class="mt-3 max-w-2xl text-balance text-base text-muted sm:text-lg">
         {personal.headline}
@@ -94,38 +89,30 @@ const breadcrumbJsonLd = breadcrumbNode([
       </p>
 
       <div class="mt-6 flex flex-wrap gap-2 font-mono text-xs">
-        {
-          links.github && (
-            <a
-              href={links.github}
-              target="_blank"
-              rel="noopener"
-              class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
-            >
-              github ↗
-            </a>
-          )
-        }
-        {
-          links.linkedin && (
-            <a
-              href={links.linkedin}
-              target="_blank"
-              rel="noopener"
-              class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
-            >
-              linkedin ↗
-            </a>
-          )
-        }
         <a
-          href={`mailto:${personal.email}`}
+          href={SOCIAL.github}
+          target="_blank"
+          rel="noopener"
           class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
         >
-          {personal.email} ↗
+          github ↗
         </a>
         <a
-          href="/Mateo%20Kadiu%20-%20CV.pdf"
+          href={SOCIAL.linkedin}
+          target="_blank"
+          rel="noopener"
+          class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+        >
+          linkedin ↗
+        </a>
+        <a
+          href={`mailto:${SOCIAL.email}`}
+          class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+        >
+          {SOCIAL.email} ↗
+        </a>
+        <a
+          href={SITE.cvPath}
           target="_blank"
           rel="noopener"
           class="rounded-md border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent transition-colors hover:bg-accent/15"
@@ -251,37 +238,5 @@ const breadcrumbJsonLd = breadcrumbNode([
       )
     }
 
-    {/* CERTIFICATIONS */}
-    {
-      certifications.length > 0 && (
-        <section class="mb-16">
-          <header class="mb-6">
-            <h2 class="font-mono text-xl font-semibold tracking-tight sm:text-2xl">
-              certs<span class="text-accent">.</span>
-            </h2>
-          </header>
-          <ul class="flex flex-wrap gap-2 font-mono text-xs">
-            {certifications.map((c) => (
-              <li>
-                {c.credentialUrl ? (
-                  <a
-                    href={c.credentialUrl}
-                    class="rounded-md border border-border bg-card px-3 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {c.name} · {c.issuer}
-                  </a>
-                ) : (
-                  <span class="rounded-md border border-border bg-card px-3 py-1.5 text-muted">
-                    {c.name} · {c.issuer}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
   </article>
 </Layout>

@@ -2,8 +2,8 @@
 // entities shared by every page so Google sees one consistent Person and
 // WebSite, referenced by `@id` from page-level nodes.
 
-import { loadEducation, loadLinks, loadPersonal, loadRoles, loadSkills } from './cv';
-import { SITE, siteUrl } from './data';
+import { loadEducation, loadPersonal, loadRoles, loadSkills } from './cv';
+import { SITE, SOCIAL, siteUrl } from './data';
 
 export type JsonLdNode = Record<string, unknown>;
 
@@ -16,34 +16,35 @@ export const websiteRef = { '@id': WEBSITE_ID };
 const city = (location: string) => location.split(',')[0]?.trim() || undefined;
 
 export async function buildPersonNode(): Promise<JsonLdNode> {
-  const [personal, links, skills, roles, education] = await Promise.all([
+  const [personal, skills, roles, education] = await Promise.all([
     loadPersonal(),
-    loadLinks(),
     loadSkills(),
     loadRoles(),
     loadEducation(),
   ]);
-  const [givenName, ...rest] = personal.name.split(' ');
+  const [givenName, ...rest] = SITE.author.split(' ');
   const currentRole = roles.find((r) => r.endDate === null);
 
   return {
     '@type': 'Person',
     '@id': PERSON_ID,
-    name: personal.name,
+    name: SITE.author,
     givenName,
     familyName: rest.join(' '),
     jobTitle: SITE.jobTitle,
     description: SITE.description,
     url: siteUrl('/'),
     mainEntityOfPage: siteUrl('/about'),
-    image: siteUrl('/og/about.png'),
-    email: `mailto:${personal.email}`,
+    image: personal.avatarUrl
+      ? new URL(personal.avatarUrl, SITE.url).toString()
+      : siteUrl('/og/about.png'),
+    email: `mailto:${SOCIAL.email}`,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: city(personal.location) ?? 'Tirana',
-      addressCountry: 'AL',
+      addressLocality: SITE.city,
+      addressCountry: SITE.countryCode,
     },
-    sameAs: [links.github, links.linkedin].filter(Boolean),
+    sameAs: [SOCIAL.github, SOCIAL.linkedin],
     knowsAbout: skills.map((s) => s.name),
     ...(currentRole && {
       worksFor: { '@type': 'Organization', name: currentRole.company },
@@ -56,7 +57,7 @@ export async function buildPersonNode(): Promise<JsonLdNode> {
     hasOccupation: {
       '@type': 'Occupation',
       name: SITE.jobTitle,
-      occupationLocation: { '@type': 'City', name: city(personal.location) },
+      occupationLocation: { '@type': 'City', name: SITE.city },
     },
   };
 }

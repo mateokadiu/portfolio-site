@@ -18,20 +18,8 @@ export default function MossTile() {
   const gross = NET_EUR + vat;
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">stripe-eu-vat-moss</h3>
-          <p className="mt-1 text-xs text-muted">
-            EU One-Stop-Shop · destination-rate VAT routing per Art. 58
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wider text-muted">
             <span>customer in</span>

@@ -131,20 +131,8 @@ export default function ShadowkitTile() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">shadowkit</h3>
-          <p className="mt-1 text-xs text-muted">
-            Tailwind inside Shadow DOM — cascade boundary holds
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
             3 shadow roots · synced through a typed postMessage bridge

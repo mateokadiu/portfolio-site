@@ -1,5 +1,5 @@
 ---
-import { SOCIAL } from '~/lib/data';
+import { SITE, SOCIAL } from '~/lib/data';
 ---
 
 <header
@@ -11,7 +11,7 @@ import { SOCIAL } from '~/lib/data';
       href="/"
       class="rounded font-mono text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-accent"
     >
-      <span class="sr-only">Mateo Kadiu — home</span>
+      <span class="sr-only">{SITE.author} — home</span>
       <span aria-hidden="true">mk<span class="text-accent">.</span></span>
     </a>
     <ul class="flex items-center gap-6 text-sm text-muted">

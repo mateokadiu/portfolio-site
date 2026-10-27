@@ -1,8 +1,5 @@
-// Client-safe portion of cv.ts — types + display helpers only.
-// The Keystatic reader (in cv.ts) calls `process.cwd()` at module load,
-// which fails in the browser when client-side React islands import from
-// cv.ts. Splitting types here lets the SkillGraph island avoid pulling the
-// reader (and Node `process`) into the client bundle.
+// Client-safe portion of cv.ts — types + display helpers only, so client code
+// never pulls `astro:content` into a bundle.
 
 export type SkillCategory =
   | 'languages'
@@ -21,7 +18,6 @@ export interface Skill {
   category: SkillCategory;
   proficiency: Proficiency;
   yearsUsing: number;
-  unlockedBy: string[];
   order: number;
 }
 
@@ -47,14 +43,6 @@ export interface EducationEntry {
   endYear: number;
   location: string;
   notes: string;
-}
-
-export interface Certification {
-  slug: string;
-  name: string;
-  issuer: string;
-  date: string;
-  credentialUrl: string;
 }
 
 const CATEGORY_LABELS: Record<SkillCategory, string> = {

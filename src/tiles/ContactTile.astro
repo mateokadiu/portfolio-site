@@ -1,5 +1,8 @@
 ---
+import { loadPersonal } from '~/lib/cv';
 import { SOCIAL } from '~/lib/data';
+
+const personal = await loadPersonal();
 ---
 
 <div class="flex h-full flex-col gap-3">
@@ -9,7 +12,7 @@ import { SOCIAL } from '~/lib/data';
   </header>
 
   <p class="text-xs text-muted">
-    open to senior IC roles, contract work, or interesting OSS chats.
+    {personal.availability.toLowerCase()}, or interesting OSS chats.
   </p>
 
   <ul class="mt-auto space-y-2 font-mono text-xs">

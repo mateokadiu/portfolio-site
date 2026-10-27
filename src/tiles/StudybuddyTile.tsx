@@ -71,18 +71,8 @@ export default function StudybuddyTile() {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">studybuddy</h3>
-          <p className="mt-1 text-xs text-muted">on-device RAG study app · review heatmap</p>
-        </div>
-        <span className="rounded-full border border-border px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-muted">
-          beta
-        </span>
-      </header>
-
-      <div className="relative mt-4 flex-1" data-ready={ready || undefined}>
+    <div className="flex h-full flex-1 flex-col">
+      <div className="relative flex-1" data-ready={ready || undefined}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${WIDTH} ${HEIGHT + 14}`}

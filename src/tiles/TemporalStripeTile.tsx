@@ -98,20 +98,8 @@ export default function TemporalStripeTile() {
   const reauthNode = STRIPE_NODE_BY_ID.reauthorizing;
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">temporal-stripe</h3>
-          <p className="mt-1 text-xs text-muted">
-            Temporal workflows for the Stripe Connect lifecycle
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="relative mt-4 flex-1 overflow-hidden rounded-lg border border-border/60 bg-background/40">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="relative flex-1 overflow-hidden rounded-lg border border-border/60 bg-background/40">
         <svg
           viewBox="0 0 400 170"
           className="h-full w-full"

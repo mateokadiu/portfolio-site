@@ -1,65 +1,29 @@
 ---
+import ProjectDemo from '~/components/ProjectDemo.astro';
 import Tile from '~/components/Tile.astro';
 import TileHeader from '~/components/TileHeader.astro';
-import { type Project, sitePath } from '~/lib/data';
-import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
-import MossTile from '~/tiles/MossTile';
-import ShadowkitTile from '~/tiles/ShadowkitTile';
-import StudybuddyTile from '~/tiles/StudybuddyTile';
-import TaxLedgerTile from '~/tiles/TaxLedgerTile';
-import TemporalStripeTile from '~/tiles/TemporalStripeTile';
-import TideTile from '~/tiles/TideTile';
-import WebhookGatewayAdminTile from '~/tiles/WebhookGatewayAdminTile';
-import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
+import { sitePath } from '~/lib/data';
+import type { Project } from '~/lib/projects';
 
 interface Props {
   project: Project;
 }
 const { project } = Astro.props;
-
-const href = sitePath(`/projects/${project.slug}`);
 ---
 
 <Tile
   size={project.tileSize}
-  href={href}
+  href={sitePath(`/projects/${project.slug}`)}
   label={`${project.name} — ${project.tagline}`}
   transitionName={`project-${project.slug}`}
 >
-  {
-    project.slug === 'temporal-stripe' && <TemporalStripeTile client:visible />
-  }
-  {
-    project.slug === 'webhook-gateway' && <WebhookGatewayTile client:visible />
-  }
-  {
-    project.slug === 'webhook-gateway-admin' && <WebhookGatewayAdminTile client:visible />
-  }
-  {project.slug === 'shadowkit' && <ShadowkitTile client:visible />}
-  {project.slug === 'studybuddy' && <StudybuddyTile client:visible />}
-  {project.slug === 'tax-ledger' && <TaxLedgerTile client:visible />}
-  {project.slug === 'stripe-eu-vat-moss' && <MossTile client:visible />}
-  {project.slug === 'tide' && <TideTile client:visible />}
-  {
-    project.slug === 'grpc-monorepo-starter' && (
-      <GrpcMonorepoTile client:visible />
-    )
-  }
-  {
-    !['temporal-stripe', 'webhook-gateway', 'webhook-gateway-admin', 'shadowkit', 'studybuddy', 'tax-ledger', 'grpc-monorepo-starter', 'stripe-eu-vat-moss', 'tide'].includes(
-      project.slug,
-    ) && (
-      <>
-        <TileHeader
-          name={project.name}
-          tagline={project.tagline}
-          status={project.status}
-          isPrivate={project.isPrivate}
-        />
-        <div class="mt-4 flex-1 rounded-lg border border-dashed border-border/60 p-3 text-xs text-muted">
-          tile demo · placeholder
-        </div>
-      </>
-    )
-  }
+  <TileHeader
+    name={project.name}
+    tagline={project.tagline}
+    status={project.status}
+    isPrivate={project.isPrivate}
+  />
+  <div class="mt-4 flex flex-1 flex-col">
+    <ProjectDemo slug={project.slug} hydrate="visible" />
+  </div>
 </Tile>

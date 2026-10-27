@@ -35,20 +35,8 @@ export default function TideTile() {
   const surface = SURFACES.find((s) => s.id === picked) ?? SURFACES[0]!;
 
   return (
-    <div ref={rootRef} className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">tide</h3>
-          <p className="mt-1 text-xs text-muted">
-            Self-hostable read-later · Next.js + RSC + pgvector + Anthropic
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+    <div ref={rootRef} className="flex h-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-3">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
             capture surface

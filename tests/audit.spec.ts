@@ -1,34 +1,11 @@
 import { type Page, expect, test } from '@playwright/test';
-import { PROJECTS_WITH_DEMO_HINTS, projectPath } from './site-urls';
-
-const PAGES = [
-  '/',
-  '/about/',
-  '/projects/',
-  '/projects/temporal-stripe/',
-  '/projects/webhook-gateway/',
-  '/projects/webhook-gateway-admin/',
-  '/projects/shadowkit/',
-  '/projects/studybuddy/',
-  '/projects/tax-ledger/',
-  '/projects/grpc-monorepo-starter/',
-  '/projects/stripe-eu-vat-moss/',
-  '/projects/tide/',
-];
+import { PAGES, PROJECT_SLUGS, projectPath } from './site-urls';
 
 const STATIC_ASSETS = [
   '/og/default.png',
   '/og/about.png',
   '/og/projects.png',
-  '/og/temporal-stripe.png',
-  '/og/webhook-gateway.png',
-  '/og/shadowkit.png',
-  '/og/studybuddy.png',
-  '/og/tax-ledger.png',
-  '/og/grpc-monorepo-starter.png',
-  '/og/tide.png',
-  '/og/webhook-gateway-admin.png',
-  '/og/stripe-eu-vat-moss.png',
+  ...PROJECT_SLUGS.map((slug) => `/og/${slug}.png`),
   '/manifest.webmanifest',
   '/apple-touch-icon.png',
   '/favicon-32.png',
@@ -231,7 +208,7 @@ test('homepage hero copy is the new version', async ({ page }) => {
   await expect(page.getByText(/Every tile below is a project I shipped/i)).toBeVisible();
 });
 
-for (const slug of PROJECTS_WITH_DEMO_HINTS) {
+for (const slug of PROJECT_SLUGS) {
   test(`demo hint shows on project page: ${slug}`, async ({ page }) => {
     await page.goto(projectPath(slug));
     await expect(page.getByText(/try the demo/i)).toBeVisible();

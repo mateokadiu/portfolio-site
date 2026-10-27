@@ -1,35 +1,35 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import ProjectDemo from '~/components/ProjectDemo.astro';
 import Layout from '~/layouts/Layout.astro';
-import { PROJECTS, sitePath, siteUrl } from '~/lib/data';
+import { sitePath, siteUrl } from '~/lib/data';
+import { type ProjectEntry, getProjects } from '~/lib/projects';
 import { type JsonLdNode, breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
-import GrpcMonorepoTile from '~/tiles/GrpcMonorepoTile';
-import MossTile from '~/tiles/MossTile';
-import ShadowkitTile from '~/tiles/ShadowkitTile';
-import StudybuddyTile from '~/tiles/StudybuddyTile';
-import TaxLedgerTile from '~/tiles/TaxLedgerTile';
-import TemporalStripeTile from '~/tiles/TemporalStripeTile';
-import TideTile from '~/tiles/TideTile';
-import WebhookGatewayAdminTile from '~/tiles/WebhookGatewayAdminTile';
-import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map((entry) => ({
-    params: { slug: entry.id.replace(/\.mdx$/, '') },
-    props: { entry },
-  }));
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
 interface Props {
-  entry: CollectionEntry<'projects'>;
+  entry: ProjectEntry;
 }
 
 const { entry } = Astro.props;
-const slug = entry.id.replace(/\.mdx$/, '');
-const { Content } = await entry.render();
-const { name, tagline, seoTitle, description, language, status, stack, repoUrl, isPrivate } =
-  entry.data;
+const slug = entry.id;
+const { Content } = await render(entry);
+const {
+  name,
+  tagline,
+  seoTitle,
+  description,
+  language,
+  status,
+  stack,
+  repoUrl,
+  isPrivate,
+  demoHint: hint,
+} = entry.data;
 
 const projectUrl = siteUrl(`/projects/${slug}`);
 const ogImage = `/og/${slug}.png`;
@@ -59,84 +59,7 @@ const breadcrumbLd = breadcrumbNode([
   { name, path: `/projects/${slug}` },
 ]);
 
-const moreProjects = PROJECTS.filter((p) => p.slug !== slug);
-
-const DEMO_HINTS: Record<string, { headline: string; steps: string[] }> = {
-  'temporal-stripe': {
-    headline: 'Watch a Stripe Connect PaymentIntent live its full lifecycle.',
-    steps: [
-      'Hit ▶ play — the workflow walks through authorize → reauth timer → re-authorize → multicapture → captured.',
-      'The orange ring above the “reauthorizing” node is the 4-day reauth timer compressed to ~4 seconds.',
-      'Click any state to jump there. Illegal transitions shake red.',
-    ],
-  },
-  'webhook-gateway': {
-    headline: 'A simulated webhook gateway under load.',
-    steps: [
-      'Toggle “downstream is down” to mark the receiver as unhealthy.',
-      'The next attempt enters the retry-backoff schedule: 30s · 2m · 10m · 1h · 6h · 24h (sped up for the demo).',
-      'After enough failed retries the event lands in the DLQ — toggle back to healthy to drain.',
-    ],
-  },
-  'webhook-gateway-admin': {
-    headline: 'A miniature of the Angular admin UI.',
-    steps: [
-      'The received/delivered counters tick on a 2.4s interval — animated by signals in the real app.',
-      'Click the filter pills (all/ok/failed) to drive a `signal()`; the visible rows are a `computed()`.',
-      'The full admin (sidebar + dashboard + events table + sources/targets CRUD) is in the repo — same backend as webhook-gateway.',
-    ],
-  },
-  shadowkit: {
-    headline: 'A real <sk-counter> Web Component embedded inside this page.',
-    steps: [
-      'Click + / − to mutate state inside its Shadow DOM.',
-      'Click “Inject host-page CSS targeting the counter” — note that the styles do NOT bleed through.',
-      'That is the Tailwind-v4-inside-Shadow-DOM cascade boundary the library exists to prove.',
-    ],
-  },
-  studybuddy: {
-    headline: 'A year of seeded review activity rendered as a heatmap.',
-    steps: [
-      'Each cell is one day; density encodes how many cards were reviewed. Summer is quiet, exam season is not.',
-      'Hover or tap any cell for the exact count — or focus the heatmap and move with the arrow keys.',
-      'The real app draws this with Skia on the device — here it is an SVG rendered from a seeded fixture.',
-    ],
-  },
-  'tax-ledger': {
-    headline: 'Cent-exact tax allocation, and refunds that reverse it.',
-    steps: [
-      'A $53.69 order taxed by three jurisdictions. The engine rounds tax once per jurisdiction on the whole order.',
-      'That quote is split back to the lines with largest-remainder allocation, so the lines sum to it exactly. Rounding each line on its own would drift by a cent in every jurisdiction.',
-      'Refund any item: its allocated cents are reversed per jurisdiction, and owed + refunded still equals the engine total.',
-    ],
-  },
-  'grpc-monorepo-starter': {
-    headline: 'One .proto file fans out to four typed clients.',
-    steps: [
-      'The cursor types in a new RPC at the top.',
-      'Arrows draw down to TypeScript / Go / Python / Connect-Web clients.',
-      'Each checkmark = a generated, type-safe client ready to consume the service.',
-    ],
-  },
-  'stripe-eu-vat-moss': {
-    headline: 'Destination-country VAT on a €100 sale under the EU One-Stop-Shop.',
-    steps: [
-      'Pick the customer’s member state — the VAT rate is the destination country’s, not the seller’s.',
-      'The VAT line shows which treasury the tax is owed to; the gross is what the customer pays.',
-      'Rates are the 2026 standard rates from the project’s Liquibase seed (27 member states).',
-    ],
-  },
-  tide: {
-    headline: 'The capture → enrich pipeline of a self-hostable read-later app.',
-    steps: [
-      'Pick a capture surface: web, browser extension, email-in or the REST API.',
-      'Every saved article runs the same pipeline: extract → tag → embed (pgvector) → summarize (streamed).',
-      'The real app runs these as BullMQ jobs; the demo steps through them on a timer.',
-    ],
-  },
-};
-
-const hint = DEMO_HINTS[slug];
+const moreProjects = (await getProjects()).filter((p) => p.slug !== slug);
 ---
 
 <Layout title={seoTitle} description={description} ogImage={ogImage} jsonLd={[projectLd, breadcrumbLd]}>
@@ -174,38 +97,27 @@ const hint = DEMO_HINTS[slug];
       </div>
     </header>
 
-    {hint && (
-      <aside class="mb-4 rounded-xl border border-accent/25 bg-accent/5 p-3 sm:p-4">
-        <h2 class="mb-2 flex items-center gap-2 font-mono text-[11px] font-normal uppercase tracking-wider text-accent">
-          <span aria-hidden="true">▸</span> try the demo
-        </h2>
-        <p class="mb-2 text-[14px] text-foreground sm:text-sm">{hint.headline}</p>
-        <ol class="space-y-1.5 text-[13px] text-muted sm:text-sm">
-          {hint.steps.map((s, i) => (
-            <li class="flex gap-2 leading-relaxed">
-              <span class="select-none font-mono text-accent">{i + 1}.</span>
-              <span>{s}</span>
-            </li>
-          ))}
-        </ol>
-      </aside>
-    )}
+    <aside class="mb-4 rounded-xl border border-accent/25 bg-accent/5 p-3 sm:p-4">
+      <h2 class="mb-2 flex items-center gap-2 font-mono text-[11px] font-normal uppercase tracking-wider text-accent">
+        <span aria-hidden="true">▸</span> try the demo
+      </h2>
+      <p class="mb-2 text-[14px] text-foreground sm:text-sm">{hint.headline}</p>
+      <ol class="space-y-1.5 text-[13px] text-muted sm:text-sm">
+        {hint.steps.map((s, i) => (
+          <li class="flex gap-2 leading-relaxed">
+            <span class="select-none font-mono text-accent">{i + 1}.</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ol>
+    </aside>
 
-    {!hint && <h2 class="sr-only">Interactive demo</h2>}
     <div
       class="mb-12 rounded-2xl border border-border bg-card"
       transition:name={`project-${slug}`}
     >
-      <div class="min-h-[420px] w-full p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6">
-        {slug === 'temporal-stripe' && <TemporalStripeTile client:idle />}
-        {slug === 'webhook-gateway' && <WebhookGatewayTile client:idle />}
-        {slug === 'webhook-gateway-admin' && <WebhookGatewayAdminTile client:idle />}
-        {slug === 'shadowkit' && <ShadowkitTile client:idle />}
-        {slug === 'studybuddy' && <StudybuddyTile client:idle />}
-        {slug === 'tax-ledger' && <TaxLedgerTile client:idle />}
-        {slug === 'grpc-monorepo-starter' && <GrpcMonorepoTile client:idle />}
-        {slug === 'stripe-eu-vat-moss' && <MossTile client:idle />}
-        {slug === 'tide' && <TideTile client:idle />}
+      <div class="flex min-h-[420px] w-full flex-col p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6">
+        <ProjectDemo slug={slug} hydrate="idle" />
       </div>
     </div>
 

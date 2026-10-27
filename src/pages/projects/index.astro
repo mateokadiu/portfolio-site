@@ -1,11 +1,13 @@
 ---
 import Layout from '~/layouts/Layout.astro';
-import { PROJECTS, SITE, sitePath, siteUrl } from '~/lib/data';
+import { SITE, sitePath, siteUrl } from '~/lib/data';
+import { getProjects } from '~/lib/projects';
 import { breadcrumbNode, personRef, websiteRef } from '~/lib/seo';
 
+const projects = await getProjects();
+
 const title = 'Open-Source Projects';
-const description =
-  'Open-source projects by Mateo Kadiu: Stripe Connect on Temporal, a tax ledger, a webhook gateway, plus Next.js, Angular and React Native apps with live demos.';
+const description = `Open-source projects by ${SITE.author}: Stripe Connect on Temporal, a tax ledger, a webhook gateway, plus Next.js, Angular and React Native apps with demos.`;
 
 const collectionLd = {
   '@type': 'CollectionPage',
@@ -18,8 +20,8 @@ const collectionLd = {
   about: personRef,
   mainEntity: {
     '@type': 'ItemList',
-    numberOfItems: PROJECTS.length,
-    itemListElement: PROJECTS.map((p, i) => ({
+    numberOfItems: projects.length,
+    itemListElement: projects.map((p, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       url: siteUrl(`/projects/${p.slug}`),
@@ -43,7 +45,7 @@ const breadcrumbLd = breadcrumbNode([
   <article class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
     <header class="mb-12">
       <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-        projects · {PROJECTS.length} open source · MIT
+        projects · {projects.length} open source · MIT
       </p>
       <h1 class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
         projects<span class="text-accent">.</span>
@@ -56,7 +58,7 @@ const breadcrumbLd = breadcrumbNode([
 
     <ul class="grid gap-4">
       {
-        PROJECTS.map((p) => (
+        projects.map((p) => (
           <li class="rounded-2xl border border-border bg-card p-5 sm:p-6">
             <div class="flex flex-wrap items-center gap-2">
               <h2 class="font-mono text-lg font-semibold tracking-tight">

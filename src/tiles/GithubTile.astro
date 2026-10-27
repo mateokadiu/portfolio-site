@@ -1,7 +1,8 @@
 ---
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { PROJECTS, SOCIAL } from '~/lib/data';
+import { SOCIAL } from '~/lib/data';
+import { getProjects } from '~/lib/projects';
 import { formatShortDate } from '~/lib/time';
 
 interface RepoActivity {
@@ -15,7 +16,7 @@ interface RepoActivity {
 // Written by scripts/fetch-github-activity.mjs during prebuild.
 const ACTIVITY_PATH = resolve(process.cwd(), 'src/lib/github-activity.generated.json');
 
-function loadActivity(): RepoActivity[] {
+async function loadActivity(): Promise<RepoActivity[]> {
   if (existsSync(ACTIVITY_PATH)) {
     try {
       const data = JSON.parse(readFileSync(ACTIVITY_PATH, 'utf8')) as RepoActivity[];
@@ -24,16 +25,18 @@ function loadActivity(): RepoActivity[] {
       // fall through to the static list
     }
   }
-  return PROJECTS.filter((p) => p.repoUrl).map((p) => ({
-    name: p.slug,
-    description: p.tagline,
-    language: null,
-    pushedAt: null,
-    url: p.repoUrl!,
-  }));
+  return (await getProjects())
+    .filter((p) => p.repoUrl)
+    .map((p) => ({
+      name: p.slug,
+      description: p.tagline,
+      language: null,
+      pushedAt: null,
+      url: p.repoUrl!,
+    }));
 }
 
-const repos = loadActivity().slice(0, 5);
+const repos = (await loadActivity()).slice(0, 5);
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: 'oklch(0.62 0.13 250)',

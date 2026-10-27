@@ -9,6 +9,14 @@ stack: ['TypeScript', 'Decimal.js', 'Zod', 'fast-check', 'Drizzle']
 repoUrl: 'https://github.com/mateokadiu/tax-ledger'
 isPrivate: false
 tileSize: '2x1'
+order: 6
+blurb: "Takes the engine response + your line items and emits a deterministic ledger that sums to the engine total to the cent and stays reconciled across refunds, partial captures, revisions, and engine-quoted reversals. Decimal.js + Hamilton allocator + Zod + fast-check property tests. Drizzle adapter for PG/SQLite."
+demoHint:
+  headline: "Cent-exact tax allocation, and refunds that reverse it."
+  steps:
+    - "A $53.69 order taxed by three jurisdictions. The engine rounds tax once per jurisdiction on the whole order."
+    - "That quote is split back to the lines with largest-remainder allocation, so the lines sum to it exactly. Rounding each line on its own would drift by a cent in every jurisdiction."
+    - "Refund any item: its allocated cents are reversed per jurisdiction, and owed + refunded still equals the engine total."
 ---
 
 ## Elevator pitch

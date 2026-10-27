@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { getCollection } from 'astro:content';
 import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
 import satori from 'satori';
-import { PROJECTS } from '~/lib/data';
+import { SITE } from '~/lib/data';
+import { getProjects } from '~/lib/projects';
 
 const WIDTH = 1200;
 const HEIGHT = 630;
@@ -21,36 +21,32 @@ const ABOUT_STACK = ['nestjs', 'next.js', 'stripe connect', 'kubernetes', 'pulum
 const PROJECTS_STACK = ['temporal', 'stripe connect', 'nestjs', 'angular', 'spring boot'];
 
 async function loadOgSpecs(): Promise<OgSpec[]> {
+  const projects = await getProjects();
   const specs: OgSpec[] = [
     {
       slug: 'default',
-      title: 'Mateo Kadiu',
+      title: SITE.author,
       tagline:
         'Senior software engineer — React · Next.js · Angular · NestJS · Stripe Connect. Every project has an interactive demo.',
       stack: HOME_STACK,
     },
     {
       slug: 'about',
-      title: 'Mateo Kadiu',
-      tagline: 'Senior software engineer · Tirana, AL · remote-friendly, EU timezone.',
+      title: SITE.author,
+      tagline: `${SITE.jobTitle} · ${SITE.city}, ${SITE.countryCode} · remote-friendly, EU timezone.`,
       stack: ABOUT_STACK,
     },
     {
       slug: 'projects',
       title: 'projects',
-      tagline: `${PROJECTS.length} open-source projects, each with a live interactive demo.`,
+      tagline: `${projects.length} open-source projects, each with an interactive demo.`,
       stack: PROJECTS_STACK,
     },
   ];
 
-  const entries = await getCollection('projects');
-  const bySlug = new Map(entries.map((e) => [e.id.replace(/\.mdx$/, ''), e.data]));
-
-  for (const p of PROJECTS) {
-    const data = bySlug.get(p.slug);
-    const tagline = data?.tagline ?? p.tagline;
-    const stack = (data?.stack ?? p.stack).slice(0, 5).map((s) => s.toLowerCase());
-    specs.push({ slug: p.slug, title: p.name, tagline, stack });
+  for (const p of projects) {
+    const stack = p.stack.slice(0, 5).map((s) => s.toLowerCase());
+    specs.push({ slug: p.slug, title: p.name, tagline: p.tagline, stack });
   }
 
   return specs;

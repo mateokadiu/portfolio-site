@@ -51,21 +51,8 @@ export default function WebhookGatewayAdminTile() {
   );
 
   return (
-    <div ref={rootRef} className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway-admin</h3>
-          <p className="mt-1 text-xs text-muted">
-            Angular admin · zoneless · <span className="font-mono text-accent">signal()</span>{' '}
-            filters
-          </p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex-1 overflow-hidden">
+    <div ref={rootRef} className="flex h-full flex-1 flex-col">
+      <div className="flex-1 overflow-hidden">
         {/* mini sidebar + content layout, mimicking the real admin */}
         <div className="grid grid-cols-[88px_1fr] gap-2 rounded-lg border border-border/60 bg-background/40 p-2">
           <aside className="border-r border-border/60 pr-2">

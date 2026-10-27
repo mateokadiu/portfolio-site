@@ -22,18 +22,8 @@ export default function WebhookGatewayTile() {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-start justify-between">
-        <div>
-          <h3 className="font-mono text-sm font-medium text-foreground">webhook-gateway</h3>
-          <p className="mt-1 text-xs text-muted">retry with exponential backoff, then DLQ</p>
-        </div>
-        <span className="rounded-full border border-accent/30 px-1.5 py-px font-mono text-[10px] uppercase tracking-wider text-accent">
-          shipped
-        </span>
-      </header>
-
-      <div className="mt-4 flex-1 overflow-hidden">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex-1 overflow-hidden">
         <div className="rounded-lg border border-border/60 bg-background/40 p-3">
           <div className="mb-2 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-muted">
             <span>delivery timeline</span>
