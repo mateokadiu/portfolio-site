@@ -14,6 +14,8 @@ const SHOTS = [
   { name: 'project-temporal-stripe', path: '/projects/temporal-stripe/' },
   { name: 'project-tax-ledger', path: '/projects/tax-ledger/' },
   { name: 'not-found', path: '/this-page-does-not-exist/' },
+  // Build-time OG card (satori + resvg): guards the share preview layout.
+  { name: 'og-card', path: '/og/tax-ledger.png' },
 ];
 
 for (const shot of SHOTS) {

@@ -78,6 +78,9 @@ function template(spec: OgSpec) {
         flexDirection: 'column',
         width: '100%',
         height: '100%',
+        // Satori (Yoga 3) defaults to content-box: without this the padding is
+        // added to the canvas size and the footer + dots render off-canvas.
+        boxSizing: 'border-box',
         backgroundColor: '#1a1a1a',
         backgroundImage:
           'radial-gradient(circle at 85% 15%, rgba(232, 88, 84, 0.22), rgba(232, 88, 84, 0) 55%)',
