@@ -90,6 +90,7 @@ const breadcrumbJsonLd = breadcrumbNode([
       </p>
       <h1
         class="mt-4 font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
+        translate="no"
       >
         {SITE.author}
       </h1>
@@ -201,7 +202,7 @@ const breadcrumbJsonLd = breadcrumbNode([
                     const dots = proficiencyDots(s.proficiency);
                     return (
                       <li class="flex items-center justify-between gap-3">
-                        <span class="truncate text-foreground/90">
+                        <span class="truncate text-foreground/90" translate="no">
                           {s.name}
                         </span>
                         <span class="flex shrink-0 items-center gap-2">

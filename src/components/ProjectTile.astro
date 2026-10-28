@@ -23,7 +23,8 @@ const { project } = Astro.props;
     status={project.status}
     isPrivate={project.isPrivate}
   />
-  <div class="mt-4 flex flex-1 flex-col">
+  <!-- Translators must not rewrite React-managed DOM (hydration mismatch, stale text). -->
+  <div class="mt-4 flex flex-1 flex-col" translate="no">
     <ProjectDemo slug={project.slug} hydrate="visible" />
   </div>
 </Tile>

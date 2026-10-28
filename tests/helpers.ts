@@ -46,3 +46,32 @@ export function trackErrors(page: Page): string[] {
   });
   return errors;
 }
+
+/**
+ * Rewrite the page the way Google Translate does: every translatable text node
+ * becomes <font><font>translated</font></font>. Respects translate="no".
+ * Returns how many text nodes were rewritten.
+ */
+export async function simulateTranslate(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const skip = 'script, style, noscript, [translate="no"], .notranslate';
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) =>
+        node.nodeValue?.trim() && !node.parentElement?.closest(skip)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT,
+    });
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    for (const node of nodes) {
+      const outer = document.createElement('font');
+      const inner = document.createElement('font');
+      outer.style.verticalAlign = 'inherit';
+      inner.style.verticalAlign = 'inherit';
+      inner.textContent = `[t] ${node.nodeValue}`;
+      outer.appendChild(inner);
+      node.replaceWith(outer);
+    }
+    return nodes.length;
+  });
+}

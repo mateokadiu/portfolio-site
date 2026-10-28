@@ -6,7 +6,13 @@ const CI = !!process.env.CI;
 const VISUAL = process.env.PW_VISUAL === '1';
 const PORT = 4321;
 
-const functional = ['**/smoke.spec.ts', '**/demos.spec.ts', '**/audit.spec.ts', '**/a11y.spec.ts'];
+const functional = [
+  '**/smoke.spec.ts',
+  '**/demos.spec.ts',
+  '**/audit.spec.ts',
+  '**/a11y.spec.ts',
+  '**/translate.spec.ts',
+];
 
 const projects: PlaywrightTestConfig['projects'] = [
   { name: 'desktop', testMatch: functional, use: { ...devices['Desktop Chrome'] } },

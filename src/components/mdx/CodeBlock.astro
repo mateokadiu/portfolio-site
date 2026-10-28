@@ -1,0 +1,9 @@
+---
+// MDX code blocks: keep code (and ASCII diagrams) out of page translators.
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'pre'>;
+const props = Astro.props;
+---
+
+<pre {...props} translate="no"><slot /></pre>

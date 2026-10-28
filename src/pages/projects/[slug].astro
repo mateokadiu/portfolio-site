@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
+import CodeBlock from '~/components/mdx/CodeBlock.astro';
+import InlineCode from '~/components/mdx/InlineCode.astro';
 import ProjectDemo from '~/components/ProjectDemo.astro';
 import Layout from '~/layouts/Layout.astro';
 import { sitePath, siteUrl } from '~/lib/data';
@@ -86,9 +88,9 @@ const moreProjects = (await getProjects()).filter((p) => p.slug !== slug);
           </a>
         )}
       </div>
-      <h1 class="break-words font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">{name}</h1>
+      <h1 class="break-words font-mono text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl" translate="no">{name}</h1>
       <p class="mt-3 max-w-2xl text-base text-muted sm:text-lg">{tagline}</p>
-      <div class="mt-4 flex flex-wrap gap-1.5 sm:mt-5">
+      <div class="mt-4 flex flex-wrap gap-1.5 sm:mt-5" translate="no">
         {stack.map((tech) => (
           <span class="rounded-md border border-border bg-card px-2 py-1 font-mono text-[11px] text-muted sm:text-xs">
             {tech}
@@ -116,13 +118,14 @@ const moreProjects = (await getProjects()).filter((p) => p.slug !== slug);
       class="mb-12 rounded-2xl border border-border bg-card"
       transition:name={`project-${slug}`}
     >
-      <div class="flex min-h-[420px] w-full flex-col p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6">
+      <!-- Translators must not rewrite React-managed DOM (hydration mismatch, stale text). -->
+      <div class="flex min-h-[420px] w-full flex-col p-4 sm:aspect-[16/10] sm:min-h-0 sm:p-6" translate="no">
         <ProjectDemo slug={slug} hydrate="idle" />
       </div>
     </div>
 
     <div class="prose-project">
-      <Content />
+      <Content components={{ pre: CodeBlock, code: InlineCode }} />
     </div>
 
     <nav aria-labelledby="more-projects" class="mt-16 border-t border-border/60 pt-10">
@@ -141,7 +144,7 @@ const moreProjects = (await getProjects()).filter((p) => p.slug !== slug);
               href={sitePath(`/projects/${p.slug}`)}
               class="block h-full rounded-xl border border-border bg-card p-4 transition-colors hover:border-accent/40 hover:bg-card-hover"
             >
-              <span class="block font-mono text-sm font-medium text-foreground">{p.name}</span>
+              <span class="block font-mono text-sm font-medium text-foreground" translate="no">{p.name}</span>
               <span class="mt-1 block text-xs leading-relaxed text-muted">{p.tagline}</span>
             </a>
           </li>
