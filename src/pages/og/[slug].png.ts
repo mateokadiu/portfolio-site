@@ -33,7 +33,7 @@ async function loadOgSpecs(): Promise<OgSpec[]> {
     {
       slug: 'about',
       title: SITE.author,
-      tagline: `${SITE.jobTitle} · ${SITE.city}, ${SITE.countryCode} · remote-friendly, EU timezone.`,
+      tagline: `${SITE.jobTitle} · ${SITE.city}, ${SITE.countryCode} · CET · open to relocation.`,
       stack: ABOUT_STACK,
     },
     {

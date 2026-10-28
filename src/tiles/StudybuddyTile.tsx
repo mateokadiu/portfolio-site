@@ -150,7 +150,8 @@ export default function StudybuddyTile() {
 
       <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] text-muted">
         <span id={summaryId} className="mr-auto">
-          {SUMMARY.total.toLocaleString('en-US')} reviews · busiest {BUSIEST_LABEL}
+          sample data · {SUMMARY.total.toLocaleString('en-US')} card reviews · busiest{' '}
+          {BUSIEST_LABEL}
         </span>
         <span aria-hidden="true">less</span>
         {LEVEL_COLORS.map((c) => (

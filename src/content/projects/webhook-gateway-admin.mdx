@@ -37,9 +37,9 @@ A modern Angular admin spanning the full webhook-gateway surface area:
 
 ## Why this exists
 
-The portfolio claimed two years of Angular but had zero public Angular code under github.com/mateokadiu — interviewers spot-check, the claim got discounted. This fills the gap with a real, complete admin paired to an existing backend rather than a contrived toy.
+A complete, public Angular admin against a real backend rather than a contrived toy.
 
-The "same backend, two frontends" framing is also a real interview talking point: I built the NestJS service + the React (Next.js) admin first; I added the Angular admin to defend the Angular skill claim with code that ships against the same domain model.
+Same backend, two frontends: I built the NestJS service and the React (Next.js) admin first, then the Angular admin against the same API and the same Zod schemas. Putting the two side by side makes the trade-offs concrete — signals + `computed()` vs. React state, TanStack Query in both, and how much of the domain layer is shared.
 
 ## Modern Angular cheat sheet (what this exercises)
 

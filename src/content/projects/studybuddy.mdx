@@ -3,14 +3,14 @@ slug: studybuddy
 name: studybuddy
 tagline: On-device RAG study app for React Native.
 seoTitle: 'studybuddy: On-Device RAG App for React Native'
-description: 'React Native flashcard app with on-device retrieval-augmented question generation via llama.rn, SQLite storage and a Skia review heatmap. No cloud inference.'
+description: 'React Native study app: PDF in, FSRS-scheduled flashcards and doc chat out. Llama 3.2 + MiniLM run on-device via ExecuTorch. No cloud inference.'
 status: beta
-stack: ['React Native', 'Skia', 'llama.rn', 'SQLite']
+stack: ['React Native', 'ExecuTorch', 'Skia', 'SQLite']
 repoUrl: 'https://github.com/mateokadiu/studybuddy'
 isPrivate: false
 tileSize: '2x1'
 order: 4
-blurb: "A flashcard / study app with retrieval-augmented question generation, all model inference on-device via llama.rn. Skia for the heatmap."
+blurb: "Drop in a PDF, get FSRS-scheduled flashcards and chat with the doc. All model inference on-device via ExecuTorch. Skia for the heatmap."
 demoHint:
   headline: "A year of seeded review activity rendered as a heatmap."
   steps:
@@ -21,42 +21,44 @@ demoHint:
 
 ## Elevator pitch
 
-> A flashcard / study app that runs the entire inference loop on-device — embedding model + small LLM via `llama.rn` — so my notes never leave my phone, and the spaced-repetition queue is generated from a true semantic retrieval pass over my own corpus rather than tags or hand-picked decks.
+> Drop in a PDF, get spaced-repetition flashcards back, and chat with the document — with the embedding model and the LLM both running on the phone via `react-native-executorch`. Nothing leaves the device.
 
 ## What it is
 
 A React Native app with three loops:
 
-1. **Capture loop.** I write a note. It's chunked, embedded on-device by a quantised E5-small, and stored in SQLite with the chunk vectors as `BLOB`s.
-2. **Retrieval loop.** I ask a question. The query is embedded, cosine-searched against the local vectors, top-k chunks are pulled, and a small on-device LLM generates a flashcard from the retrieved context.
-3. **Review loop.** The flashcard is enqueued in a SuperMemo-2 spaced-repetition schedule. The heatmap (the one on the portfolio tile) is the daily-review-completion view.
+1. **Ingest loop.** A PDF is extracted and chunked (~512 tokens, 64 overlap), each chunk embedded on-device by MiniLM-L6-v2 (384-dim) and stored in SQLite as a Float32 `BLOB`.
+2. **Card-gen + chat loop.** Representative chunks are sampled with k-means over the embeddings (topic coverage, not just page order), and Llama 3.2 3B generates structured Q/A + cloze cards from them; near-duplicate questions are dropped by cosine similarity. Chat does top-k retrieval over the same vectors and answers with page-cited evidence.
+3. **Review loop.** Cards are scheduled with FSRS-4.5 (a TypeScript port). The heatmap on the portfolio tile is the daily-review view.
 
-All of it runs without a network. The phone is the server.
+All of it runs without a network once the models are downloaded. The phone is the server.
 
 ## Status
 
 | Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/studybuddy |
-| Status | beta |
-| Platforms | iOS + Android via React Native |
-| Model | E5-small (embeddings) + Phi-3-mini-int4 (generation) |
+| Status | beta (v0.1) |
+| Platforms | iOS + Android via React Native (Expo dev client) |
+| Models | Llama 3.2 3B Instruct 4-bit (default; swappable to Phi-3.5 mini / Gemma 2 2B / Llama 3.2 1B) + all-MiniLM-L6-v2 embeddings |
 
 ## The problem I was solving
 
 Notes apps make me file things. They don't make me _learn_ things. Anki is the gold standard for the review loop but every card is hand-authored — there's no path from "I read 200 pages" to "I now have 30 well-tuned cards covering it".
 
-The bet: combine retrieval-augmented card generation with spaced repetition, and run it entirely locally because the corpus is personal notes I don't want in someone's cloud.
+The bet: combine retrieval-augmented card generation with spaced repetition, and run it entirely locally because the documents are personal and I don't want them in someone's cloud.
 
 ## Key decisions
 
 1. **On-device only.** Once that's the spec, every other decision falls out: small quantised models, embeddings as `BLOB`s in SQLite, no auth surface, no sync.
-2. **`llama.rn` over MLC / ExecuTorch.** llama.cpp's quantisation story is more mature; the int4 model is the difference between 200ms and 2s per token on an iPhone 14.
-3. **SuperMemo-2, not SM-15+.** SM-2 is six lines; the marginal accuracy of SM-15+ doesn't compensate for the implementation cost on a solo project.
-4. **Skia for the heatmap.** Smooth 60fps gestures on the year view; SVG falls over on a 53×7 grid with hover.
+2. **ExecuTorch (`react-native-executorch`).** Runs both the LLM and the embedder behind one native module, accelerated on the Apple Neural Engine and Android NNAPI, with a catalog of models that are licensed for commercial use. Model files are SHA-256 verified on download.
+3. **FSRS-4.5, not SM-2.** FSRS is what Anki ships as its default scheduler and models retention better than SM-2; it's pure math, so it stays a tested pure function.
+4. **Mock-model dev path.** By default the app runs against deterministic mock embeddings and canned LLM output, so every screen can be driven end-to-end without a 2.5 GB download.
+5. **Skia for visualisations.** The review heatmap and retention curve draw on the UI thread at 60fps.
 
 ## Numbers
 
-- **~200ms** per generated token on iPhone 14 with int4 quantisation
-- **53×7** cells in the year heatmap
+- **~20 tok/s** for Llama 3.2 3B on flagship phones (iPhone 15 Pro, Galaxy S24+)
+- **384-dim** MiniLM vectors → 1,536 bytes per chunk
+- **~100** Vitest cases, ~500ms run
 - **0 bytes** of personal data leaves the device

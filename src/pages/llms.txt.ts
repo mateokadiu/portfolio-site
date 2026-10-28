@@ -19,7 +19,7 @@ export const GET: APIRoute = async () => {
   const body = [
     `# ${SITE.author}`,
     '',
-    `> ${SITE.jobTitle}${currentRole ? ` at ${currentRole.company}` : ''}, based in ${SITE.city}, ${SITE.country} (EU time zone).`,
+    `> ${SITE.jobTitle}${currentRole ? ` at ${currentRole.company}` : ''}, based in ${SITE.city}, ${SITE.country} (CET time zone), open to relocation.`,
     '',
     personal.tagline,
     '',

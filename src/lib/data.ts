@@ -3,7 +3,7 @@
 // src/content/cv.
 
 export const NOW = [
-  'on-device LLMs · llama.rn on RN',
+  'on-device LLMs · ExecuTorch on RN',
   'web components + shadow-dom theming',
   'gRPC + connect-web client codegen',
   'temporal workflows for retries',
@@ -18,7 +18,7 @@ export const SOCIAL = {
 export const SITE = {
   title: 'Mateo Kadiu — Senior Software Engineer',
   description:
-    'Mateo Kadiu, senior software engineer in Tirana (EU time). React, Next.js, Angular, NestJS, Spring Boot, Stripe Connect. Every project has an interactive demo.',
+    'Mateo Kadiu, senior software engineer in Tirana (CET), open to relocation. React, Next.js, Angular, NestJS, Stripe Connect. Every project has a live demo.',
   jobTitle: 'Senior Software Engineer',
   url: 'https://mateokadiu.com',
   author: 'Mateo Kadiu',
