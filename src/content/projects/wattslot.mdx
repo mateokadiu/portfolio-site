@@ -1,0 +1,67 @@
+---
+slug: wattslot
+name: wattslot
+tagline: The electricity price you actually pay, every 15 minutes.
+seoTitle: 'wattslot: 15-Minute Electricity Price Planner'
+description: 'Live all-in electricity prices per quarter hour (spot, grid tariffs, taxes, VAT) and the cheapest time to run appliances. Cloudflare Workers, D1 and Next.js.'
+status: shipped
+stack: ['TypeScript', 'Cloudflare Workers', 'D1', 'Hono', 'Next.js', 'Playwright']
+repoUrl: 'https://github.com/mateokadiu/wattslot'
+isPrivate: false
+tileSize: '2x2'
+order: 0
+blurb: "Live at wattslot.mateokadiu.com. Adds the spot price, the grid company's time-of-use tariff, Energinet's tariffs, electricity tax and VAT for every quarter hour, then finds the cheapest time to run the dishwasher or charge the car. One Worker, one cron and D1 on Cloudflare's free plan; property-tested pricing in integer micro-units."
+demoHint:
+  headline: "Today's real quarter-hour prices for Copenhagen, from the live API."
+  steps:
+    - "Each bar is the all-in price per kWh for 15 minutes, coloured by thirds of the day. The green band is the cheapest two hours, the length of a dishwasher run."
+    - "Hover or tap the chart, or focus it and use the arrow keys (Page Up/Down jumps an hour), to read any quarter hour."
+    - "If the API can't be reached, the tile falls back to a recorded day (28 Oct 2026) and says so in the footer."
+---
+
+## Elevator pitch
+
+> Spot prices are what every app shows, but they're less than half of the bill. wattslot adds the grid company's time-of-use tariff, the transmission tariffs, electricity tax and VAT for every 15-minute slot, so "cheapest time to run the dishwasher" is answered with the price you actually pay.
+
+## What it is
+
+A public website and API, live at [wattslot.mateokadiu.com](https://wattslot.mateokadiu.com):
+
+1. **Ingestion.** One cron Worker pulls day-ahead prices, CO₂ forecasts and DataHub tariffs from Energi Data Service. A schedule function decides what's due on each 5-minute tick: day-ahead every 5 minutes around publication (12:50–14:30), CO₂ every half hour, tariffs nightly. Rate limits are respected via the API's `Retry-After`.
+2. **Pricing.** A pure `pricing` package turns spot price + tariffs into an all-in price per quarter hour. Tariffs are published per *local* hour with local wall-clock validity, so DST days come out as 92 or 100 slots, not 96.
+3. **API + website.** `GET /v1/prices`, `/v1/co2` and reference data, with an OpenAPI document. The website is a Next.js static export served by the same Worker: a verdict ("good time to use power" or "wait until 14:00, 23% cheaper"), a task planner and a stacked chart showing what you pay for. English, Danish, German, Norwegian and Swedish.
+
+## Status
+
+| Field | Value |
+|---|---|
+| Repo | github.com/mateokadiu/wattslot |
+| Status | Phase 1 live; Phase 2 (scheduled jobs, Web Push, iCal) next |
+| Hosting | Cloudflare Workers + D1 + static assets, free plan |
+| Data | Energinet via Energi Data Service (CC BY 4.0) |
+| License | Apache-2.0 libraries, AGPL-3.0 apps |
+
+## The problem I was solving
+
+Since October 2025, the day-ahead market settles in 15-minute slots, and grid companies charge time-of-use tariffs: in winter, the 17:00–21:00 peak tariff is about nine times the night rate. Planning on the spot price alone picks the wrong slots more often than you'd think. Over 393 days of Copenhagen data, a spot-only plan for an overnight EV charge chose different quarter hours than the full-price plan on **73%** of days.
+
+Smart charging pays: on a year of real prices and tariffs, charging an EV in the cheapest quarter hours instead of on plug-in cuts its electricity cost by about **48%**.
+
+Getting the full price right means handling the messy part: hundreds of tariff series, each with 24 local-hour prices, periods that start and end on local wall-clock times, and one grid company that reuses the same charge code for a subscription and a tariff.
+
+## Key decisions
+
+1. **The free plan as a design constraint.** Workers get 10 ms of CPU per request, so the website is a static export instead of server-rendered React, and bulk writes go through a single `json_each(?)` statement instead of a query builder (~7 ms → ~0.8 ms).
+2. **Strict tariffs, honest fallback.** Overlapping tariff periods never happen in valid data, so they throw instead of silently picking one. When a grid company's tariff can't be priced, the API falls back to the spot price and says so in a `note`, rather than showing a wrong total.
+3. **Money as integer micro-units.** VAT is rounded half away from zero, once. Property tests (fast-check) check the breakdown always sums to the total, prices are monotonic in the spot price, and DST days tile correctly across 40 years.
+4. **Edge cache with self-enforced freshness.** Responses are cached by completeness: a minute while tomorrow's prices are pending, a day for the past. The Worker stores the cache time itself, because the zone's browser-cache setting would otherwise override it.
+5. **Real stack in end-to-end tests.** Playwright seeds a local D1 by running the real cron against recorded API fixtures, then drives the built site under `wrangler dev`, with an axe audit on every run.
+
+## Numbers
+
+- **96** quarter hours a day (92 / 100 on DST days)
+- **35** grid companies mapped, **31** supported, covering **99.7%** of metering points
+- **124** unit and integration tests, **17** end-to-end tests per viewport
+- **~0.8 ms** CPU for an ingestion write (was ~7 ms)
+- **100** Lighthouse on desktop, **97–100** on mobile
+- **0 kr.** a month to run

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { PROJECT_SLUGS, projectPath, UTILITY_TILE_COUNT } from './site-urls';
 
 test('homepage renders with hero + bento grid', async ({ page }) => {

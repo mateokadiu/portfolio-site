@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { hydrateAll, simulateTranslate, trackErrors } from './helpers';
 import { PAGES, projectPath } from './site-urls';
 

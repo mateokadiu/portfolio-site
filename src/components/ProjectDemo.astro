@@ -9,6 +9,7 @@ import StudybuddyTile from '~/tiles/StudybuddyTile';
 import TaxLedgerTile from '~/tiles/TaxLedgerTile';
 import TemporalStripeTile from '~/tiles/TemporalStripeTile';
 import TideTile from '~/tiles/TideTile';
+import WattslotTile from '~/tiles/WattslotTile';
 import WebhookGatewayAdminTile from '~/tiles/WebhookGatewayAdminTile';
 import WebhookGatewayTile from '~/tiles/WebhookGatewayTile';
 
@@ -28,6 +29,7 @@ const DEMO_SLUGS = [
   'tax-ledger',
   'temporal-stripe',
   'tide',
+  'wattslot',
   'webhook-gateway-admin',
   'webhook-gateway',
 ];
@@ -44,5 +46,6 @@ const idle = hydrate === 'idle';
 {slug === 'tax-ledger' && (idle ? <TaxLedgerTile client:idle /> : <TaxLedgerTile client:visible />)}
 {slug === 'temporal-stripe' && (idle ? <TemporalStripeTile client:idle /> : <TemporalStripeTile client:visible />)}
 {slug === 'tide' && (idle ? <TideTile client:idle /> : <TideTile client:visible />)}
+{slug === 'wattslot' && (idle ? <WattslotTile client:idle /> : <WattslotTile client:visible />)}
 {slug === 'webhook-gateway-admin' && (idle ? <WebhookGatewayAdminTile client:idle /> : <WebhookGatewayAdminTile client:visible />)}
 {slug === 'webhook-gateway' && (idle ? <WebhookGatewayTile client:idle /> : <WebhookGatewayTile client:visible />)}

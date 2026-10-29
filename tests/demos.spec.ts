@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, SAMPLE_RESPONSE, test } from './fixtures';
 import { trackErrors } from './helpers';
 import { projectPath } from './site-urls';
 
@@ -121,6 +121,53 @@ test.describe('studybuddy', () => {
   test('month labels line up with the cells under them', async ({ page }) => {
     await page.goto(projectPath('studybuddy'));
     await expect(page.getByRole('application').locator('text').first()).toHaveText('Jun');
+  });
+});
+
+test.describe('wattslot', () => {
+  const chart = (page: import('@playwright/test').Page) =>
+    page.getByRole('slider', { name: /price per quarter hour/i });
+
+  test('reads any quarter hour with the keyboard', async ({ page }) => {
+    await page.goto(projectPath('wattslot'));
+    await expect(page.getByText(/^live/)).toBeVisible();
+    await expect(chart(page)).toHaveAttribute('aria-valuetext', /^18:00–18:15, 4\.35 DKK/);
+    await expect(page.getByText('cheapest 2 h')).toBeVisible();
+    await expect(page.getByText(/^00:00–02:00/)).toBeVisible();
+
+    await chart(page).focus();
+    await page.keyboard.press('Home');
+    await expect(chart(page)).toHaveAttribute(
+      'aria-valuetext',
+      '00:00–00:15, 1.66 DKK per kWh, cheap',
+    );
+    await page.keyboard.press('PageDown');
+    await expect(chart(page)).toHaveAttribute('aria-valuetext', /^01:00–01:15/);
+    await page.keyboard.press('End');
+    await expect(chart(page)).toHaveAttribute('aria-valuetext', /^23:45–00:00/);
+  });
+
+  test('shows today’s prices from the API', async ({ page }) => {
+    const doubled = {
+      ...SAMPLE_RESPONSE,
+      slots: SAMPLE_RESPONSE.slots.map((s) => ({ ...s, total: (s.total ?? 0) * 2 })),
+    };
+    await page.route('https://wattslot.mateokadiu.com/v1/**', (route) =>
+      route.fulfill({ json: doubled }),
+    );
+    await page.goto(projectPath('wattslot'));
+    await expect(chart(page)).toHaveAttribute('aria-valuetext', /^18:00–18:15, 8\.69 DKK/);
+  });
+
+  test('keeps the recorded day when the API is unreachable', async ({ page }) => {
+    await page.route('https://wattslot.mateokadiu.com/v1/**', (route) =>
+      route.fulfill({ status: 503, body: '' }),
+    );
+    await page.goto(projectPath('wattslot'));
+    await expect(page.getByText(/^sample · Wed 28 Oct · DK2/)).toBeVisible();
+    await expect(chart(page)).toHaveAttribute('aria-valuetext', /^18:00–18:15, 4\.35 DKK/);
+    // Chromium reports the failed request on the console; that's the scenario under test.
+    errors = errors.filter((e) => !e.includes('503'));
   });
 });
 

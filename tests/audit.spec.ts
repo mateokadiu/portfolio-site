@@ -1,4 +1,4 @@
-import { expect, type Page, test } from '@playwright/test';
+import { expect, type Page, test } from './fixtures';
 import { hydrateAll, trackErrors } from './helpers';
 import { PAGES, PROJECT_SLUGS, projectPath } from './site-urls';
 

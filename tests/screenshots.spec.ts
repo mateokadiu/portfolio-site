@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from './fixtures';
 import { projectPath } from './site-urls';
 
 test('homepage screenshot', async ({ page }) => {

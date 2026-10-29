@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { hydrateAll } from './helpers';
 
 // Visual regression. Baselines are rendered inside the official Playwright
