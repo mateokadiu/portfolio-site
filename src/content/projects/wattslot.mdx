@@ -3,14 +3,14 @@ slug: wattslot
 name: wattslot
 tagline: The electricity price you actually pay, every 15 minutes.
 seoTitle: 'wattslot: 15-Minute Electricity Price Planner'
-description: 'Live all-in electricity prices per quarter hour (spot, grid tariffs, taxes, VAT) and the cheapest time to run appliances. Cloudflare Workers, D1 and Next.js.'
+description: 'Live 15-minute electricity prices with grid tariffs and taxes, cheapest and greenest run plans with Web Push reminders, and power outages. Cloudflare Workers.'
 status: shipped
-stack: ['TypeScript', 'Cloudflare Workers', 'D1', 'Hono', 'Next.js', 'Playwright']
+stack: ['TypeScript', 'Cloudflare Workers', 'Workflows', 'D1', 'Hono', 'Next.js', 'Web Push', 'Playwright']
 repoUrl: 'https://github.com/mateokadiu/wattslot'
 isPrivate: false
 tileSize: '2x2'
 order: 0
-blurb: "Live at wattslot.mateokadiu.com. Adds the spot price, the grid company's time-of-use tariff, Energinet's tariffs, electricity tax and VAT for every quarter hour, then finds the cheapest time to run the dishwasher or charge the car. One Worker, one cron and D1 on Cloudflare's free plan; property-tested pricing in integer micro-units."
+blurb: "Live at wattslot.mateokadiu.com. Adds the spot price, the grid company's time-of-use tariff, Energinet's tariffs, electricity tax and VAT for every quarter hour, then plans the cheapest or greenest time to run the dishwasher or charge the car. Saved plans run as Cloudflare Workflows and send Web Push at each start and stop. Everything runs on Cloudflare's free plan."
 demoHint:
   headline: "Today's real quarter-hour prices for Copenhagen, from the live API."
   steps:
@@ -30,14 +30,16 @@ A public website and API, live at [wattslot.mateokadiu.com](https://wattslot.mat
 1. **Ingestion.** One cron Worker pulls day-ahead prices, CO₂ forecasts and DataHub tariffs from Energi Data Service. A schedule function decides what's due on each 5-minute tick: day-ahead every 5 minutes around publication (12:50–14:30), CO₂ every half hour, tariffs nightly. Rate limits are respected via the API's `Retry-After`.
 2. **Pricing.** A pure `pricing` package turns spot price + tariffs into an all-in price per quarter hour. Tariffs are published per *local* hour with local wall-clock validity, so DST days come out as 92 or 100 slots, not 96.
 3. **API + website.** `GET /v1/prices`, `/v1/co2` and reference data, with an OpenAPI document. The website is a Next.js static export served by the same Worker: a verdict ("good time to use power" or "wait until 14:00, 23% cheaper"), a task planner and a stacked chart showing what you pay for. English, Danish, German, Norwegian and Swedish.
+4. **Plans and notifications.** Say what to run and by when, and wattslot offers the cheapest, a balanced and the greenest plan, compared with starting now and with a midnight timer. A saved plan, with no account (a random token kept in the browser), runs as its own Cloudflare Workflow: it sleeps until each start and stop and sends a Web Push notification, and you can add it to your calendar.
+5. **Power outages.** Current outages and planned work from every Danish grid company, refreshed every 5 minutes, with each company's fault line.
 
 ## Status
 
 | Field | Value |
 |---|---|
 | Repo | github.com/mateokadiu/wattslot |
-| Status | Phase 1 live; Phase 2 (scheduled jobs, Web Push, iCal) next |
-| Hosting | Cloudflare Workers + D1 + static assets, free plan |
+| Status | Live: prices, outages, saved plans with Web Push. Next: re-planning when tomorrow's prices land, and a calendar feed |
+| Hosting | Cloudflare Workers + Workflows + D1 + static assets, free plan |
 | Data | Energinet via Energi Data Service (CC BY 4.0) |
 | License | Apache-2.0 libraries, AGPL-3.0 apps |
 
@@ -56,12 +58,14 @@ Getting the full price right means handling the messy part: hundreds of tariff s
 3. **Money as integer micro-units.** VAT is rounded half away from zero, once. Property tests (fast-check) check the breakdown always sums to the total, prices are monotonic in the spot price, and DST days tile correctly across 40 years.
 4. **Edge cache with self-enforced freshness.** Responses are cached by completeness: a minute while tomorrow's prices are pending, a day for the past. The Worker stores the cache time itself, because the zone's browser-cache setting would otherwise override it.
 5. **Real stack in end-to-end tests.** Playwright seeds a local D1 by running the real cron against recorded API fixtures, then drives the built site under `wrangler dev`, with an axe audit on every run.
+6. **A workflow per plan that replays exactly.** A Workflow re-runs its code after every sleep, so each plan's actions come from the stored plan alone, never the clock, and step names are fixed per plan version. A retried step can't notify twice, and pushes stay under the free plan's 50 requests per workflow.
+7. **Web Push without a library.** Message encryption (RFC 8291) and VAPID signing (RFC 8292) are written on Web Crypto and checked against the RFC's test vector in Node and in `workerd`. One push takes about 0.4 ms of CPU. Device subscriptions are stored with envelope encryption, and the Worker only sends to the browsers' own push services.
 
 ## Numbers
 
 - **96** quarter hours a day (92 / 100 on DST days)
 - **35** grid companies mapped, **31** supported, covering **99.7%** of metering points
-- **124** unit and integration tests, **17** end-to-end tests per viewport
+- **236** unit and integration tests, **61** end-to-end tests per viewport
 - **~0.8 ms** CPU for an ingestion write (was ~7 ms)
 - **100** Lighthouse on desktop, **97–100** on mobile
 - **0 kr.** a month to run
