@@ -14,6 +14,11 @@ describe('canonical URLs', () => {
   it('leaves hash links alone', () => {
     expect(sitePath('/#work')).toBe('/#work');
   });
+
+  it('leaves file paths alone', () => {
+    expect(sitePath('/og/about.png')).toBe('/og/about.png');
+    expect(siteUrl('/og/wattslot.png')).toBe('https://mateokadiu.com/og/wattslot.png');
+  });
 });
 
 describe('time labels', () => {

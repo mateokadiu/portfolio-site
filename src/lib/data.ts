@@ -31,11 +31,16 @@ export const SITE = {
   cvPath: '/Mateo%20Kadiu%20-%20CV.pdf',
 };
 
-/** Site-relative path with trailing slash (hash paths like /#work are unchanged). */
+/**
+ * Site-relative path with trailing slash. Hash paths like /#work and file
+ * paths like /og/about.png are unchanged (a slash on a file 404s).
+ */
 export function sitePath(path = '/'): string {
   if (!path || path === '/') return '/';
-  if (path.includes('#')) return path.startsWith('/') ? path : `/${path}`;
   const normalized = path.startsWith('/') ? path : `/${path}`;
+  if (normalized.includes('#')) return normalized;
+  const lastSegment = normalized.slice(normalized.lastIndexOf('/') + 1);
+  if (lastSegment.includes('.')) return normalized;
   return normalized.endsWith('/') ? normalized : `${normalized}/`;
 }
 
